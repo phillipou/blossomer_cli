@@ -128,7 +128,7 @@ class ConfigManager:
         if not config.openai_api_key:
             issues.append(
                 "OpenAI API key not found. Set OPENAI_API_KEY environment variable "
-                "or run: gtm-cli config set openai_api_key YOUR_KEY"
+                "or run: blossomer config set openai_api_key YOUR_KEY"
             )
         
         # Check projects path if specified
@@ -165,7 +165,7 @@ def require_api_key() -> str:
             "OpenAI API key not found",
             suggestions=[
                 "Set environment variable: export OPENAI_API_KEY=your_key",
-                "Or run: gtm-cli config set openai_api_key your_key"
+                "Or run: blossomer config set openai_api_key your_key"
             ]
         )
     return api_key

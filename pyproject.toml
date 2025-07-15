@@ -43,8 +43,7 @@ dev = [
 ]
 
 [project.scripts]
-gtm = "cli.main:main"
-gtm-cli = "cli.main:main"
+blossomer = "cli.main:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -57,7 +57,7 @@ class ProjectManager:
     def __init__(self, base_path: Optional[Path] = None):
         """Initialize with base path for projects."""
         self.base_path = base_path or Path.cwd() / "gtm_projects"
-        self.global_state_file = self.base_path / ".gtm-cli-state.json"
+        self.global_state_file = self.base_path / ".blossomer-state.json"
     
     def ensure_base_directory(self) -> None:
         """Ensure the base gtm_projects directory exists."""

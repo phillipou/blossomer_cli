@@ -31,7 +31,7 @@ class ProjectStorage:
         self.base_dir.mkdir(exist_ok=True)
         
         # Global state file
-        self.state_file = self.base_dir / ".gtm-cli-state.json"
+        self.state_file = self.base_dir / ".blossomer-state.json"
     
     def get_project_dir(self, domain: str) -> Path:
         """Get the project directory for a given domain"""

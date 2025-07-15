@@ -24,7 +24,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
         projects = gtm_service.storage.list_projects()
         if not projects:
             console.print("[red]No GTM projects found.[/red]")
-            console.print("→ Create one with: [cyan]gtm-cli init <domain>[/cyan]")
+            console.print("→ Create one with: [cyan]blossomer init <domain>[/cyan]")
             return
         elif len(projects) == 1:
             domain = projects[0]["domain"]
@@ -32,7 +32,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
             console.print("[red]Multiple projects found. Please specify domain:[/red]")
             for project in projects[:5]:  # Show first 5
                 console.print(f"  • {project['domain']}")
-            console.print("→ Use: [cyan]gtm-cli show <asset> --domain <domain>[/cyan]")
+            console.print("→ Use: [cyan]blossomer show <asset> --domain <domain>[/cyan]")
             return
     
     # Normalize domain
@@ -47,7 +47,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [cyan]gtm-cli init " + domain + "[/cyan]")
+        console.print("→ Create one with: [cyan]blossomer init " + domain + "[/cyan]")
         return
     
     if asset == "all":
@@ -107,9 +107,9 @@ def show_all_assets(domain: str, json_output: bool = False) -> None:
     # Next steps
     console.print()
     console.print("[bold]Commands:[/bold]")
-    console.print(f"  • View details: [cyan]gtm-cli show <asset>[/cyan]")
-    console.print(f"  • Edit content: [cyan]gtm-cli edit <asset>[/cyan]")
-    console.print(f"  • Export report: [cyan]gtm-cli export[/cyan]")
+    console.print(f"  • View details: [cyan]blossomer show <asset>[/cyan]")
+    console.print(f"  • Edit content: [cyan]blossomer edit <asset>[/cyan]")
+    console.print(f"  • Export report: [cyan]blossomer export[/cyan]")
 
 
 def show_single_asset(domain: str, step: str, json_output: bool = False) -> None:
@@ -119,7 +119,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
     step_data = gtm_service.storage.load_step_data(domain, step)
     if not step_data:
         console.print(f"[red]{step.title()} not found for {domain}[/red]")
-        console.print(f"→ Generate with: [cyan]gtm-cli generate {step}[/cyan]")
+        console.print(f"→ Generate with: [cyan]blossomer generate {step}[/cyan]")
         return
     
     if json_output:
