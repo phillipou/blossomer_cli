@@ -15,6 +15,7 @@ from rich.text import Text
 from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
+from cli.utils.console import enter_immersive_mode, exit_immersive_mode
 
 console = Console()
 
@@ -40,6 +41,8 @@ async def init_interactive_flow(
     # Check if project already exists
     status = gtm_service.get_project_status(normalized_domain)
     if status["exists"]:
+        # Enter immersive mode for existing projects
+        enter_immersive_mode()
         console.print()
         
         # Get more detailed status info
@@ -60,12 +63,13 @@ async def init_interactive_flow(
         if not yolo:
             try:
                 update_project = questionary.confirm(
-                    f"Project '{normalized_domain}' already exists. Would you like to update it with fresh data?"
+                    f"Project '{normalized_domain}' already exists. Would you like to update it with fresh data?",
+                    default=None
                 ).ask()
             except Exception as e:
                 # Fallback to simple input when questionary fails
                 console.print(f"Project '{normalized_domain}' already exists.")
-                response = typer.confirm("Would you like to update it with fresh data?")
+                response = typer.confirm("Would you like to update it with fresh data?", default=None)
                 update_project = response
             
             if not update_project:
@@ -82,6 +86,8 @@ async def init_interactive_flow(
     
     # Welcome message
     if not yolo:
+        # Enter immersive mode for new projects
+        enter_immersive_mode()
         console.print()
         console.print(Panel.fit(
             f"[bold blue]🚀 Starting GTM Generation for {normalized_domain}[/bold blue]\n\n"
@@ -153,19 +159,19 @@ async def init_interactive_flow(
         console.print(Panel.fit(
             "[bold green]✓ GTM Generation Complete![/bold green]\n\n"
             "[bold]Next steps:[/bold]\n"
-            f"• View results: [cyan]gtm-cli show all[/cyan]\n"
-            f"• Export report: [cyan]gtm-cli export[/cyan]\n"
-            f"• Edit content: [cyan]gtm-cli edit <step>[/cyan]",
+            f"• View results: [cyan]blossomer show all[/cyan]\n"
+            f"• Export report: [cyan]blossomer export[/cyan]\n"
+            f"• Edit content: [cyan]blossomer edit <step>[/cyan]",
             title="[bold]Success[/bold]",
             border_style="green"
         ))
         
     except KeyboardInterrupt:
         console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
-        console.print("→ Resume with: [cyan]gtm-cli init " + domain + "[/cyan]")
+        console.print("→ Resume with: [cyan]blossomer init " + domain + "[/cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print("→ Try: [cyan]gtm-cli init " + domain + "[/cyan] to resume")
+        console.print("→ Try: [cyan]blossomer init " + domain + "[/cyan] to resume")
         raise typer.Exit(1)
 
 
@@ -241,7 +247,7 @@ async def run_step_with_choices(
             console.print(f"   [red]✗[/red] Failed to generate {step_name}: {e}")
             
             if not yolo:
-                retry = questionary.confirm("Would you like to retry this step?").ask()
+                retry = questionary.confirm("Would you like to retry this step?", default=None).ask()
                 if retry:
                     await run_step_with_choices(
                         step_name, step_number, total_steps, 

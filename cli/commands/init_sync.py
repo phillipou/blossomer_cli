@@ -19,6 +19,7 @@ from rich.text import Text
 from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
+from cli.utils.console import enter_immersive_mode, exit_immersive_mode
 
 console = Console()
 
@@ -41,6 +42,9 @@ def init_sync_flow(domain: str, context: Optional[str] = None, yolo: bool = Fals
         handle_existing_project(normalized_domain, status, yolo)
         return
     
+    # Enter immersive mode - clear console for fresh experience
+    enter_immersive_mode()
+    
     # Welcome message for new project
     console.print()
     console.print(Panel.fit(
@@ -55,7 +59,7 @@ def init_sync_flow(domain: str, context: Optional[str] = None, yolo: bool = Fals
     ))
     
     if not yolo:
-        ready = typer.confirm("Ready to start generation?")
+        ready = typer.confirm("Ready to start generation?", default=None)
         if not ready:
             console.print("Operation cancelled.")
             return
@@ -122,24 +126,27 @@ def init_sync_flow(domain: str, context: Optional[str] = None, yolo: bool = Fals
         console.print(Panel.fit(
             "[bold green]✅ GTM Generation Complete![/bold green]\n\n"
             "[bold]Your go-to-market package is ready:[/bold]\n"
-            f"• View results: [cyan]gtm-cli show all[/cyan]\n"
-            f"• Edit content: [cyan]gtm-cli edit <step>[/cyan]\n"
-            f"• Export report: [cyan]gtm-cli export[/cyan]",
+            f"• View results: [cyan]blossomer show all[/cyan]\n"
+            f"• Edit content: [cyan]blossomer edit <step>[/cyan]\n"
+            f"• Export report: [cyan]blossomer export[/cyan]",
             title="[bold]Success[/bold]",
             border_style="green"
         ))
         
     except KeyboardInterrupt:
         console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
-        console.print(f"→ Resume with: [cyan]gtm-cli init {domain}[/cyan]")
+        console.print(f"→ Resume with: [cyan]blossomer init {domain}[/cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print(f"→ Try again: [cyan]gtm-cli init {domain}[/cyan]")
+        console.print(f"→ Try again: [cyan]blossomer init {domain}[/cyan]")
         raise typer.Exit(1)
 
 
 def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
     """Handle existing project confirmation"""
+    
+    # Enter immersive mode for existing projects too
+    enter_immersive_mode()
     
     metadata = gtm_service.storage.load_metadata(domain)
     last_updated = metadata.updated_at if metadata else "Unknown"
@@ -161,11 +168,11 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         update_project = True
     else:
         console.print(f"Project '{domain}' already exists.")
-        update_project = typer.confirm("Would you like to update it with fresh data?")
+        update_project = typer.confirm("Would you like to update it with fresh data?", default=None)
     
     if not update_project:
         console.print("Operation cancelled.")
-        console.print(f"→ View current results: [cyan]gtm-cli show all[/cyan]")
+        console.print(f"→ View current results: [cyan]blossomer show all[/cyan]")
         return
     
     console.print()
@@ -225,11 +232,15 @@ def run_generation_step(
     
     # Post-generation choices (if not in YOLO mode)
     if not yolo:
+        # Show preview for target account step
+        if step_key == "account":
+            show_target_account_preview(domain)
+        
         console.print(f"[green]✓[/green] {step_name} completed!")
         
         # Simple continue confirmation instead of complex menu
         if step_number < 4:  # Not the last step
-            continue_choice = typer.confirm("Continue to next step?", default=True)
+            continue_choice = typer.confirm("Continue to next step?", default=None)
             if not continue_choice:
                 console.print("Generation paused. Resume with the same command.")
                 raise KeyboardInterrupt()
@@ -272,3 +283,97 @@ def run_async_generation(coro):
         return loop.run_until_complete(coro)
     finally:
         loop.close()
+
+
+def show_target_account_preview(domain: str) -> None:
+    """Show target account preview with 3 options"""
+    try:
+        # Load the generated account data
+        account_data = gtm_service.storage.load_step_data(domain, "account")
+        if not account_data:
+            return
+        
+        # Extract key information for preview
+        profile_name = account_data.get("target_account_name", "Target Companies")
+        description = account_data.get("target_account_description", "")
+        firmographics = account_data.get("firmographics", {})
+        rationale = account_data.get("target_account_rationale", [])
+        
+        # Create compact preview
+        console.print()
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print("TARGET ACCOUNT - Quick Summary")
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        
+        console.print(f"Profile: {profile_name}")
+        
+        # Show size and geography if available
+        size_info = []
+        if "employees" in firmographics:
+            size_info.append(f"{firmographics['employees']} employees")
+        if "revenue" in firmographics:
+            size_info.append(f"{firmographics['revenue']} revenue")
+        if size_info:
+            console.print(f"Size: {', '.join(size_info)}")
+        
+        if "geography" in firmographics and firmographics["geography"]:
+            geo_list = firmographics["geography"]
+            if isinstance(geo_list, list):
+                console.print(f"Geography: {', '.join(geo_list)}")
+        
+        # Show rationale points (max 3)
+        if rationale:
+            console.print()
+            console.print("Why this profile:")
+            for point in rationale[:3]:
+                console.print(f"• {point}")
+        
+        # Top Buying Signals placeholder
+        buying_signals = account_data.get("buying_signals", [])
+        if buying_signals:
+            console.print()
+            console.print("Top Buying Signals:")
+            # Show top 3 high priority signals
+            high_priority = [s for s in buying_signals if s.get("priority") == "high"]
+            for signal in high_priority[:3]:
+                console.print(f"• {signal.get('title', 'Signal')}")
+        
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
+        
+        # Show file save info
+        project_dir = gtm_service.storage.get_project_dir(domain)
+        file_size = (project_dir / "account.json").stat().st_size / 1024
+        console.print(f"✓ Full profile saved to: account.json ({file_size:.1f}KB)")
+        console.print()
+        
+        # Options
+        console.print("Options:")
+        console.print("[C]ontinue to next step (or press Enter)")
+        console.print("[E]dit full analysis in editor")
+        console.print("[A]bort (or press Ctrl+C)")
+        console.print()
+        
+        # Get user choice
+        choice = questionary.select(
+            "Choice [c/e/a]:",
+            choices=[
+                "Continue to next step",
+                "Edit full analysis in editor", 
+                "Abort"
+            ]
+        ).ask()
+        
+        if choice == "Abort":
+            raise KeyboardInterrupt()
+        elif choice == "Edit full analysis in editor":
+            edit_step_content(domain, "account", "Target Account Profile")
+            # After editing, show options again
+            console.print()
+            continue_choice = typer.confirm("Continue to next step?", default=None)
+            if not continue_choice:
+                raise KeyboardInterrupt()
+        # If "Continue to next step", just return and let the flow continue
+        
+    except Exception as e:
+        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
