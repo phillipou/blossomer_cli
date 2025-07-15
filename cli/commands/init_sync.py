@@ -179,8 +179,78 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
     console.print("[blue]→ Updating project with fresh website data[/blue]")
     console.print()
     
-    # Continue with generation flow...
-    # (Reuse the same generation steps as above)
+    # Continue with generation flow - run all steps with fresh data
+    try:
+        # Step 1: Company Overview
+        run_generation_step(
+            step_name="Company Overview",
+            step_number=1,
+            explanation="Analyzing your website to understand your business, products, and value proposition",
+            generate_func=lambda: run_async_generation(
+                gtm_service.generate_company_overview(domain, None, True)
+            ),
+            domain=domain,
+            step_key="overview",
+            yolo=yolo
+        )
+        
+        # Step 2: Target Account
+        run_generation_step(
+            step_name="Target Account Profile",
+            step_number=2,
+            explanation="Identifying your ideal customer companies based on your business analysis",
+            generate_func=lambda: run_async_generation(
+                gtm_service.generate_target_account(domain, force_regenerate=True)
+            ),
+            domain=domain,
+            step_key="account",
+            yolo=yolo
+        )
+        
+        # Step 3: Buyer Persona
+        run_generation_step(
+            step_name="Buyer Persona",
+            step_number=3,
+            explanation="Creating detailed profiles of decision-makers at your target companies",
+            generate_func=lambda: run_async_generation(
+                gtm_service.generate_target_persona(domain, force_regenerate=True)
+            ),
+            domain=domain,
+            step_key="persona",
+            yolo=yolo
+        )
+        
+        # Step 4: Email Campaign
+        run_generation_step(
+            step_name="Email Campaign",
+            step_number=4,
+            explanation="Crafting personalized outreach emails based on your analysis",
+            generate_func=lambda: run_async_generation(
+                gtm_service.generate_email_campaign(domain, force_regenerate=True)
+            ),
+            domain=domain,
+            step_key="email",
+            yolo=yolo
+        )
+        
+        # Success message
+        console.print()
+        console.print(Panel.fit(
+            "[bold green]✅ GTM Generation Complete![/bold green]\n\n"
+            "[bold]Your go-to-market package is ready:[/bold]\n"
+            f"• View results: [cyan]blossomer show all[/cyan]\n"
+            f"• Edit content: [cyan]blossomer edit <step>[/cyan]\n"
+            f"• Export report: [cyan]blossomer export[/cyan]",
+            title="[bold]Success[/bold]",
+            border_style="green"
+        ))
+        
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
+        console.print(f"→ Resume with: [cyan]blossomer init {domain.replace('https://', '')}[/cyan]")
+    except Exception as e:
+        console.print(f"\n[red]Error during generation:[/red] {e}")
+        console.print(f"→ Try again: [cyan]blossomer init {domain.replace('https://', '')}[/cyan]")
 
 
 def run_generation_step(
