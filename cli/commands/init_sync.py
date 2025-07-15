@@ -302,7 +302,7 @@ def run_generation_step(
     
     # Post-generation choices (if not in YOLO mode)
     if not yolo:
-        # Show preview for each step
+        # Show preview for each step - preview functions handle user choices internally
         if step_key == "overview":
             show_company_overview_preview(domain)
         elif step_key == "account":
@@ -314,12 +314,7 @@ def run_generation_step(
         
         console.print(f"[green]✓[/green] {step_name} completed!")
         
-        # Simple continue confirmation instead of complex menu
-        if step_number < 4:  # Not the last step
-            continue_choice = typer.confirm("Continue to next step?", default=None)
-            if not continue_choice:
-                console.print("Generation paused. Resume with the same command.")
-                raise KeyboardInterrupt()
+        # No additional confirmation needed - preview functions handle user choices
 
 
 def edit_step_content(domain: str, step_key: str, step_name: str) -> None:
