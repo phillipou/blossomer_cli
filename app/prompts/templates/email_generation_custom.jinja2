@@ -1,0 +1,99 @@
+{# System Prompt #}
+You are an expert B2B email copywriter. Your goal is to create compelling, personalized emails based on the user's custom template structure while maintaining professional quality standards.
+
+{# TODO: Custom Template Implementation #}
+{# 
+IMPLEMENTATION NOTES FOR FUTURE CUSTOM TEMPLATE SUPPORT:
+
+1. CUSTOM TEMPLATE STRUCTURE:
+   - Users will provide their own template structure via preferences.custom_template_content
+   - Template should support variable injection for: company_context, target_account, target_persona, preferences
+   - Maintain flexibility for user-defined segment types and structure
+
+2. VALIDATION REQUIREMENTS:
+   - Validate custom template has required variable placeholders
+   - Sanitize user input to prevent injection attacks
+   - Ensure output maintains professional email standards
+   - Word count limits should be configurable per custom template
+
+3. SEGMENT TYPE HANDLING:
+   - Allow users to define custom segment types
+   - Generate breakdown entries that match user's segment structure
+   - Support both predefined and custom segment colors in frontend
+
+4. VARIABLE INJECTION:
+   - Standard variables: company_context, target_account, target_persona, preferences
+   - Optional variables: social_proof (when provided)
+   - User-defined variables from custom template configuration
+
+5. QUALITY STANDARDS:
+   - Maintain professional tone regardless of custom structure
+   - Ensure smooth transitions between segments
+   - Validate email completeness (subject, body, CTA)
+   - Provide helpful error messages for malformed templates
+
+6. BACKEND INTEGRATION:
+   - Template selection logic in email_generation_service.py
+   - Custom template storage (database vs file-based)
+   - Template versioning and user management
+   - Error handling for template parsing failures
+
+7. FRONTEND SUPPORT:
+   - Custom template upload/editing interface
+   - Template preview functionality
+   - Custom segment color mapping
+   - Template validation feedback
+
+CURRENT STATE: DISABLED IN UX
+Custom template selection is currently disabled in EmailWizardModal.tsx.
+When implementing, ensure UX enables this option and handles custom template input.
+#}
+
+## Required Output Format
+
+**IMPORTANT: You MUST respond with ONLY valid JSON. No markdown blocks, no explanatory text.**
+
+```json
+{
+  "subjects": {
+    "primary": "Primary subject line based on custom template",
+    "alternatives": [
+      "Alternative subject option 1",
+      "Alternative subject option 2"
+    ]
+  },
+  "email_body": [
+    {
+      "text": "Email content segment based on custom template structure",
+      "type": "custom-segment-type"
+    }
+  ],
+  "breakdown": {
+    "custom-segment-type": {
+      "label": "User-defined segment label",
+      "description": "Description of this custom segment's purpose"
+    }
+  },
+  "metadata": {
+    "generation_id": "unique-uuid",
+    "confidence": "high|medium|low",
+    "personalization_level": "high|medium|low",
+    "word_count": 0,
+    "template_type": "custom"
+  }
+}
+```
+
+{# User Prompt #}
+
+TODO: Implement custom template processing logic here.
+
+Current context available:
+**Company:** {{ company_context.company_name }}
+**Target Account:** {{ target_account.target_account_name }}
+**Target Persona:** {{ target_persona.target_persona_name }}
+**User Preferences:** {{ preferences }}
+
+{% if preferences.social_proof %}**Social Proof:** {{ preferences.social_proof }}{% endif %}
+
+Custom template processing is not yet implemented. Please use the Blossomer template instead.
