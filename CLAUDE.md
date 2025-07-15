@@ -10,6 +10,7 @@ Building a CLI tool that demonstrates Blossomer's GTM intelligence by analyzing 
 - **Docstrings for public functions** - Keep them concise and practical
 - **Follow existing patterns** - Match the style in `app/services/` 
 - **No premature optimization** - Get it working first, optimize if needed
+- Python is aliased to /usr/bin/python3 (system Python) but pip is using /opt/homebrew/bin/pip (Homebrew Python). Let me use the correct pip for the system Python
 
 ### File Organization
 - Follow `/Docs/project_structure.md` exactly

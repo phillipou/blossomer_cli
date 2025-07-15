@@ -4,10 +4,26 @@ Domain normalization and validation utilities.
 
 import re
 from urllib.parse import urlparse
-from typing import Tuple
+from typing import NamedTuple
 
 
-def normalize_domain(domain_input: str) -> Tuple[str, str]:
+class NormalizedDomain(NamedTuple):
+    """
+    Represents a normalized domain with both clean name and full URL.
+    
+    Attributes:
+        domain: Clean domain name (e.g., "acme.com")
+        url: Full HTTPS URL (e.g., "https://acme.com")
+    """
+    domain: str
+    url: str
+    
+    def __str__(self) -> str:
+        """Return the full URL when converting to string"""
+        return self.url
+
+
+def normalize_domain(domain_input: str) -> NormalizedDomain:
     """
     Normalize various domain formats to a consistent format.
     
@@ -15,9 +31,7 @@ def normalize_domain(domain_input: str) -> Tuple[str, str]:
         domain_input: User input (acme.com, www.acme.com, https://acme.com/about, etc.)
         
     Returns:
-        Tuple of (clean_domain, full_url) where:
-        - clean_domain: Just the domain name (e.g., "acme.com")
-        - full_url: Full HTTPS URL (e.g., "https://acme.com")
+        NormalizedDomain with clean domain name and full HTTPS URL
     """
     # Strip whitespace
     domain_input = domain_input.strip()
@@ -31,7 +45,7 @@ def normalize_domain(domain_input: str) -> Tuple[str, str]:
         if domain.startswith('www.'):
             domain = domain[4:]
             
-        return domain, f"https://{domain}"
+        return NormalizedDomain(domain, f"https://{domain}")
     
     # If it starts with www., remove it
     if domain_input.startswith('www.'):
@@ -45,7 +59,7 @@ def normalize_domain(domain_input: str) -> Tuple[str, str]:
     if not is_valid_domain_format(domain_input):
         raise ValueError(f"Invalid domain format: {domain_input}")
     
-    return domain_input, f"https://{domain_input}"
+    return NormalizedDomain(domain_input, f"https://{domain_input}")
 
 
 def is_valid_domain_format(domain: str) -> bool:
@@ -105,7 +119,7 @@ if __name__ == "__main__":
     
     for test in test_domains:
         try:
-            clean, full = normalize_domain(test)
-            print(f"{test:<30} -> {clean:<20} | {full}")
+            result = normalize_domain(test)
+            print(f"{test:<30} -> {result.domain:<20} | {result.url}")
         except ValueError as e:
             print(f"{test:<30} -> ERROR: {e}")

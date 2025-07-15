@@ -44,7 +44,7 @@ async def scenario_1_project_lifecycle():
     print_header("Scenario 1: Complete Project Lifecycle")
     
     domain = "example-startup.com"
-    normalized = normalize_domain(domain)
+    normalized = normalize_domain(domain).url
     
     print_step("1. Check if project exists")
     exists_before = project_storage.project_exists(normalized)
@@ -124,7 +124,7 @@ async def scenario_2_dependency_tracking():
     print_header("Scenario 2: Dependency Tracking & Stale Data")
     
     domain = "dependency-test.com"
-    normalized = normalize_domain(domain)
+    normalized = normalize_domain(domain).url
     
     print_step("1. Create project with full pipeline")
     project_storage.create_project(normalized)
@@ -178,7 +178,7 @@ async def scenario_3_project_management():
     ]
     
     for company in companies:
-        normalized = normalize_domain(company["domain"])
+        normalized = normalize_domain(company["domain"]).url
         project_storage.create_project(normalized)
         
         for i, step in enumerate(company["steps"]):
@@ -215,7 +215,7 @@ async def scenario_3_project_management():
         else:
             print(f"  🔴 {project['domain']}: Just Started ({completion:.0f}%)")
     
-    return [normalize_domain(c["domain"]) for c in companies]
+    return [normalize_domain(c["domain"]).url for c in companies]
 
 
 async def scenario_4_data_flow_simulation():
@@ -223,7 +223,7 @@ async def scenario_4_data_flow_simulation():
     print_header("Scenario 4: Realistic Data Flow Simulation")
     
     domain = "realistic-test.com"
-    normalized = normalize_domain(domain)
+    normalized = normalize_domain(domain).url
     
     print_step("1. Simulate Step 1: Company Overview")
     

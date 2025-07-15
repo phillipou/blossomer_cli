@@ -180,9 +180,15 @@ python3 -m cli.utils.file_manager    # File management test
 
 **Testing:** All core generation components tested and working. Run testing commands:
 ```bash
-python test_stage2.py              # Comprehensive component tests
-python interactive_test.py         # Interactive usage scenarios  
-python -c "from cli.services.gtm_generation_service import gtm_service; print('✓ GTM service ready')"
+cd tests && python3 run_all_tests.py     # Comprehensive component tests (NEW)
+python3 interactive_test.py              # Interactive usage scenarios  
+python3 -c "from cli.services.gtm_generation_service import gtm_service; print('✓ GTM service ready')"
+
+# Individual test modules:
+cd tests && python3 test_domain_utils.py     # Domain normalization tests
+cd tests && python3 test_project_storage.py  # Project storage tests
+cd tests && python3 test_dependencies.py     # Dependency tracking tests
+cd tests && python3 test_services.py         # Service integration tests
 ```
 
 ### 🔄 Stage 3: Interactive CLI Commands (NEXT)

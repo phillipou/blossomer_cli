@@ -20,7 +20,8 @@ python -c "
 from cli.utils.domain import normalize_domain
 test_cases = ['acme.com', 'https://acme.com', 'www.acme.com', 'http://www.acme.com/about']
 for domain in test_cases:
-    print(f'{domain} → {normalize_domain(domain)}')
+    result = normalize_domain(domain)
+    print(f'{domain} → {result.url}')
 "
 ```
 

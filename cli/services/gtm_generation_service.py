@@ -37,7 +37,8 @@ class GTMGenerationService:
         force_regenerate: bool = False
     ) -> ProductOverviewResponse:
         """Generate or load company overview (Step 1)"""
-        normalized_domain = normalize_domain(domain)
+        normalized = normalize_domain(domain)
+        normalized_domain = normalized.url
         
         # Check if already exists and not forcing regeneration
         if not force_regenerate:
@@ -75,7 +76,8 @@ class GTMGenerationService:
         force_regenerate: bool = False
     ) -> TargetAccountResponse:
         """Generate or load target account profile (Step 2)"""
-        normalized_domain = normalize_domain(domain)
+        normalized = normalize_domain(domain)
+        normalized_domain = normalized.url
         
         # Check if already exists and not forcing regeneration
         if not force_regenerate:
@@ -121,7 +123,8 @@ class GTMGenerationService:
         force_regenerate: bool = False
     ) -> TargetPersonaResponse:
         """Generate or load target persona profile (Step 3)"""
-        normalized_domain = normalize_domain(domain)
+        normalized = normalize_domain(domain)
+        normalized_domain = normalized.url
         
         # Check if already exists and not forcing regeneration
         if not force_regenerate:
@@ -170,7 +173,8 @@ class GTMGenerationService:
         force_regenerate: bool = False
     ) -> EmailGenerationResponse:
         """Generate or load email campaign (Step 4)"""
-        normalized_domain = normalize_domain(domain)
+        normalized = normalize_domain(domain)
+        normalized_domain = normalized.url
         
         # Check if already exists and not forcing regeneration
         if not force_regenerate:
@@ -219,7 +223,8 @@ class GTMGenerationService:
         force_regenerate_all: bool = False
     ) -> Dict[str, Any]:
         """Run the complete 5-step GTM generation flow"""
-        normalized_domain = normalize_domain(domain)
+        normalized = normalize_domain(domain)
+        normalized_domain = normalized.url
         results = {}
         
         # Step 1: Company Overview
@@ -251,7 +256,8 @@ class GTMGenerationService:
     
     def get_project_status(self, domain: str) -> Dict[str, Any]:
         """Get current status of a GTM project"""
-        normalized_domain = normalize_domain(domain)
+        normalized = normalize_domain(domain)
+        normalized_domain = normalized.url
         
         if not self.storage.project_exists(normalized_domain):
             return {"exists": False}

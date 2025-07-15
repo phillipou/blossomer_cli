@@ -28,16 +28,17 @@ def test_domain_normalization():
     print("📋 Testing domain normalization...")
     
     test_cases = [
-        ("acme.com", "https://acme.com"),
-        ("https://acme.com", "https://acme.com"),
-        ("www.acme.com", "https://acme.com"),
-        ("http://www.acme.com/about", "https://acme.com")
+        ("acme.com", "acme.com", "https://acme.com"),
+        ("https://acme.com", "acme.com", "https://acme.com"),
+        ("www.acme.com", "acme.com", "https://acme.com"),
+        ("http://www.acme.com/about", "acme.com", "https://acme.com")
     ]
     
-    for input_domain, expected in test_cases:
+    for input_domain, expected_domain, expected_url in test_cases:
         result = normalize_domain(input_domain)
-        assert result == expected, f"Expected {expected}, got {result}"
-        print(f"  ✓ {input_domain} → {result}")
+        assert result.domain == expected_domain, f"Expected domain {expected_domain}, got {result.domain}"
+        assert result.url == expected_url, f"Expected URL {expected_url}, got {result.url}"
+        print(f"  ✓ {input_domain} → {result.url}")
     
     print("  ✅ Domain normalization working correctly\n")
 
@@ -62,7 +63,7 @@ def test_project_creation_and_deletion():
     print("🏗️  Testing project creation and deletion...")
     
     test_domain = "test-domain.com"
-    normalized = normalize_domain(test_domain)
+    normalized = normalize_domain(test_domain).url
     
     # Test project creation
     project_dir = project_storage.create_project(normalized)
@@ -96,7 +97,7 @@ def test_step_data_storage():
     print("💾 Testing step data storage...")
     
     test_domain = "storage-test.com"
-    normalized = normalize_domain(test_domain)
+    normalized = normalize_domain(test_domain).url
     
     # Create test project
     project_storage.create_project(normalized)
@@ -161,7 +162,7 @@ def test_project_listing():
     
     # Create multiple test projects
     test_domains = ["list-test-1.com", "list-test-2.com"]
-    normalized_domains = [normalize_domain(d) for d in test_domains]
+    normalized_domains = [normalize_domain(d).domain for d in test_domains]
     
     for domain in normalized_domains:
         project_storage.create_project(domain)
@@ -205,7 +206,7 @@ def test_gtm_service_initialization():
     
     # Test project status for existing project
     test_domain = "status-test.com"
-    normalized = normalize_domain(test_domain)
+    normalized = normalize_domain(test_domain).url
     project_storage.create_project(normalized)
     
     status = gtm_service.get_project_status(test_domain)
