@@ -420,13 +420,15 @@ def show_target_account_preview(domain: str) -> None:
         
         # Get user choice
         choice = questionary.select(
-            "Choice [c/e/a]:",
+            "What would you like to do?",
             choices=[
-                "[C]ontinue to next step (or press Enter)",
-                "[E]dit full analysis in editor", 
-                "[A]bort (or press Ctrl+C)"
+                "Continue to next step",
+                "Edit full analysis in editor", 
+                "Abort"
             ]
         ).ask()
+        
+        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -484,22 +486,17 @@ def show_company_overview_preview(domain: str) -> None:
         console.print(f"✓ Full overview saved to: overview.json ({file_size:.1f}KB)")
         console.print()
         
-        # Options
-        console.print("Options:")
-        console.print("[C]ontinue to next step (or press Enter)")
-        console.print("[E]dit full analysis in editor")
-        console.print("[A]bort (or press Ctrl+C)")
-        console.print()
-        
         # Get user choice
         choice = questionary.select(
-            "Choice [c/e/a]:",
+            "What would you like to do?",
             choices=[
                 "Continue to next step",
                 "Edit full analysis in editor", 
                 "Abort"
             ]
         ).ask()
+        
+        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -533,7 +530,7 @@ def show_buyer_persona_preview(domain: str) -> None:
         # Create compact preview
         console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("BUYER PERSONA - Quick Summary")
+        console.print("BUYER PERSONA - Quick Summary [DUMMY DATA⚠️]")
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         
         console.print(f"Title: {job_title}")
@@ -562,22 +559,17 @@ def show_buyer_persona_preview(domain: str) -> None:
         console.print(f"✓ Full persona saved to: persona.json ({file_size:.1f}KB)")
         console.print()
         
-        # Options
-        console.print("Options:")
-        console.print("[C]ontinue to next step (or press Enter)")
-        console.print("[E]dit full analysis in editor")
-        console.print("[A]bort (or press Ctrl+C)")
-        console.print()
-        
         # Get user choice
         choice = questionary.select(
-            "Choice [c/e/a]:",
+            "What would you like to do?",
             choices=[
                 "Continue to next step",
                 "Edit full analysis in editor", 
                 "Abort"
             ]
         ).ask()
+        
+        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -610,7 +602,7 @@ def show_email_campaign_preview(domain: str) -> None:
         # Create compact preview
         console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("EMAIL CAMPAIGN - Quick Summary")
+        console.print("EMAIL CAMPAIGN - Quick Summary [DUMMY DATA⚠️]")
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         
         console.print(f"Campaign: {campaign_name}")
@@ -644,22 +636,18 @@ def show_email_campaign_preview(domain: str) -> None:
         console.print(f"✓ Full campaign saved to: email.json ({file_size:.1f}KB)")
         console.print()
         
-        # Options (no continue option for last step)
-        console.print("Options:")
-        console.print("[C]omplete generation")
-        console.print("[E]dit full campaign in editor")
-        console.print("[A]bort (or press Ctrl+C)")
-        console.print()
         
         # Get user choice
         choice = questionary.select(
-            "Choice [c/e/a]:",
+            "What would you like to do?",
             choices=[
                 "Complete generation",
                 "Edit full campaign in editor", 
                 "Abort"
             ]
         ).ask()
+        
+        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()

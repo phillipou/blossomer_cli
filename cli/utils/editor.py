@@ -79,7 +79,9 @@ def open_file_in_editor(file_path: Path, editor: Optional[str] = None) -> bool:
             subprocess.run([editor, str(file_path)], check=True)
         else:
             # Most editors can be called directly with the file path
-            subprocess.run([editor, str(file_path)], check=True)
+            # Split editor command in case it has arguments
+            editor_parts = editor.split()
+            subprocess.run(editor_parts + [str(file_path)], check=True)
         
         return True
         
