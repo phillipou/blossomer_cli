@@ -15,6 +15,13 @@ from app.services.dev_file_cache import (
 )
 import time
 
+# Import debug utility for conditional debug printing
+try:
+    from cli.utils.debug import debug_print
+except ImportError:
+    # Fallback if running outside CLI context
+    debug_print = print
+
 load_dotenv()
 
 logger = logging.getLogger(__name__)
@@ -170,7 +177,7 @@ def validate_url(url: str, user_agent: str = "BlossomerBot") -> dict:
         result["reason"] = "URL netloc must contain a dot (e.g., example.com)"
         return result
     t_parse1 = time.monotonic()
-    print(f"[TIMING] URL parsing took {t_parse1 - t_parse0:.3f}s")
+    debug_print(f"[TIMING] URL parsing took {t_parse1 - t_parse0:.3f}s")
 
     # 2. DNS resolution
     t_dns0 = time.monotonic()
@@ -183,7 +190,7 @@ def validate_url(url: str, user_agent: str = "BlossomerBot") -> dict:
         result["reason"] = f"DNS resolution failed: {e}"
         return result
     t_dns1 = time.monotonic()
-    print(f"[TIMING] DNS resolution took {t_dns1 - t_dns0:.3f}s")
+    debug_print(f"[TIMING] DNS resolution took {t_dns1 - t_dns0:.3f}s")
 
     # 3. HTTP reachability
     t_http0 = time.monotonic()
@@ -204,7 +211,7 @@ def validate_url(url: str, user_agent: str = "BlossomerBot") -> dict:
         result["reason"] = f"HTTP request failed: {e}"
         return result
     t_http1 = time.monotonic()
-    print(f"[TIMING] HTTP HEAD request took {t_http1 - t_http0:.3f}s")
+    debug_print(f"[TIMING] HTTP HEAD request took {t_http1 - t_http0:.3f}s")
 
     # 4. robots.txt compliance
     t_robots0 = time.monotonic()
@@ -223,12 +230,12 @@ def validate_url(url: str, user_agent: str = "BlossomerBot") -> dict:
         # If robots.txt is missing/unreachable, default to allow
         result["robots_allowed"] = True
     t_robots1 = time.monotonic()
-    print(f"[TIMING] robots.txt check took {t_robots1 - t_robots0:.3f}s")
+    debug_print(f"[TIMING] robots.txt check took {t_robots1 - t_robots0:.3f}s")
 
     result["is_valid"] = True
 
     t_total1 = time.monotonic()
-    print(f"[TIMING] Total URL validation took {t_total1 - t_total0:.3f}s")
+    debug_print(f"[TIMING] Total URL validation took {t_total1 - t_total0:.3f}s")
 
     return result
 
@@ -339,26 +346,26 @@ def extract_website_content(
         if cached is not None:
             # Validate cache structure
             if "content" not in cached or "html" not in cached:
-                logger.warning(
+                debug_print(
                     f"[DEV CACHE] Cache for {url} missing 'content' or 'html'. "
                     "Forcing fresh scrape."
                 )
                 cached = None
             elif not cached["content"] and not cached["html"]:
-                logger.warning(
+                debug_print(
                     f"[DEV CACHE] Cache for {url} has empty 'content' and 'html'. "
                     "Forcing fresh scrape."
                 )
                 cached = None
             else:
                 cache_time = t_cache1 - t_cache0
-                print(
+                debug_print(
                     f"[DEV CACHE] Cache hit for URL: {url} (retrieval took {cache_time:.2f}s)"
                 )
                 cached["from_cache"] = True
                 return cached
         else:
-            print(
+            debug_print(
                 f"[DEV CACHE] Cache miss for URL: {url} (check took {t_cache1 - t_cache0:.2f}s)"
             )
 
@@ -368,7 +375,7 @@ def extract_website_content(
     t_normalize0 = time.monotonic()
     url = normalize_url(url)
     t_normalize1 = time.monotonic()
-    print(f"[TIMING] URL normalization took {t_normalize1 - t_normalize0:.3f}s")
+    debug_print(f"[TIMING] URL normalization took {t_normalize1 - t_normalize0:.3f}s")
 
     if formats is None:
         formats = ["markdown", "html"]
@@ -397,7 +404,7 @@ def extract_website_content(
         html = scrape_result.get("html", "")
         metadata = scrape_result.get("metadata", {})
     t_firecrawl1 = time.monotonic()
-    print(f"[TIMING] Firecrawl API call took {t_firecrawl1 - t_firecrawl0:.2f}s")
+    debug_print(f"[TIMING] Firecrawl API call took {t_firecrawl1 - t_firecrawl0:.2f}s")
 
     # Step 3: Content processing
     t_processing0 = time.monotonic()
@@ -408,8 +415,8 @@ def extract_website_content(
 
     t_scrape1 = time.monotonic()
     t_processing1 = time.monotonic()
-    print(f"[TIMING] Content processing took {t_processing1 - t_processing0:.2f}s")
-    print(
+    debug_print(f"[TIMING] Content processing took {t_processing1 - t_processing0:.2f}s")
+    debug_print(
         f"[TIMING] Total fresh scrape for URL: {url} took {t_scrape1 - t_scrape0:.2f}s"
     )
 

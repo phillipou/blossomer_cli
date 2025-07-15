@@ -17,8 +17,8 @@ from cli import __version__
 
 # Initialize Typer app with rich markup support
 app = typer.Typer(
-    name="gtm-cli",
-    help="🚀 Blossomer GTM CLI - Generate complete GTM assets from domain analysis",
+    name="blossomer",
+    help="🚀 Blossomer CLI - Generate complete GTM assets from domain analysis",
     rich_markup_mode="rich",
     no_args_is_help=True,
 )
@@ -47,6 +47,11 @@ def main(
         "--verbose",
         help="Enable verbose output with detailed timing"
     ),
+    debug: bool = typer.Option(
+        False,
+        "--debug",
+        help="Enable debug output (cache hits, timing details)"
+    ),
     quiet: bool = typer.Option(
         False,
         "--quiet", 
@@ -70,17 +75,23 @@ def main(
     • GTM Execution Plan
     
     Examples:
-      gtm-cli init acme.com
-      gtm-cli init acme.com --context "Series A startup"
-      gtm-cli show all
-      gtm-cli export
+      blossomer init acme.com
+      blossomer init acme.com --context "Series A startup"
+      blossomer show all
+      blossomer export
     """
     # Store global options in app state for access by commands
     app.state = {
         "verbose": verbose,
+        "debug": debug,
         "quiet": quiet, 
         "no_color": no_color,
     }
+    
+    # Set debug mode for debug utilities
+    if debug:
+        from cli.utils.debug import set_debug_mode
+        set_debug_mode(True)
     
     # Configure console for no-color mode
     if no_color:

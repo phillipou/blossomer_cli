@@ -17,6 +17,13 @@ import json
 import urllib.parse
 from typing import Optional, Dict, Any
 
+# Import debug utility for conditional debug printing
+try:
+    from cli.utils.debug import debug_print
+except ImportError:
+    # Fallback if running outside CLI context
+    debug_print = print
+
 # Cache for raw website scrape results (JSON objects from Firecrawl)
 RAW_SCRAPE_CACHE_DIR = os.path.join(os.path.dirname(__file__), "../../dev_cache/website_scrapes")
 
@@ -64,7 +71,7 @@ def load_cached_scrape(url: str) -> Optional[Dict[str, Any]]:
             with open(fname, "r") as f:
                 return json.load(f)
         except (IOError, json.JSONDecodeError) as e:
-            print(f"[DEV CACHE] Error loading raw scrape cache file {fname}: {e}")
+            debug_print(f"[DEV CACHE] Error loading raw scrape cache file {fname}: {e}")
             return None
     return None
 
@@ -77,7 +84,7 @@ def save_scrape_to_cache(url: str, data: Dict[str, Any]) -> None:
         with open(fname, "w") as f:
             json.dump(data, f, indent=2)
     except IOError as e:
-        print(f"[DEV CACHE] Error saving raw scrape cache file {fname}: {e}")
+        debug_print(f"[DEV CACHE] Error saving raw scrape cache file {fname}: {e}")
 
 
 # --- Processed Content Cache ---
@@ -92,7 +99,7 @@ def load_processed_from_cache(url: str) -> Optional[str]:
             with open(fname, "r") as f:
                 return f.read()
         except IOError as e:
-            print(f"[DEV CACHE] Error loading processed cache file {fname}: {e}")
+            debug_print(f"[DEV CACHE] Error loading processed cache file {fname}: {e}")
             return None
     return None
 
@@ -105,4 +112,4 @@ def save_processed_to_cache(url: str, content: str) -> None:
         with open(fname, "w") as f:
             f.write(content)
     except IOError as e:
-        print(f"[DEV CACHE] Error saving processed cache file {fname}: {e}")
+        debug_print(f"[DEV CACHE] Error saving processed cache file {fname}: {e}")
