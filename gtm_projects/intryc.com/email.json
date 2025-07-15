@@ -1,34 +1,34 @@
 {
   "subjects": {
-    "primary": "outbound scaling",
+    "primary": "support qa boost",
     "alternatives": [
-      "sales system boost",
-      "rapid outreach"
+      "qa process update",
+      "support quality"
     ]
   },
   "email_body": [
     {
-      "text": "outbound scaling",
+      "text": "support qa boost",
       "type": "subject"
     },
     {
-      "text": "Noticed you're expanding your outbound efforts, so I thought I’d check in",
+      "text": "Noticed your team’s scaling efforts, so I thought I’d check in on your QA process",
       "type": "intro"
     },
     {
-      "text": "Most SMBs struggle to deploy fast and hit their outreach targets",
+      "text": "Manual sampling and evaluation can slow down your quality improvements",
       "type": "pain-point"
     },
     {
-      "text": "Blossomer helps SMBs build outbound systems quickly, with proven strategies that scale fast",
+      "text": "Intryc helps enterprise support teams improve quality with AI-powered sampling and real-time insights",
       "type": "company-intro"
     },
     {
-      "text": "We focus on rapid setup so teams can start seeing results sooner",
+      "text": "We enable quick setup of custom scorecards and AI evaluations for full coverage",
       "type": "emphasis"
     },
     {
-      "text": "Want to see how it works?",
+      "text": "Would it make sense to share how we’re helping teams like yours?",
       "type": "cta"
     }
   ],
@@ -65,11 +65,11 @@
     }
   },
   "metadata": {
-    "generation_id": "d5a2c35b-8fb0-4c39-8aa6-8cfde68fb25e",
+    "generation_id": "b70d6f41-4234-4d47-a60c-820866cd59ea",
     "confidence": "high",
     "personalization_level": "medium",
-    "processing_time_ms": 4051
+    "processing_time_ms": 3820
   },
-  "_generated_at": "2025-07-15T15:34:35.010948",
+  "_generated_at": "2025-07-15T15:38:24.386693",
   "_step": "email"
 }

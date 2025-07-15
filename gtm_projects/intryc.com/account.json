@@ -1,0 +1,111 @@
+{
+  "target_account_name": "Enterprise Customer Support Teams",
+  "target_account_description": "Large to mid-sized customer support organizations across industries like tech, e-commerce, and SaaS that seek scalable, AI-driven quality assurance solutions to improve support consistency, efficiency, and coaching capabilities.",
+  "target_account_rationale": [
+    "Support organizations with complex, high-volume customer interactions require scalable QA tools to maintain quality standards as they grow, making them prime candidates for AI-powered solutions.",
+    "Companies in tech, e-commerce, and SaaS industries often have support teams that are expanding rapidly, creating a need for automated, customizable evaluation processes to replace manual sampling.",
+    "Targeting support teams with 50-500 employees ensures the prospect has sufficient operational complexity and budget authority to invest in advanced QA platforms.",
+    "Organizations with a focus on customer experience improvement and operational efficiency are more likely to adopt AI-driven quality assurance tools to meet their strategic goals.",
+    "Firms with existing support data infrastructure and integration capabilities are better positioned to implement and benefit from scalable, real-time QA solutions."
+  ],
+  "firmographics": {
+    "industry": [
+      "Information Technology & Services",
+      "E-commerce",
+      "Software as a Service (SaaS)",
+      "Customer Support"
+    ],
+    "employees": "50-500",
+    "department_size": "Support teams of 10-50",
+    "revenue": "5M-100M USD",
+    "geography": [
+      "North America",
+      "Europe",
+      "APAC"
+    ],
+    "business_model": [
+      "B2B SaaS",
+      "Subscription-based"
+    ],
+    "funding_stage": [
+      "Series B",
+      "Series C",
+      "Private Equity"
+    ],
+    "company_type": [
+      "Private",
+      "Public"
+    ],
+    "keywords": [
+      "scalable support operations",
+      "customer support automation",
+      "support team growth",
+      "quality assurance processes",
+      "support data integration"
+    ]
+  },
+  "buying_signals": [
+    {
+      "title": "Support Team Expansion Announcements",
+      "description": "Companies announcing support team growth or new support centers indicate scaling efforts that require enhanced QA solutions.",
+      "type": "Company Data",
+      "priority": "High",
+      "detection_method": "Enrichment source: Company press releases, news feeds via Clay API"
+    },
+    {
+      "title": "Support Tool Integrations Mentioned",
+      "description": "Job postings or case studies referencing support tools like Zendesk, Freshdesk, or Salesforce Service Cloud suggest readiness for advanced QA integrations.",
+      "type": "Website",
+      "priority": "Medium",
+      "detection_method": "Keyword search in website content, case studies, or job descriptions"
+    },
+    {
+      "title": "Increased Support Data Activity",
+      "description": "Indicators such as increased ticket volume, new SOP implementations, or support process automation signals readiness for scalable QA.",
+      "type": "Company Data",
+      "priority": "Medium",
+      "detection_method": "Analytics from support platform integrations, API data on ticket volume"
+    },
+    {
+      "title": "Leadership Focus on Customer Experience",
+      "description": "Leadership mentions of customer experience improvements or operational efficiency in press releases or social media suggest strategic initiatives aligned with QA investments.",
+      "type": "Social Media",
+      "priority": "Low",
+      "detection_method": "LinkedIn posts, Twitter updates mentioning CX initiatives"
+    },
+    {
+      "title": "Participation in Support Industry Events",
+      "description": "Attending or speaking at industry support or customer service conferences indicates a focus on support quality and potential budget for QA tools.",
+      "type": "Other",
+      "priority": "Low",
+      "detection_method": "Conference participation records, event speaker lists"
+    }
+  ],
+  "buying_signals_rationale": [
+    "Support organizations experiencing team growth or expanding support centers are actively seeking scalable QA solutions to maintain quality standards at scale.",
+    "Mentions of support tool integrations and increased support activity reflect operational complexity and readiness to adopt advanced evaluation platforms.",
+    "Leadership initiatives focused on customer experience and operational efficiency often coincide with budget allocations for innovative QA tools.",
+    "Participation in industry events signals strategic focus on support quality, making these companies more receptive to targeted outreach.",
+    "Detecting these signals through news, website content, and social media provides observable, actionable indicators of purchase intent."
+  ],
+  "metadata": {
+    "primary_context_source": "user_input|company_context|website_content",
+    "sources_used": [
+      "company_context",
+      "website_content"
+    ],
+    "confidence_assessment": {
+      "overall_confidence": "medium",
+      "data_quality": "medium",
+      "inference_level": "moderate",
+      "recommended_improvements": [
+        "Access to direct support platform usage data",
+        "Customer success stories or case studies",
+        "More detailed financial data"
+      ]
+    },
+    "processing_notes": "Analysis focused on operational scale, industry relevance, and observable signals indicating support team growth and strategic CX initiatives."
+  },
+  "_generated_at": "2025-07-15T15:37:37.015867",
+  "_step": "account"
+}
