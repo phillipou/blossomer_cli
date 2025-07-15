@@ -302,9 +302,15 @@ def run_generation_step(
     
     # Post-generation choices (if not in YOLO mode)
     if not yolo:
-        # Show preview for target account step
-        if step_key == "account":
+        # Show preview for each step
+        if step_key == "overview":
+            show_company_overview_preview(domain)
+        elif step_key == "account":
             show_target_account_preview(domain)
+        elif step_key == "persona":
+            show_buyer_persona_preview(domain)
+        elif step_key == "email":
+            show_email_campaign_preview(domain)
         
         console.print(f"[green]✓[/green] {step_name} completed!")
         
@@ -372,7 +378,7 @@ def show_target_account_preview(domain: str) -> None:
         # Create compact preview
         console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("TARGET ACCOUNT - Quick Summary")
+        console.print("TARGET ACCOUNT - Quick Summary [DUMMY DATA⚠️]")
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         
         console.print(f"Profile: {profile_name}")
@@ -417,6 +423,72 @@ def show_target_account_preview(domain: str) -> None:
         console.print(f"✓ Full profile saved to: account.json ({file_size:.1f}KB)")
         console.print()
         
+        # Get user choice
+        choice = questionary.select(
+            "Choice [c/e/a]:",
+            choices=[
+                "[C]ontinue to next step (or press Enter)",
+                "[E]dit full analysis in editor", 
+                "[A]bort (or press Ctrl+C)"
+            ]
+        ).ask()
+        
+        if choice == "Abort":
+            raise KeyboardInterrupt()
+        elif choice == "Edit full analysis in editor":
+            edit_step_content(domain, "account", "Target Account Profile")
+            # After editing, show options again
+            console.print()
+            continue_choice = typer.confirm("Continue to next step?", default=None)
+            if not continue_choice:
+                raise KeyboardInterrupt()
+        # If "Continue to next step", just return and let the flow continue
+        
+    except Exception as e:
+        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
+
+
+def show_company_overview_preview(domain: str) -> None:
+    """Show company overview preview with 3 options"""
+    try:
+        # Load the generated overview data
+        overview_data = gtm_service.storage.load_step_data(domain, "overview")
+        if not overview_data:
+            return
+        
+        # Extract key information for preview
+        product_name = overview_data.get("product_name", "Company Product")
+        product_category = overview_data.get("product_category", "Business Solution")
+        business_model = overview_data.get("business_model", "")
+        key_capabilities = overview_data.get("key_capabilities", [])
+        
+        # Create compact preview
+        console.print()
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print("COMPANY OVERVIEW - Quick Summary")
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        
+        console.print(f"Product: {product_name}")
+        console.print(f"Category: {product_category}")
+        if business_model:
+            console.print(f"Model: {business_model}")
+        
+        # Show key capabilities (max 3)
+        if key_capabilities:
+            console.print()
+            console.print("Key Capabilities:")
+            for capability in key_capabilities[:3]:
+                console.print(f"• {capability}")
+        
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
+        
+        # Show file save info
+        project_dir = gtm_service.storage.get_project_dir(domain)
+        file_size = (project_dir / "overview.json").stat().st_size / 1024
+        console.print(f"✓ Full overview saved to: overview.json ({file_size:.1f}KB)")
+        console.print()
+        
         # Options
         console.print("Options:")
         console.print("[C]ontinue to next step (or press Enter)")
@@ -437,13 +509,170 @@ def show_target_account_preview(domain: str) -> None:
         if choice == "Abort":
             raise KeyboardInterrupt()
         elif choice == "Edit full analysis in editor":
-            edit_step_content(domain, "account", "Target Account Profile")
+            edit_step_content(domain, "overview", "Company Overview")
             # After editing, show options again
             console.print()
             continue_choice = typer.confirm("Continue to next step?", default=None)
             if not continue_choice:
                 raise KeyboardInterrupt()
         # If "Continue to next step", just return and let the flow continue
+        
+    except Exception as e:
+        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
+
+
+def show_buyer_persona_preview(domain: str) -> None:
+    """Show buyer persona preview with 3 options"""
+    try:
+        # Load the generated persona data
+        persona_data = gtm_service.storage.load_step_data(domain, "persona")
+        if not persona_data:
+            return
+        
+        # Extract key information for preview
+        job_title = persona_data.get("job_title", "Decision Maker")
+        reports_to = persona_data.get("reports_to", "")
+        team_size = persona_data.get("team_size", "")
+        use_cases = persona_data.get("use_cases", [])
+        
+        # Create compact preview
+        console.print()
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print("BUYER PERSONA - Quick Summary")
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        
+        console.print(f"Title: {job_title}")
+        if reports_to:
+            console.print(f"Reports to: {reports_to}")
+        if team_size:
+            console.print(f"Team: {team_size}")
+        
+        # Show use cases (max 3)
+        if use_cases:
+            console.print()
+            console.print("Key Priorities:")
+            for use_case in use_cases[:3]:
+                if isinstance(use_case, dict):
+                    title = use_case.get("use_case", use_case.get("title", "Priority"))
+                else:
+                    title = str(use_case)
+                console.print(f"• {title}")
+        
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
+        
+        # Show file save info
+        project_dir = gtm_service.storage.get_project_dir(domain)
+        file_size = (project_dir / "persona.json").stat().st_size / 1024
+        console.print(f"✓ Full persona saved to: persona.json ({file_size:.1f}KB)")
+        console.print()
+        
+        # Options
+        console.print("Options:")
+        console.print("[C]ontinue to next step (or press Enter)")
+        console.print("[E]dit full analysis in editor")
+        console.print("[A]bort (or press Ctrl+C)")
+        console.print()
+        
+        # Get user choice
+        choice = questionary.select(
+            "Choice [c/e/a]:",
+            choices=[
+                "Continue to next step",
+                "Edit full analysis in editor", 
+                "Abort"
+            ]
+        ).ask()
+        
+        if choice == "Abort":
+            raise KeyboardInterrupt()
+        elif choice == "Edit full analysis in editor":
+            edit_step_content(domain, "persona", "Buyer Persona")
+            # After editing, show options again
+            console.print()
+            continue_choice = typer.confirm("Continue to next step?", default=None)
+            if not continue_choice:
+                raise KeyboardInterrupt()
+        # If "Continue to next step", just return and let the flow continue
+        
+    except Exception as e:
+        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
+
+
+def show_email_campaign_preview(domain: str) -> None:
+    """Show email campaign preview with 3 options"""
+    try:
+        # Load the generated email data
+        email_data = gtm_service.storage.load_step_data(domain, "email")
+        if not email_data:
+            return
+        
+        # Extract key information for preview
+        campaign_name = email_data.get("campaign_name", "Email Campaign")
+        email_count = len(email_data.get("emails", []))
+        campaign_strategy = email_data.get("campaign_strategy", {})
+        
+        # Create compact preview
+        console.print()
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print("EMAIL CAMPAIGN - Quick Summary")
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        
+        console.print(f"Campaign: {campaign_name}")
+        console.print(f"Emails: {email_count} in sequence")
+        
+        # Show strategy highlights
+        if campaign_strategy:
+            tone = campaign_strategy.get("tone", "")
+            approach = campaign_strategy.get("approach", "")
+            if tone:
+                console.print(f"Tone: {tone}")
+            if approach:
+                console.print(f"Approach: {approach}")
+        
+        # Show first email preview
+        emails = email_data.get("emails", [])
+        if emails:
+            first_email = emails[0]
+            subject = first_email.get("subject", "")
+            if subject:
+                console.print()
+                console.print("First Email Preview:")
+                console.print(f"• Subject: {subject}")
+        
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
+        
+        # Show file save info
+        project_dir = gtm_service.storage.get_project_dir(domain)
+        file_size = (project_dir / "email.json").stat().st_size / 1024
+        console.print(f"✓ Full campaign saved to: email.json ({file_size:.1f}KB)")
+        console.print()
+        
+        # Options (no continue option for last step)
+        console.print("Options:")
+        console.print("[C]omplete generation")
+        console.print("[E]dit full campaign in editor")
+        console.print("[A]bort (or press Ctrl+C)")
+        console.print()
+        
+        # Get user choice
+        choice = questionary.select(
+            "Choice [c/e/a]:",
+            choices=[
+                "Complete generation",
+                "Edit full campaign in editor", 
+                "Abort"
+            ]
+        ).ask()
+        
+        if choice == "Abort":
+            raise KeyboardInterrupt()
+        elif choice == "Edit full campaign in editor":
+            edit_step_content(domain, "email", "Email Campaign")
+            # After editing, just continue to completion
+            console.print()
+        # If "Complete generation", just return and let the flow continue
         
     except Exception as e:
         console.print(f"[yellow]Could not show preview: {e}[/yellow]")
