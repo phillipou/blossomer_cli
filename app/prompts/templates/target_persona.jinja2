@@ -237,9 +237,6 @@ REMEMBER: Always return valid JSON. Focus on actionable persona insights for sal
 **Company Context:** {{company_context | tojson}}
 {% endif %}
 
-{% if website_content %}
-**Company website analysis:** {{website_content}}
-{% endif %}
 
 {% if target_account_context %}
 **Target Account Context:** {{target_account_context | tojson}}
