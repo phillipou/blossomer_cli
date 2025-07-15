@@ -1,0 +1,78 @@
+{
+  "subjects": {
+    "primary": "community engagement",
+    "alternatives": [
+      "community growth",
+      "member interaction"
+    ]
+  },
+  "email_body": [
+    {
+      "text": "community engagement",
+      "type": "subject"
+    },
+    {
+      "text": "Noticed your team is scaling community efforts, so I thought I’d check in",
+      "type": "intro"
+    },
+    {
+      "text": "Many platforms struggle to keep members active and engaged over time",
+      "type": "pain-point"
+    },
+    {
+      "text": "Blossomer helps enterprise community teams boost engagement with easy-to-use tools",
+      "type": "company-intro"
+    },
+    {
+      "text": "We focus on making member interaction seamless and lively",
+      "type": "emphasis"
+    },
+    {
+      "text": "Want to see how it works?",
+      "type": "cta"
+    }
+  ],
+  "breakdown": {
+    "subject": {
+      "label": "Subject Line",
+      "description": "2-4 words, lowercase, internal slack/memo style",
+      "color": "bg-purple-50 border-purple-200"
+    },
+    "intro": {
+      "label": "Opening Line",
+      "description": "Personalized reason for outreach",
+      "color": "bg-blue-50 border-blue-200"
+    },
+    "pain-point": {
+      "label": "Pain Point",
+      "description": "Specific challenge tied to persona",
+      "color": "bg-red-50 border-red-200"
+    },
+    "company-intro": {
+      "label": "Company Introduction",
+      "description": "One-liner with social proof",
+      "color": "bg-green-50 border-green-200"
+    },
+    "emphasis": {
+      "label": "Value Emphasis",
+      "description": "Highlighting key capability/outcome",
+      "color": "bg-indigo-50 border-indigo-200"
+    },
+    "cta": {
+      "label": "Call to Action",
+      "description": "Soft ask for engagement",
+      "color": "bg-yellow-50 border-yellow-200"
+    }
+  },
+  "metadata": {
+    "generation_id": "18decb41-5bb5-4162-8f40-dfcd8dcc0dac",
+    "confidence": "high",
+    "personalization_level": "medium",
+    "processing_time_ms": 3876
+  },
+  "_generated_at": "2025-07-15T15:09:45.915288",
+  "_step": "email",
+  "_stale": true,
+  "_stale_reason": "Dependency 'overview' was regenerated",
+  "_stale_timestamp": "2025-07-15T15:14:41.491298"
+}

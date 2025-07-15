@@ -12,7 +12,7 @@ def run_prompt(template_name: str, variables: BaseModel):
 
     # Call LLM (adjust as needed)
     raw_json = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4.1-nano",
         messages=[
             {"role": "system", "content": sys_prompt} if sys_prompt else {},
             {"role": "user", "content": user_prompt},

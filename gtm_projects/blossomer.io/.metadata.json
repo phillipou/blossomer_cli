@@ -1,0 +1,14 @@
+{
+  "domain": "https://blossomer.io",
+  "created_at": "2025-07-15 15:08:48.337593",
+  "updated_at": "2025-07-15 15:14:41.488137",
+  "last_step": "overview",
+  "completed_steps": [
+    "overview",
+    "account",
+    "persona",
+    "email"
+  ],
+  "total_cost": null,
+  "total_time_seconds": null
+}

@@ -9,5 +9,7 @@ Demonstrates Blossomer's GTM intelligence by analyzing company domains and gener
 - GTM Execution Plan
 """
 
+# Note: urllib3 may show OpenSSL warnings on system Python - these are harmless
+
 __version__ = "0.1.0"
 __author__ = "Blossomer"

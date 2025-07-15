@@ -2,6 +2,11 @@
 Main CLI application entry point.
 """
 
+# Suppress urllib3 OpenSSL warning for system Python compatibility - must be first
+import warnings
+warnings.filterwarnings("ignore", message="urllib3 v2 only supports OpenSSL 1.1.1+", category=UserWarning)
+
+import asyncio
 import typer
 from typing import Optional
 from rich.console import Console
@@ -82,7 +87,6 @@ def main(
         console._color_system = None
 
 
-# Placeholder commands - will be implemented in subsequent stages
 @app.command()
 def init(
     domain: str = typer.Argument(..., help="Company domain to analyze (e.g., acme.com)"),
@@ -90,22 +94,25 @@ def init(
     yolo: bool = typer.Option(False, "--yolo", help="Skip all interactions (one-shot mode)"),
 ) -> None:
     """🚀 Start new GTM project (interactive by default)."""
-    console.print("[red]Command not yet implemented[/red]")
-    console.print(f"Would analyze: {domain}")
-    if context:
-        console.print(f"With context: {context}")
-    if yolo:
-        console.print("Using YOLO mode")
+    from cli.commands.init_sync import init_sync_flow
+    
+    try:
+        init_sync_flow(domain, context, yolo)
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Operation cancelled by user.[/yellow]")
+        raise typer.Exit(130)  # Standard exit code for Ctrl+C
 
 
 @app.command()
 def show(
     asset: str = typer.Argument("all", help="Asset to display: all, overview, account, persona, email, plan"),
     json_output: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
 ) -> None:
     """📊 Display generated assets with formatting."""
-    console.print("[red]Command not yet implemented[/red]")
-    console.print(f"Would show: {asset}")
+    from cli.commands.show import show_assets
+    
+    show_assets(asset, json_output, domain)
 
 
 @app.command()
@@ -117,10 +124,17 @@ def export() -> None:
 @app.command()
 def generate(
     step: str = typer.Argument(..., help="Step to generate: overview, account, persona, email, plan"),
+    domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
+    force: bool = typer.Option(False, "--force", help="Force regeneration even if data exists"),
 ) -> None:
     """⚙️ Manually run or re-run a specific step."""
-    console.print("[red]Command not yet implemented[/red]")
-    console.print(f"Would generate: {step}")
+    from cli.commands.generate import generate_step
+    
+    try:
+        asyncio.run(generate_step(step, domain, force))
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Operation cancelled by user.[/yellow]")
+        raise typer.Exit(130)
 
 
 @app.command()
@@ -168,5 +182,9 @@ def demo() -> None:
     console.print()
 
 
-if __name__ == "__main__":
+def main():
+    """Entry point for console script"""
     app()
+
+if __name__ == "__main__":
+    main()
