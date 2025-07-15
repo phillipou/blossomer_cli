@@ -13,6 +13,13 @@ from cli.services.llm_service import CLIException
 from app.prompts.registry import render_prompt
 from app.services.web_content_service import WebContentService
 
+# Import debug utility for conditional debug printing
+try:
+    from cli.utils.debug import debug_print
+except ImportError:
+    # Fallback if running outside CLI context
+    debug_print = print
+
 logger = logging.getLogger(__name__)
 
 
@@ -100,20 +107,20 @@ class ContextOrchestratorService:
             if hasattr(prompt_vars, "website_content"):
                 content_to_render = getattr(prompt_vars, "website_content", None)
                 if content_to_render:
-                    logger.info(
+                    debug_print(
                         f"[PROMPT_TRACE] Rendering prompt with {len(content_to_render)} chars of website_content."
                     )
-                    logger.info(
+                    debug_print(
                         f"[PROMPT_TRACE] First 100 chars: {content_to_render[:100]}"
                     )
                 else:
-                    logger.warning(
+                    debug_print(
                         "[PROMPT_TRACE] website_content is None or empty before rendering."
                     )
 
             prompt = render_prompt(prompt_template, prompt_vars)
             t5 = time.monotonic()
-            print(f"[{analysis_type}] Prompt construction took {t5 - t4:.2f}s")
+            debug_print(f"[{analysis_type}] Prompt construction took {t5 - t4:.2f}s")
 
             t6 = time.monotonic()
             system_prompt, user_prompt = prompt
@@ -123,10 +130,10 @@ class ContextOrchestratorService:
                 response_model=response_model,
             )
             t7 = time.monotonic()
-            print(f"[{analysis_type}] LLM call took {t7 - t6:.2f}s")
+            debug_print(f"[{analysis_type}] LLM call took {t7 - t6:.2f}s")
 
             total_end = time.monotonic()
-            print(f"[{analysis_type}] Total time: {total_end - total_start:.2f}s")
+            debug_print(f"[{analysis_type}] Total time: {total_end - total_start:.2f}s")
             return response
 
         except CLIException:
@@ -156,10 +163,10 @@ class ContextOrchestratorService:
                 # Log cache performance
                 cache_status = content_result["cache_status"]
                 content_length = content_result["processed_content_length"]
-                print(
+                debug_print(
                     f"[WEB_CONTENT] Cache status: {cache_status}, Content length: {content_length} chars"
                 )
-                logger.info(
+                debug_print(
                     f"[WEB_CONTENT] Passing {content_length} chars of website content to prompt."
                 )
 

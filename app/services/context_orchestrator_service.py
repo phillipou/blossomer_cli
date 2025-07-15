@@ -10,6 +10,13 @@ from app.core.llm_singleton import get_llm_client
 from app.prompts.registry import render_prompt
 from app.services.web_content_service import WebContentService
 
+# Import debug utility for conditional debug printing
+try:
+    from cli.utils.debug import debug_print
+except ImportError:
+    # Fallback if running outside CLI context
+    debug_print = print
+
 try:
     from pydantic import BaseModel, ValidationError
 except ImportError:
@@ -39,7 +46,7 @@ def is_target_account_context_sufficient(context: Any) -> bool:
             ctx = json.loads(ctx)
         except Exception:
             ctx = {}
-    print(f"[Sufficiency] Checking target account context: {ctx}")
+    debug_print(f"[Sufficiency] Checking target account context: {ctx}")
     required_fields = [
         "company_size",
         "target_account_name",
@@ -63,11 +70,11 @@ def is_target_account_context_sufficient(context: Any) -> bool:
     missing = [f for f in required_fields if not is_present(ctx.get(f))]
     result = not missing
     if not result:
-        print(
+        debug_print(
             f"[Sufficiency] Target account context insufficient: missing fields: {missing}"
         )
     else:
-        print(
+        debug_print(
             "[Sufficiency] Target account context is sufficient (all required fields present)."
         )
     return result
@@ -126,7 +133,7 @@ class ContextOrchestratorService:
 
             prompt = render_prompt(prompt_template, prompt_vars)
             t5 = time.monotonic()
-            print(f"[{analysis_type}] Prompt construction took {t5 - t4:.2f}s")
+            debug_print(f"[{analysis_type}] Prompt construction took {t5 - t4:.2f}s")
 
             t6 = time.monotonic()
             system_prompt, user_prompt = prompt
@@ -136,10 +143,10 @@ class ContextOrchestratorService:
                 response_model=response_model,
             )
             t7 = time.monotonic()
-            print(f"[{analysis_type}] LLM call took {t7 - t6:.2f}s")
+            debug_print(f"[{analysis_type}] LLM call took {t7 - t6:.2f}s")
 
             total_end = time.monotonic()
-            print(f"[{analysis_type}] Total time: {total_end - total_start:.2f}s")
+            debug_print(f"[{analysis_type}] Total time: {total_end - total_start:.2f}s")
             return response
 
         except HTTPException:
@@ -169,10 +176,10 @@ class ContextOrchestratorService:
                 # Log cache performance
                 cache_status = content_result["cache_status"]
                 content_length = content_result["processed_content_length"]
-                print(
+                debug_print(
                     f"[WEB_CONTENT] Cache status: {cache_status}, Content length: {content_length} chars"
                 )
-                logger.info(
+                debug_print(
                     f"[WEB_CONTENT] Passing {content_length} chars of website content to prompt."
                 )
 
