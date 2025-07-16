@@ -66,7 +66,8 @@ def capture_hypotheses() -> dict:
     console.print()
     
     account_hypothesis = questionary.text(
-        "Target Account Hypothesis (press Enter to skip):",
+        "💡 Target Account Hypothesis (optional - helps focus our analysis):",
+        placeholder="e.g., Mid-market SaaS companies with 50-500 employees experiencing rapid growth",
         style=MENU_STYLE
     ).ask()
     
@@ -75,7 +76,8 @@ def capture_hypotheses() -> dict:
         raise KeyboardInterrupt()
     
     persona_hypothesis = questionary.text(
-        "Target Persona Hypothesis (press Enter to skip):",
+        "👤 Target Persona Hypothesis (optional - helps focus our analysis):",
+        placeholder="e.g., CTOs and VP Engineering at fast-growing tech companies",
         style=MENU_STYLE
     ).ask()
     
@@ -103,8 +105,8 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
     # Prompt for domain if not provided
     if domain is None:
         domain = questionary.text(
-            "Enter the company domain to analyze:",
-            placeholder="e.g., acme.com"
+            "🔍 Enter the company domain you'd like to analyze for GTM intelligence:",
+            placeholder="e.g., acme.com, https://company.com, or www.startup.io"
         ).ask()
         
         ensure_breathing_room(console)
@@ -123,7 +125,9 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         normalized_domain = normalized.url
     except Exception as e:
         console.print(Colors.format_error(f"Invalid domain format: {e}"))
+        console.print("💡 Domain should be in format: company.com, https://company.com, or www.company.com")
         console.print(f"→ Try: {Colors.format_command('acme.com')} or {Colors.format_command('https://acme.com')}")
+        console.print(f"→ Or get help: {Colors.format_command('blossomer --help')}")
         raise typer.Exit(1)
     
     # Check if project already exists
@@ -158,7 +162,7 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         hypothesis_context = {"general_context": context}
     
     if not yolo:
-        ready = typer.confirm("Ready to start generation?", default=None)
+        ready = typer.confirm("🚀 Ready to start? (This will analyze your website and generate 4 GTM assets in ~60 seconds)", default=None)
         ensure_breathing_room(console)
         # Handle CTRL+C (typer.confirm returns None when interrupted)
         if ready is None:
@@ -168,7 +172,7 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
             return
     
     console.print()
-    console.print("[dim]→ This will take about 30-60 seconds[/dim]")
+    console.print("[dim]⏱️  Analyzing your website and generating insights - this takes about 30-60 seconds[/dim]")
     console.print()
     
     try:
@@ -257,10 +261,13 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
-        console.print(f"→ Resume with: [bold cyan]blossomer init[/bold cyan]")
+        console.print(f"→ Resume with: [bold cyan]blossomer init {normalized_domain}[/bold cyan]")
+        console.print(f"→ Or view progress: [bold cyan]blossomer show all[/bold cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print("→ Try again: [bold cyan]blossomer init[/bold cyan]")
+        console.print("💡 Common issues: network connectivity, invalid domain, or API limits")
+        console.print(f"→ Try again: [bold cyan]blossomer init {normalized_domain}[/bold cyan]")
+        console.print(f"→ Check status: [bold cyan]blossomer show all[/bold cyan]")
         raise typer.Exit(1)
 
 
@@ -310,7 +317,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         ]
         
         choice = show_menu_with_separator(
-            "Where would you like to start updating?",
+            "🚀 Choose your starting point (we'll run all subsequent steps automatically):",
             choices=choices
         )
         
@@ -409,10 +416,13 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
-        console.print("→ Resume with: [bold cyan]blossomer init[/bold cyan]")
+        console.print(f"→ Resume with: [bold cyan]blossomer init {domain}[/bold cyan]")
+        console.print(f"→ Or view progress: [bold cyan]blossomer show all[/bold cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print("→ Try again: [bold cyan]blossomer init[/bold cyan]")
+        console.print("💡 Common issues: network connectivity, invalid domain, or API limits")
+        console.print(f"→ Try again: [bold cyan]blossomer init {domain}[/bold cyan]")
+        console.print(f"→ Check status: [bold cyan]blossomer show all[/bold cyan]")
 
 
 def run_generation_step(
@@ -502,10 +512,10 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
     # Ask for mode choice (unless in YOLO mode)
     if not yolo:
         mode_choice = show_menu_with_separator(
-            "Generate email automatically or go through guided email builder?",
+            "📧 How would you like to create your email campaign?",
             choices=[
-                "Guided (interactive email builder)",
-                "Automatic (generate based on analysis)"
+                "🎯 Guided Builder (5-step interactive process ~2 min)",
+                "⚡ Automatic (AI generates based on your analysis ~30 sec)"
             ]
         )
         

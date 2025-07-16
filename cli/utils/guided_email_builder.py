@@ -6,6 +6,7 @@ import questionary
 from typing import Dict, Any, List, Optional
 from rich.console import Console
 from rich.panel import Panel
+from cli.utils.console import ensure_breathing_room
 
 console = Console()
 
@@ -76,9 +77,11 @@ class GuidedEmailBuilder:
         ]
         
         choice = questionary.select(
-            "Select emphasis [1-4]:",
+            "💡 What should be the main focus of your email? (This shapes the entire message):",
             choices=choices
         ).ask()
+        
+        ensure_breathing_room(console)
         
         # Map choice to value
         emphasis_type = choice.split(".")[0].strip()
@@ -125,13 +128,16 @@ class GuidedEmailBuilder:
             choices=choices
         ).ask()
         
+        ensure_breathing_room(console)
+        
         choice_num = int(choice.split(".")[0])
         
         if choice_num == other_num:  # "Other" option selected
             custom_instructions = questionary.text(
-                "Enter custom instructions for the LLM:",
-                placeholder="e.g., Focus on the specific workflow around..."
+                "🎯 Describe what you want the AI to focus on:",
+                placeholder="e.g., Emphasize cost savings, mention recent industry trends, focus on security benefits"
             ).ask()
+            ensure_breathing_room(console)
             selected_content = {
                 "type": emphasis_type,
                 "value": "Custom",
@@ -152,14 +158,16 @@ class GuidedEmailBuilder:
         """Step 3: Collect social proof (optional)"""
         console.print("[bold]Step 3/5: Add Social Proof (Optional)[/bold]")
         console.print()
-        console.print("Social proof examples: \"We worked with Deel recently and doubled their QA coverage\"")
-        console.print("Leave blank to skip, or enter your social proof:")
+        console.print("💪 Social proof adds credibility to your outreach")
+        console.print("Examples: client wins, case studies, impressive metrics, or notable partnerships")
         console.print()
         
         social_proof = questionary.text(
-            "[Enter social proof or press Enter to skip]:",
-            placeholder="e.g., We helped TechCorp reduce support response time by 40% in 30 days"
+            "Add social proof (optional):",
+            placeholder="e.g., We helped 50+ companies reduce churn by 25% | Recently worked with Stripe on scaling | Featured in TechCrunch"
         ).ask()
+        
+        ensure_breathing_room(console)
         
         if social_proof and social_proof.strip():
             console.print("✓ Social proof added")
@@ -197,6 +205,8 @@ class GuidedEmailBuilder:
             choices=choices
         ).ask()
         
+        ensure_breathing_room(console)
+        
         choice_num = int(choice.split(".")[0])
         
         if choice_num == other_num:  # "Other" option selected
@@ -204,6 +214,7 @@ class GuidedEmailBuilder:
                 "Enter custom personalization instructions for the LLM:",
                 placeholder="e.g., Reference their recent product launch..."
             ).ask()
+            ensure_breathing_room(console)
             selected_personalization = {
                 "type": "custom",
                 "value": "Custom personalization",
@@ -270,6 +281,8 @@ class GuidedEmailBuilder:
             choices=choices
         ).ask()
         
+        ensure_breathing_room(console)
+        
         choice_num = int(choice.split(".")[0])
         
         if choice_num == other_num:  # "Other" option selected
@@ -277,6 +290,7 @@ class GuidedEmailBuilder:
                 "Enter your custom call-to-action:",
                 placeholder="e.g., Would you like to see how this works in action?"
             ).ask()
+            ensure_breathing_room(console)
             selected_cta = {
                 "type": "custom",
                 "text": custom_cta,

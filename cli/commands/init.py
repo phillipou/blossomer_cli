@@ -15,7 +15,7 @@ from rich.text import Text
 from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
-from cli.utils.console import enter_immersive_mode, exit_immersive_mode
+from cli.utils.console import enter_immersive_mode, exit_immersive_mode, ensure_breathing_room
 from cli.utils.colors import Colors, format_project_status, format_step_flow
 
 console = Console()
@@ -65,6 +65,7 @@ async def init_interactive_flow(
                     f"Project '{normalized_domain}' already exists. Would you like to update it with fresh data?",
                     default=None
                 ).ask()
+                ensure_breathing_room(console)
             except Exception as e:
                 # Fallback to simple input when questionary fails
                 console.print(f"Project '{normalized_domain}' already exists.")
@@ -184,6 +185,7 @@ async def run_step_with_choices(
                     "Abort"
                 ]
             ).ask()
+            ensure_breathing_room(console)
         except Exception as e:
             console.print(f"[red]Error: {e}[/red]")
             raise typer.Exit(1)
@@ -235,6 +237,7 @@ async def run_step_with_choices(
             
             if not yolo:
                 retry = questionary.confirm("Would you like to retry this step?", default=None).ask()
+                ensure_breathing_room(console)
                 if retry:
                     await run_step_with_choices(
                         step_name, step_number, total_steps, 
@@ -256,6 +259,7 @@ async def run_step_with_choices(
                     "Abort"
                 ]
             ).ask()
+            ensure_breathing_room(console)
         except Exception as e:
             console.print(f"[red]Error: {e}[/red]")
             raise typer.Exit(1)

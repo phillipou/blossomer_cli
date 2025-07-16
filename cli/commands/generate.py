@@ -13,6 +13,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 
 from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
+from cli.utils.console import ensure_breathing_room
 
 console = Console()
 
@@ -36,7 +37,9 @@ async def generate_step(
         projects = gtm_service.storage.list_projects()
         if not projects:
             console.print("[red]No GTM projects found.[/red]")
-            console.print("→ Create one with: [bold cyan]blossomer init[/bold cyan]")
+            console.print("📝 Projects store your company analysis and GTM assets")
+            console.print("→ Create your first project: [bold cyan]blossomer init company.com[/bold cyan]")
+            console.print("→ Or get help: [bold cyan]blossomer --help[/bold cyan]")
             raise typer.Exit(1)
         elif len(projects) == 1:
             domain = projects[0]["domain"]
@@ -99,6 +102,8 @@ async def generate_step(
             ]
         ).ask()
         
+        ensure_breathing_room(console)
+        
         if action == "Abort":
             return
         elif action == "View current content":
@@ -159,9 +164,11 @@ async def generate_step(
             console.print(f"[yellow]⚠️  Dependent steps may need regeneration:[/yellow] {', '.join(available_dependents)}")
             
             regen_deps = questionary.confirm(
-                "Would you like to regenerate dependent steps now?",
+                "🔄 Regenerate dependent steps? (These use data from the step you just updated)",
                 default=None
             ).ask()
+            
+            ensure_breathing_room(console)
             
             if regen_deps:
                 for dep_step in available_dependents:
