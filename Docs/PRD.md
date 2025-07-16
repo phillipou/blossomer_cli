@@ -57,11 +57,37 @@ blossomer init acme.com
 blossomer init
 ```
 
+**Welcome Panel:**
+
+```
+╭─────────────────────────────────────────────────────────────────────────────╮
+│                                                                             │
+│  🚀 Starting GTM Generation for acme.com                                   │
+│                                                                             │
+│  Creating: Overview → Account Profile → Buyer Persona → Email Campaign     │
+│                                                                             │
+╰─────────────────────────────────────────────────────────────────────────────╯
+```
+
+**Hypothesis Capture (Optional Context):**
+
+```
+🎯 Optional Context (press Enter to skip)
+
+Target Account Hypothesis (press Enter to skip):
+> Mid-market SaaS companies struggling with customer onboarding
+
+Target Persona Hypothesis (press Enter to skip):
+> VP of Customer Success, 2-5 years experience, focused on retention metrics
+
+✓ Context captured.
+
+Ready to start generation? [y/N]: y
+```
+
 **Step 1 - Company Overview:**
 
 ```
-🚀 Blossomer GTM CLI - Analyzing acme.com
-
 [1/5] 🔍 Analyzing company...
    → Fetching website content... ✓
    → Processing with AI... ✓  
@@ -480,12 +506,23 @@ Review everything: blossomer show all
 
 ```
 
-### **1.3 With Additional Context**
+### **1.3 Context Flag Support**
 
 **Input:**
 
 ```bash
 blossomer init acme.com --context "We're a Series A startup building AI tools for customer support teams"
+```
+
+**Output:**
+
+```
+🚀 Blossomer GTM CLI - Analyzing acme.com
+
+✓ Context provided: "We're a Series A startup building AI tools for customer support teams"
+
+[1/5] 🔍 Analyzing company... done (8s)
+[continues with normal interactive flow]
 ```
 
 **Smart Domain Handling:**
@@ -494,7 +531,39 @@ The CLI automatically handles various domain formats:
 - `www.acme.com` → `https://www.acme.com`  
 - `https://acme.com/about` → `https://acme.com`
 
-The context is used to improve all generation steps but doesn't change the interactive flow.
+**Hypothesis Capture:**
+Before starting generation, users can optionally provide specific hypotheses about their target market:
+- **Target Account Hypothesis**: "Mid-market SaaS companies struggling with customer onboarding"
+- **Target Persona Hypothesis**: "VP of Customer Success, 2-5 years experience, focused on retention metrics"
+
+These hypotheses are used to guide AI analysis and improve output quality, but default behavior is to skip this step for speed.
+
+**Implementation Pattern:**
+```python
+# In init command, before step 1
+if not yolo_mode:
+    account_hypothesis = questionary.text(
+        "Target Account Hypothesis (press Enter to skip):",
+        default=""
+    ).ask()
+
+    persona_hypothesis = questionary.text(
+        "Target Persona Hypothesis (press Enter to skip):",
+        default=""
+    ).ask()
+    
+    # Both hypotheses are passed to target account and persona generation
+    context = {
+        "account_hypothesis": account_hypothesis,
+        "persona_hypothesis": persona_hypothesis
+    }
+```
+
+**Why This Works:**
+1. **Intuitive**: Everyone knows pressing Enter skips optional inputs
+2. **Fast**: Two quick Enter presses and you're moving
+3. **Valuable**: When provided, context improves both account and persona steps
+4. **No Cognitive Load**: No complex choices, just type or skip
 
 ### **1.4 Handling Existing Projects**
 

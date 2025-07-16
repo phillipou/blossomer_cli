@@ -21,6 +21,7 @@
 
 **Interactive Features:**
 - Progressive disclosure with user choices at each step
+- Optional hypothesis capture for target account and persona context
 - Real-time editing with system editor integration
 - Error recovery with retry/skip options
 - YOLO mode for one-shot generation
@@ -255,6 +256,11 @@ python3 -m cli.main generate email      # Regenerate email with guided flow opti
 **Dependencies:** ✅ Stage 3 completion + ✅ Guided Email Feature completion  
 
 #### Sub-steps:
+- [ ] **Implement hypothesis capture** - Optional context inputs for target account and persona
+  - [ ] Add hypothesis capture prompts to init command before Step 1
+  - [ ] Update target account and persona generation to use hypothesis context
+  - [ ] Support --context flag for non-interactive hypothesis provision
+  - [ ] Add hypothesis data to project metadata for regeneration
 - [ ] Implement `export` command with meaningful file naming (gtm-report-acme-com-jan15.md)
 - [ ] Implement `edit` command with dependency cascade handling
 - [ ] Implement `list` command with project overview

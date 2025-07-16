@@ -70,10 +70,18 @@ def capture_hypotheses() -> dict:
         style=MENU_STYLE
     ).ask()
     
+    # Handle CTRL+C (questionary returns None when interrupted)
+    if account_hypothesis is None:
+        raise KeyboardInterrupt()
+    
     persona_hypothesis = questionary.text(
         "Target Persona Hypothesis (press Enter to skip):",
         style=MENU_STYLE
     ).ask()
+    
+    # Handle CTRL+C (questionary returns None when interrupted)
+    if persona_hypothesis is None:
+        raise KeyboardInterrupt()
     
     # Build context object
     context = {}
@@ -84,8 +92,7 @@ def capture_hypotheses() -> dict:
     
     if context:
         console.print()
-        console.print("✓ Context captured. Starting analysis...")
-        console.print()
+        console.print("✓ Context captured.")
     
     return context if context else None
 
@@ -128,10 +135,20 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
     # Enter immersive mode - clear console for fresh experience
     enter_immersive_mode()
     
-    # Welcome message for new project - compact style like existing projects
+    # Welcome message for new project - using Panel like existing projects
     console.print()
-    console.print(f"🚀 [bold cyan]Starting GTM Generation for {normalized_domain}[/bold cyan]")
-    console.print(f"Creating: [green]Overview[/green] → [green]Account Profile[/green] → [green]Buyer Persona[/green] → [green]Email Campaign[/green]")
+    welcome_content = (
+        f"🚀 [bold cyan]Starting GTM Generation for {normalized_domain}[/bold cyan]\n"
+        f"\n"
+        f"[bold]Creating:[/bold] [green]Overview[/green] → [green]Account Profile[/green] → [green]Buyer Persona[/green] → [green]Email Campaign[/green]"
+    )
+    
+    console.print(Panel(
+        welcome_content,
+        border_style="cyan",
+        expand=False,
+        padding=(1, 2)
+    ))
     
     # Capture hypotheses (if not in YOLO mode and context not provided)
     hypothesis_context = None
@@ -156,12 +173,26 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
     
     try:
         # Step 1: Company Overview
+        # Convert hypothesis context to string format for company overview
+        context_str = None
+        if context:
+            context_str = context
+        elif hypothesis_context:
+            context_parts = []
+            if hypothesis_context.get("account_hypothesis"):
+                context_parts.append(f"Target Account: {hypothesis_context['account_hypothesis']}")
+            if hypothesis_context.get("persona_hypothesis"):
+                context_parts.append(f"Target Persona: {hypothesis_context['persona_hypothesis']}")
+            if hypothesis_context.get("general_context"):
+                context_parts.append(hypothesis_context["general_context"])
+            context_str = " | ".join(context_parts) if context_parts else None
+        
         run_generation_step(
             step_name="Company Overview",
             step_number=1,
             explanation="Analyzing your website to understand your business, products, and value proposition",
             generate_func=lambda: run_async_generation(
-                gtm_service.generate_company_overview(normalized_domain, context or hypothesis_context, True)
+                gtm_service.generate_company_overview(normalized_domain, context_str, True)
             ),
             domain=normalized_domain,
             step_key="overview",
