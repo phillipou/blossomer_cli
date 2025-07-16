@@ -1,34 +1,34 @@
 {
   "subjects": {
-    "primary": "outbound strategy",
+    "primary": "sales ramp delay",
     "alternatives": [
-      "sales system boost",
-      "rapid onboarding"
+      "onboarding speed",
+      "outbound scaling"
     ]
   },
   "email_body": [
     {
-      "text": "outbound strategy",
+      "text": "sales ramp delay",
       "type": "subject"
     },
     {
-      "text": "Noticed you're focusing on outbound sales and thought now's a good time to optimize your approach",
+      "text": "saw your recent job posts for outbound roles and wondered if onboarding is slowing down your revenue growth",
       "type": "intro"
     },
     {
-      "text": "Many SMBs struggle to scale outreach fast without slowing down sales cycles",
+      "text": "Lengthy onboarding and strategy development delay revenue acceleration",
       "type": "pain-point"
     },
     {
-      "text": "Blossomer helps teams build outbound systems quickly, with proven strategies and fast onboarding",
+      "text": "Blossomer helps outbound teams build faster, actionable systems — we’ve helped startups accelerate their outreach in days, not weeks",
       "type": "company-intro"
     },
     {
-      "text": "Would you be open to a quick chat on how we can support your efforts",
+      "text": "We focus on rapid deployment so you can hit your scaling targets sooner",
       "type": "emphasis"
     },
     {
-      "text": "Let me know if you're interested",
+      "text": "Worth a quick 15-min call next week?",
       "type": "cta"
     }
   ],
@@ -65,11 +65,14 @@
     }
   },
   "metadata": {
-    "generation_id": "ebda6a8e-4448-4244-8e4a-c96a38242de2",
+    "generation_id": "7f040164-16f1-4cab-990e-64681d126038",
     "confidence": "high",
     "personalization_level": "medium",
-    "processing_time_ms": 3606
+    "processing_time_ms": 3328
   },
-  "_generated_at": "2025-07-15T17:15:19.805668",
-  "_step": "email"
+  "_generated_at": "2025-07-15T19:23:36.798719",
+  "_step": "email",
+  "_stale": true,
+  "_stale_reason": "Dependency 'overview' was regenerated",
+  "_stale_timestamp": "2025-07-15T19:24:23.932000"
 }

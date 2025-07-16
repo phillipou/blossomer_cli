@@ -11,12 +11,15 @@ console = Console()
 
 
 class GuidedEmailBuilder:
-    """Interactive guided email builder with 4 steps"""
+    """Interactive guided email builder with 4 steps matching PRD specifications"""
     
     def __init__(self, persona_data: Dict[str, Any], account_data: Dict[str, Any]):
         self.persona_data = persona_data
         self.account_data = account_data
         self.selections = {}
+        # Extract structured data from persona
+        self.use_cases = persona_data.get('use_cases', [])
+        self.buying_signals = persona_data.get('buying_signals', [])
     
     def run_guided_flow(self) -> Dict[str, Any]:
         """Run the complete 4-step guided email building flow"""
@@ -36,8 +39,8 @@ class GuidedEmailBuilder:
         # Step 1: Point of Emphasis
         emphasis = self._step_1_emphasis()
         
-        # Step 2: Specific Pain Point (based on emphasis choice)
-        pain_point = self._step_2_pain_point(emphasis)
+        # Step 2: Specific Content (based on emphasis choice)
+        selected_content = self._step_2_content_selection(emphasis)
         
         # Step 3: Personalization Angle
         personalization = self._step_3_personalization()
@@ -48,8 +51,8 @@ class GuidedEmailBuilder:
         # Return configuration for email generation
         return {
             "guided_mode": True,
-            "emphasis": emphasis,
-            "pain_point": pain_point,
+            "emphasis": emphasis["type"],
+            "selected_content": selected_content,
             "personalization": personalization,
             "call_to_action": cta
         }
@@ -61,67 +64,80 @@ class GuidedEmailBuilder:
         console.print()
         
         choices = [
-            "1. Pain Point: Focus on challenges they're experiencing",
-            "2. Capability: Focus on what your solution can do", 
-            "3. Desired Outcome: Focus on the results they want"
+            "1. Use Case: Focus on specific workflows your solution impacts",
+            "2. Pain Point: Focus on challenges they're experiencing",
+            "3. Capability: Focus on what your solution can do", 
+            "4. Desired Outcome: Focus on the results they want"
         ]
         
         choice = questionary.select(
-            "Select emphasis [1-3]:",
+            "Select emphasis [1-4]:",
             choices=choices
         ).ask()
         
         # Map choice to value
         emphasis_type = choice.split(".")[0].strip()
         if emphasis_type == "1":
-            emphasis_value = "pain_point"
+            emphasis_value = "use_case"
         elif emphasis_type == "2":
+            emphasis_value = "pain_point"
+        elif emphasis_type == "3":
             emphasis_value = "capability"
         else:
-            emphasis_value = "outcome"
+            emphasis_value = "desired_outcome"
         
         console.print(f"✓ Focusing on {emphasis_value.replace('_', ' ')}")
         console.print()
         
         return {"type": emphasis_value}
     
-    def _step_2_pain_point(self, emphasis: Dict[str, Any]) -> Dict[str, Any]:
-        """Step 2: Select specific pain point"""
-        console.print("[bold]Step 2/4: Which pain point should we focus on?[/bold]")
+    def _step_2_content_selection(self, emphasis: Dict[str, Any]) -> Dict[str, Any]:
+        """Step 2: Select specific content based on emphasis choice"""
+        emphasis_type = emphasis["type"]
+        
+        console.print(f"[bold]Step 2/4: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
         console.print()
-        console.print("Based on your persona analysis, here are their key pain points:")
+        console.print(f"Based on your persona analysis, here are their key {emphasis_type.replace('_', ' ')}s:")
         console.print()
         
-        # Extract pain points from persona data
-        pain_points = self._extract_pain_points()
+        # Extract content options based on emphasis type
+        content_options = self._extract_content_by_type(emphasis_type)
         
         choices = []
-        for i, pain_point in enumerate(pain_points[:3], 1):
-            choices.append(f"{i}. {pain_point['title']}\n   \"{pain_point['description']}\"")
+        for i, option in enumerate(content_options, 1):
+            choices.append(f"{i}. \"{option['value']}\": {option['description']}")
         
-        choices.append("4. Other (specify your own)")
+        # Add "Other" option with dynamic numbering
+        other_num = len(content_options) + 1
+        choices.append(f"{other_num}. Other (specify custom instructions to the LLM)")
         
         choice = questionary.select(
-            "Select pain point [1-4]:",
+            f"Select {emphasis_type.replace('_', ' ')} [1-{other_num}]:",
             choices=choices
         ).ask()
         
-        if choice.startswith("4."):
-            custom_pain = questionary.text("Enter your custom pain point:").ask()
-            selected_pain = {
-                "title": "Custom Pain Point",
-                "description": custom_pain,
+        choice_num = int(choice.split(".")[0])
+        
+        if choice_num == other_num:  # "Other" option selected
+            custom_instructions = questionary.text(
+                "Enter custom instructions for the LLM:",
+                placeholder="e.g., Focus on the specific workflow around..."
+            ).ask()
+            selected_content = {
+                "type": emphasis_type,
+                "value": "Custom",
+                "description": custom_instructions,
+                "custom_instructions": custom_instructions,
                 "custom": True
             }
         else:
-            # Extract the number and get the corresponding pain point
-            choice_num = int(choice.split(".")[0]) - 1
-            selected_pain = pain_points[choice_num]
+            selected_content = content_options[choice_num - 1]
+            selected_content["custom"] = False
         
-        console.print(f"✓ Selected: {selected_pain['title']}")
+        console.print(f"✓ Selected: {selected_content['value']}")
         console.print()
         
-        return selected_pain
+        return selected_content
     
     def _step_3_personalization(self) -> Dict[str, Any]:
         """Step 3: Select personalization angle"""
@@ -130,36 +146,40 @@ class GuidedEmailBuilder:
         console.print("Based on your target account analysis:")
         console.print()
         
-        # Extract personalization options from account data
-        personalization_options = self._extract_personalization_options()
+        # Extract personalization options from buying signals
+        personalization_options = self._extract_buying_signals_for_personalization()
         
-        choices = ["1. No personalization (generic approach)"]
+        choices = []
+        for i, option in enumerate(personalization_options, 1):
+            choices.append(f"{i}. {option['title']}: \"{option['example']}\"")
         
-        for i, option in enumerate(personalization_options, 2):
-            choices.append(f"{i}. {option['name']}\n   \"{option['example']}\"")
-        
-        choices.append(f"{len(personalization_options) + 2}. Other (specify your own)")
+        # Add "Other" option with dynamic numbering
+        other_num = len(personalization_options) + 1
+        choices.append(f"{other_num}. Other (specify custom instructions to the LLM)")
         
         choice = questionary.select(
-            "Select personalization [1-5]:",
+            f"Select personalization [1-{other_num}]:",
             choices=choices
         ).ask()
         
         choice_num = int(choice.split(".")[0])
         
-        if choice_num == 1:
-            selected_personalization = {"type": "generic", "angle": "none"}
-        elif choice_num == len(personalization_options) + 2:
-            custom_angle = questionary.text("Enter your custom personalization angle:").ask()
+        if choice_num == other_num:  # "Other" option selected
+            custom_instructions = questionary.text(
+                "Enter custom personalization instructions for the LLM:",
+                placeholder="e.g., Reference their recent product launch..."
+            ).ask()
             selected_personalization = {
                 "type": "custom",
-                "angle": custom_angle,
-                "example": f"Custom approach: {custom_angle}"
+                "value": "Custom personalization",
+                "custom_instructions": custom_instructions,
+                "custom": True
             }
         else:
-            selected_personalization = personalization_options[choice_num - 2]
+            selected_personalization = personalization_options[choice_num - 1]
+            selected_personalization["custom"] = False
         
-        console.print(f"✓ Will use: {selected_personalization.get('name', selected_personalization.get('angle', 'custom approach'))}")
+        console.print(f"✓ Will reference: {selected_personalization.get('title', 'custom approach')}")
         console.print()
         
         return selected_personalization
@@ -169,50 +189,68 @@ class GuidedEmailBuilder:
         console.print("[bold]Step 4/4: What should the call-to-action be?[/bold]")
         console.print()
         
-        choices = [
-            "1. Ask for a meeting\n   \"Worth a quick 15-min call next week?\"",
-            "2. Ask if it's a priority\n   \"Is improving support efficiency a Q1 priority?\"", 
-            "3. Ask for feedback\n   \"Curious if this resonates with your experience?\"",
-            "4. Offer free help\n   \"Happy to share our scaling playbook - interested?\"",
-            "5. Invite to resource\n   \"We have a guide on this - should I send it over?\""
+        cta_options = [
+            {
+                "type": "meeting",
+                "text": "Worth a quick 15-min call next week?",
+                "intent": "schedule_meeting",
+                "label": "Ask for a meeting"
+            },
+            {
+                "type": "priority_check",
+                "text": "Is improving support efficiency a Q1 priority?",
+                "intent": "gauge_interest",
+                "label": "Ask if it's a priority"
+            },
+            {
+                "type": "feedback",
+                "text": "Curious if this resonates with your experience?",
+                "intent": "start_conversation",
+                "label": "Ask for feedback"
+            },
+            {
+                "type": "free_help",
+                "text": "Happy to share our scaling playbook - interested?",
+                "intent": "provide_value",
+                "label": "Offer free help"
+            },
+            {
+                "type": "resource",
+                "text": "We have a guide on this - should I send it over?",
+                "intent": "share_content",
+                "label": "Invite to resource"
+            }
         ]
         
+        choices = []
+        for i, option in enumerate(cta_options, 1):
+            choices.append(f"{i}. {option['label']}\n   \"{option['text']}\"")
+        
+        # Add "Other" option with dynamic numbering
+        other_num = len(cta_options) + 1
+        choices.append(f"{other_num}. Other (write your own custom CTA)")
+        
         choice = questionary.select(
-            "Select CTA [1-5]:",
+            f"Select CTA [1-{other_num}]:",
             choices=choices
         ).ask()
         
         choice_num = int(choice.split(".")[0])
         
-        cta_options = [
-            {
-                "type": "meeting",
-                "text": "Worth a quick 15-min call next week?",
-                "intent": "schedule_meeting"
-            },
-            {
-                "type": "priority_check",
-                "text": "Is improving support efficiency a Q1 priority?",
-                "intent": "gauge_interest"
-            },
-            {
-                "type": "feedback",
-                "text": "Curious if this resonates with your experience?",
-                "intent": "start_conversation"
-            },
-            {
-                "type": "free_help",
-                "text": "Happy to share our scaling playbook - interested?",
-                "intent": "provide_value"
-            },
-            {
-                "type": "resource",
-                "text": "We have a guide on this - should I send it over?",
-                "intent": "share_content"
+        if choice_num == other_num:  # "Other" option selected
+            custom_cta = questionary.text(
+                "Enter your custom call-to-action:",
+                placeholder="e.g., Would you like to see how this works in action?"
+            ).ask()
+            selected_cta = {
+                "type": "custom",
+                "text": custom_cta,
+                "intent": "custom_action",
+                "custom": True
             }
-        ]
-        
-        selected_cta = cta_options[choice_num - 1]
+        else:
+            selected_cta = cta_options[choice_num - 1]
+            selected_cta["custom"] = False
         
         console.print(f"✓ Will {selected_cta['intent'].replace('_', ' ')}")
         console.print()
@@ -299,3 +337,118 @@ class GuidedEmailBuilder:
         
         # Return account options if available, otherwise defaults
         return account_options if account_options else default_options
+    
+    def _extract_content_by_type(self, emphasis_type: str) -> List[Dict[str, Any]]:
+        """Extract content options based on emphasis type from use_cases array"""
+        content_options = []
+        
+        for use_case in self.use_cases:
+            if isinstance(use_case, dict):
+                if emphasis_type == "use_case":
+                    content_options.append({
+                        "type": "use_case",
+                        "value": use_case.get("use_case", "Unknown use case"),
+                        "description": use_case.get("use_case", "Unknown use case")
+                    })
+                elif emphasis_type == "pain_point":
+                    content_options.append({
+                        "type": "pain_point", 
+                        "value": use_case.get("pain_points", "Unknown pain point"),
+                        "description": use_case.get("pain_points", "Unknown pain point")
+                    })
+                elif emphasis_type == "capability":
+                    content_options.append({
+                        "type": "capability",
+                        "value": use_case.get("capability", "Unknown capability"),
+                        "description": use_case.get("capability", "Unknown capability")
+                    })
+                elif emphasis_type == "desired_outcome":
+                    content_options.append({
+                        "type": "desired_outcome",
+                        "value": use_case.get("desired_outcome", "Unknown outcome"),
+                        "description": use_case.get("desired_outcome", "Unknown outcome")
+                    })
+        
+        # Return first 3 unique options or defaults if none found
+        unique_options = []
+        seen_values = set()
+        for option in content_options:
+            if option["value"] not in seen_values:
+                unique_options.append(option)
+                seen_values.add(option["value"])
+                if len(unique_options) >= 3:
+                    break
+        
+        # Fallback defaults if no content found
+        if not unique_options:
+            if emphasis_type == "pain_point":
+                unique_options = [
+                    {"type": "pain_point", "value": "Scaling challenges", "description": "Maintaining quality during rapid growth"},
+                    {"type": "pain_point", "value": "Long onboarding times", "description": "New team members take too long to be productive"},
+                    {"type": "pain_point", "value": "Lack of visibility", "description": "No insight into performance gaps"}
+                ]
+            elif emphasis_type == "capability":
+                unique_options = [
+                    {"type": "capability", "value": "Real-time analysis", "description": "Analyze performance in real-time"},
+                    {"type": "capability", "value": "Automated coaching", "description": "Provide automated guidance and suggestions"},
+                    {"type": "capability", "value": "Knowledge gap detection", "description": "Identify areas needing improvement"}
+                ]
+            elif emphasis_type == "use_case":
+                unique_options = [
+                    {"type": "use_case", "value": "Quality assurance", "description": "Ensure consistent service quality"},
+                    {"type": "use_case", "value": "Team training", "description": "Accelerate team onboarding and training"},
+                    {"type": "use_case", "value": "Performance monitoring", "description": "Monitor and improve team performance"}
+                ]
+            else:  # desired_outcome
+                unique_options = [
+                    {"type": "desired_outcome", "value": "Improved efficiency", "description": "Faster resolution times and better productivity"},
+                    {"type": "desired_outcome", "value": "Higher quality", "description": "More consistent and accurate service delivery"},
+                    {"type": "desired_outcome", "value": "Reduced costs", "description": "Lower training costs and improved ROI"}
+                ]
+        
+        return unique_options
+    
+    def _extract_buying_signals_for_personalization(self) -> List[Dict[str, Any]]:
+        """Extract buying signals that can be used for personalization"""
+        personalization_options = []
+        
+        for signal in self.buying_signals:
+            if isinstance(signal, dict):
+                personalization_options.append({
+                    "type": "buying_signal",
+                    "title": signal.get("title", "Company activity"),
+                    "description": signal.get("description", "Recent company activity"),
+                    "example": f"Reference {signal.get('title', 'recent activity')}: \"{signal.get('description', 'activity suggests opportunity')}\""
+                })
+        
+        # Return first 4 options or defaults if none found
+        if personalization_options:
+            return personalization_options[:4]
+        
+        # Fallback defaults if no buying signals found
+        return [
+            {
+                "type": "funding",
+                "title": "Recent funding round",
+                "description": "Recent Series B funding",
+                "example": "Congrats on the Series B - scaling challenges ahead?"
+            },
+            {
+                "type": "hiring",
+                "title": "Hiring activity",
+                "description": "Active hiring in support team",
+                "example": "Saw you're hiring 10+ support agents this quarter"
+            },
+            {
+                "type": "growth",
+                "title": "Company growth",
+                "description": "Rapid company growth metrics",
+                "example": "With 200% YoY growth, support must be challenging"
+            },
+            {
+                "type": "tech_stack",
+                "title": "Technology adoption",
+                "description": "Recent technology adoption",
+                "example": "Notice you recently adopted Zendesk - scaling pains?"
+            }
+        ]

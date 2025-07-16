@@ -211,69 +211,52 @@ Email Guide Step 1: Select Point of Emphasis
 
 Step 1/4: What should your email emphasize?
 
-1. Pain Point: Focus on challenges they're experiencing
-2. Capability: Focus on what your solution can do
-3. Desired Outcome: Focus on the results they want
+1. Use Case: Focus on specific workflows your solution impacts
+2. Pain Point: Focus on challenges they're experiencing
+3. Capability: Focus on what your solution can do
+4. Desired Outcome: Focus on the results they want
 
-Select emphasis [1-3]: 1
+Select emphasis [1-4]: 2
 ✓ Focusing on pain points
-Email Guide Step 2: Select Specific Pain Point
+
+Email Guide Step 2: Select Specific Content
 Step 2/4: Which pain point should we focus on?
 
 Based on your persona analysis, here are their key pain points:
 
-1. Maintaining support quality during rapid scaling
-   "As teams grow from 10 to 50 agents, consistency drops"
-
-2. Long agent onboarding times  
-   "New agents take 6+ weeks to reach full productivity"
-
-3. Lack of visibility into knowledge gaps
-   "No way to identify what agents don't know until customers complain"
-
-4. Other (specify your own)
+1. "Maintaining support quality during rapid scaling": As teams grow from 10 to 50 agents, consistency drops
+2. "Long agent onboarding times": New agents take 6+ weeks to reach full productivity
+3. "Lack of visibility into knowledge gaps": No way to identify what agents don't know until customers complain
+4. Other (specify custom instructions to the LLM)
 
 Select pain point [1-4]: 1
 ✓ Selected: Quality challenges during scaling
-Email Guide Step 3: Select Personalization Angle
+
+Email Guide Step 3: Select Personalization Approach
 Step 3/4: How should we personalize this email?
 
-Based on your target account analysis:
+Based on your buying signals analysis, here are personalization options:
 
-1. No personalization (generic approach)
+1. Reference recent Series B funding: "Congrats on the Series B - scaling challenges ahead?"
+2. Reference hiring spree: "Saw you're hiring 10+ support agents this quarter"  
+3. Reference company growth metrics: "With 200% YoY growth, support must be challenging"
+4. Reference tech stack adoption: "Notice you recently adopted Zendesk - scaling pains?"
+5. Other (specify custom instructions to the LLM)
 
-2. Reference recent Series B funding
-   "Congrats on the Series B - scaling challenges ahead?"
-
-3. Reference hiring spree  
-   "Saw you're hiring 10+ support agents this quarter"
-
-4. Reference company growth metrics
-   "With 200% YoY growth, support must be challenging"
-
-5. Other (specify your own)
-
-Select personalization [1-5]: 2
+Select personalization [1-5]: 1
 ✓ Will reference Series B funding
+
 Email Guide Step 4: Select Call-to-Action
 Step 4/4: What should the call-to-action be?
 
-1. Ask for a meeting
-   "Worth a quick 15-min call next week?"
+1. Ask for a meeting (e.g. "Worth a quick 15-min call next week?")
+2. Ask if it's a priority (e.g. "Is improving support efficiency a Q1 priority?")
+3. Ask for feedback (e.g "Curious if this resonates with your experience?")
+4. Offer free help (e.g "Happy to share our scaling playbook - interested?")
+5. Invite to resource (e.g. "We have a guide on this - should I send it over?")
+6. Other (write your own custom CTA)
 
-2. Ask if it's a priority  
-   "Is improving support efficiency a Q1 priority?"
-
-3. Ask for feedback
-   "Curious if this resonates with your experience?"
-
-4. Offer free help
-   "Happy to share our scaling playbook - interested?"
-
-5. Invite to resource
-   "We have a guide on this - should I send it over?"
-
-Select CTA [1-5]: 1
+Select CTA [1-6]: 1
 
 ✓ Will ask for a meeting
 
@@ -696,6 +679,87 @@ dataops.ai
 Total: 3 projects (2 complete, 1 partial)
 
 ```
+
+## Guided Email Setup Implementation - ✅ IMPLEMENTED
+
+### Implementation Status
+
+**✅ COMPLETED** - The guided email setup has been fully implemented and integrated into the CLI:
+
+- ✅ **4-Step Interactive Flow**: Use Case/Pain Point/Capability/Desired Outcome selection
+- ✅ **Dynamic Content Extraction**: Pulls from target_persona.json use_cases and buying_signals arrays
+- ✅ **Custom Instructions Support**: "Other" option with custom LLM instructions for steps 2 & 3
+- ✅ **Template Integration**: Updated email_generation_blossomer.jinja2 to handle guided mode
+- ✅ **CLI Integration**: Seamlessly integrated into init command flow
+- ✅ **Dynamic Array Sizing**: Handles variable array sizes with proper numbering
+
+### Implementation Details
+
+#### Files Modified:
+- **`cli/utils/guided_email_builder.py`**: Complete 4-step guided flow implementation
+- **`app/prompts/templates/email_generation_blossomer.jinja2`**: Added guided mode template logic
+- **`cli/commands/init_sync.py`**: Already had guided flow integration
+
+#### User Prompt Variables for Email Generation
+
+The email generation prompt now supports these guided mode variables:
+
+```json
+{
+  "guided_mode": true,
+  "emphasis": "use_case|pain_point|capability|desired_outcome",
+  "selected_content": {
+    "type": "use_case|pain_point|capability|desired_outcome", 
+    "value": "Selected content from target_persona.json arrays",
+    "description": "Full description of selected content",
+    "custom_instructions": "Optional custom LLM instructions if user selected 'Other'",
+    "custom": false
+  },
+  "personalization": {
+    "type": "buying_signal|custom",
+    "title": "Selected buying signal title",
+    "example": "Example personalization approach",
+    "custom_instructions": "Optional custom LLM instructions if user selected 'Other'",
+    "custom": false
+  },
+  "call_to_action": {
+    "type": "meeting|priority_check|feedback|free_help|resource|custom",
+    "text": "Selected CTA text",
+    "intent": "schedule_meeting|gauge_interest|start_conversation|provide_value|share_content|custom_action",
+    "custom": false
+  }
+}
+```
+
+#### Data Flow from Target Persona Step
+
+The implementation extracts data from target_persona.json:
+
+- **use_cases[]**: Extracts `use_case`, `pain_point`, `capability`, `desired_outcome` fields
+- **buying_signals[]**: Extracts `title`, `description` for personalization options
+- **Fallback defaults**: Provides sensible defaults when persona data is incomplete
+
+#### Dynamic Implementation Features
+
+✅ **Variable Array Handling**: Supports any number of options from persona data
+✅ **Unique Content Filtering**: Prevents duplicate options in selection lists  
+✅ **Graceful Fallbacks**: Uses default options when persona data is missing
+✅ **Custom Instructions**: Full LLM customization when "Other" is selected
+✅ **Dynamic Numbering**: Options are numbered based on actual array length
+
+### Step-by-Step Implementation Logic
+
+1. **Emphasis Selection**: User picks from 4 options (use_case, pain_point, capability, desired_outcome)
+2. **Content Selection**: Shows filtered options from use_cases array based on emphasis choice + "Other" option
+3. **Personalization**: Shows buying_signals array options + "Other" option for custom instructions
+4. **Call-to-Action**: Shows 5 predefined CTA types + "Other" option for custom text
+
+### Testing Results
+
+✅ **Content Extraction**: All emphasis types correctly extract unique options from persona data
+✅ **Dynamic Sizing**: Handles arrays of any size with proper numbering
+✅ **Fallback Behavior**: Provides defaults when persona data is missing
+✅ **Template Integration**: Guided mode variables correctly passed to email generation template
 
 ## Prompt Updates Required
 

@@ -24,7 +24,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
         projects = gtm_service.storage.list_projects()
         if not projects:
             console.print("[red]No GTM projects found.[/red]")
-            console.print("→ Create one with: [cyan]blossomer init <domain>[/cyan]")
+            console.print("→ Create one with: [cyan]blossomer init[/cyan]")
             return
         elif len(projects) == 1:
             domain = projects[0]["domain"]
@@ -47,7 +47,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [cyan]blossomer init " + domain + "[/cyan]")
+        console.print("→ Create one with: [cyan]blossomer init[/cyan]")
         return
     
     if asset == "all":

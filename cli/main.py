@@ -100,7 +100,7 @@ def main(
 
 @app.command()
 def init(
-    domain: str = typer.Argument(..., help="Company domain to analyze (e.g., acme.com)"),
+    domain: Optional[str] = typer.Argument(None, help="Company domain to analyze (e.g., acme.com)"),
     context: Optional[str] = typer.Option(None, "--context", help="Additional context about the company"),
     yolo: bool = typer.Option(False, "--yolo", help="Skip all interactions (one-shot mode)"),
 ) -> None:

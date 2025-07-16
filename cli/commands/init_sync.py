@@ -25,8 +25,19 @@ from cli.utils.guided_email_builder import GuidedEmailBuilder
 console = Console()
 
 
-def init_sync_flow(domain: str, context: Optional[str] = None, yolo: bool = False) -> None:
+def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool = False) -> None:
     """Run the synchronous GTM generation flow with proper loading animations"""
+    
+    # Prompt for domain if not provided
+    if domain is None:
+        domain = questionary.text(
+            "Enter the company domain to analyze:",
+            placeholder="e.g., acme.com"
+        ).ask()
+        
+        if not domain:
+            console.print("[yellow]No domain provided. Exiting.[/yellow]")
+            raise typer.Exit(1)
     
     # Normalize domain
     try:
@@ -129,10 +140,10 @@ def init_sync_flow(domain: str, context: Optional[str] = None, yolo: bool = Fals
         
     except KeyboardInterrupt:
         console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
-        console.print(f"→ Resume with: [cyan]blossomer init {domain}[/cyan]")
+        console.print(f"→ Resume with: [cyan]blossomer init[/cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print(f"→ Try again: [cyan]blossomer init {domain}[/cyan]")
+        console.print("→ Try again: [cyan]blossomer init[/cyan]")
         raise typer.Exit(1)
 
 
@@ -234,10 +245,10 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         
     except KeyboardInterrupt:
         console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
-        console.print(f"→ Resume with: [cyan]blossomer init {domain.replace('https://', '')}[/cyan]")
+        console.print("→ Resume with: [cyan]blossomer init[/cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print(f"→ Try again: [cyan]blossomer init {domain.replace('https://', '')}[/cyan]")
+        console.print("→ Try again: [cyan]blossomer init[/cyan]")
 
 
 def run_generation_step(

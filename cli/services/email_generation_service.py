@@ -7,6 +7,7 @@ import time
 import uuid
 from typing import Dict, Any, Optional
 from cli.services.context_orchestrator_service import ContextOrchestratorService
+from cli.utils.debug import debug_print
 from app.prompts.models import EmailGenerationPromptVars
 from app.schemas import (
     EmailGenerationRequest,

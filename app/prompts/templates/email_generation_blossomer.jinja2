@@ -214,19 +214,48 @@ Generate a Blossomer-style email using the following context:
 
 **Company:** {{ company_context.company_name }}
 **Company Description:** {{ company_context.description }}
-**Key Capabilities:** {% for capability in company_context.capabilities[:3] %}{{ capability }}{% if not loop.last %}, {% endif %}{% endfor %}
+**Use Case Focus:** {% for capability in company_context.capabilities[:3] %}{{ capability }}{% if not loop.last %}, {% endif %}{% endfor %}
 
 **Target Account:** {{ target_account.target_account_name }}
 **Target Persona:** {{ target_persona.target_persona_name }}
 **Selected Use Case:** {{ preferences.use_case }}
 
-**Preferences:**
+{% if preferences.guided_mode -%}
+**Guided Email Selections:**
+- Emphasis: {{ preferences.emphasis }}
+- Selected Content: {{ preferences.selected_content.value }} ({{ preferences.selected_content.description }})
+{% if preferences.selected_content.custom_instructions %}- Custom Instructions: {{ preferences.selected_content.custom_instructions }}{% endif %}
+- Personalization: {{ preferences.personalization.title }} - {{ preferences.personalization.example }}
+{% if preferences.personalization.custom_instructions %}- Personalization Instructions: {{ preferences.personalization.custom_instructions }}{% endif %}
+- Call-to-Action: {{ preferences.call_to_action.text }} (Intent: {{ preferences.call_to_action.intent }})
+{% if preferences.call_to_action.custom and preferences.call_to_action.text %}- Custom CTA: {{ preferences.call_to_action.text }}{% endif %}
+{%- else -%}
+**Standard Preferences:**
 - Emphasis: {{ preferences.emphasis }}
 - Opening Strategy: {{ preferences.opening_line }}
 - CTA Strategy: {{ preferences.cta_setting }}
 {% if preferences.social_proof %}- Social Proof: {{ preferences.social_proof }}{% endif %}
+{%- endif %}
 
-{% if preferences.template == 'custom' and preferences.custom_template -%}
+{% if preferences.guided_mode -%}
+**Guided Mode Instructions:**
+Create an email following the 5-segment Blossomer structure, incorporating the user's specific selections above:
+
+1. **Subject Line**: 2-4 words, lowercase, relating to the emphasis content selected
+2. **Intro Line**: Use the personalization approach selected to create the opening
+3. **Content Focus**: Emphasize the selected {{ preferences.emphasis.replace('_', ' ') }} content: "{{ preferences.selected_content.value }}"
+4. **Company Intro**: One-liner with social proof if available
+5. **CTA**: Use the selected call-to-action approach: {{ preferences.call_to_action.intent.replace('_', ' ') }}
+
+{% if preferences.selected_content.custom_instructions -%}
+**Content Custom Instructions**: {{ preferences.selected_content.custom_instructions }}
+{% endif -%}
+{% if preferences.personalization.custom_instructions -%}
+**Personalization Custom Instructions**: {{ preferences.personalization.custom_instructions }}
+{% endif -%}
+
+Maintain Blossomer quality standards: under 75 words total, casual tone, smooth transitions.
+{%- elif preferences.template == 'custom' and preferences.custom_template -%}
 **Custom Template Instructions:**
 {{ preferences.custom_template }}
 

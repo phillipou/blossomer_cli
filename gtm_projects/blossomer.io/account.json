@@ -1,97 +1,97 @@
 {
-  "target_account_name": "Outbound Sales-Focused SMBs",
-  "target_account_description": "Small to medium-sized businesses and sales teams seeking rapid, strategic outbound sales growth are ideal targets, as they often lack structured outbound systems and need quick, actionable guidance to scale prospecting efforts effectively.",
+  "target_account_name": "Outbound Sales Scaling Companies",
+  "target_account_description": "Mid-sized B2B organizations seeking rapid, structured outbound sales system implementation to accelerate revenue growth and improve outreach efficiency.",
   "target_account_rationale": [
-    "These companies operate in competitive markets where outbound outreach is critical for growth, making them highly receptive to strategic sales enablement solutions.",
-    "Their size and operational complexity suggest they require scalable, fast-onboarding strategies that align with their growth ambitions and resource constraints.",
-    "Targeting SMBs and sales teams within larger organizations allows for addressing pain points related to slow prospecting, inefficient workflows, and lack of strategic guidance.",
-    "Focusing on companies with a need for rapid outbound scaling aligns with the company's emphasis on speed, minimal onboarding, and strategic guidance, increasing purchase likelihood.",
-    "These firms are likely to be in a growth or transition phase, actively seeking ways to accelerate outbound sales without lengthy implementation delays."
+    "These companies operate in fast-paced B2B sectors where quick outbound outreach is critical for growth, making them prime candidates for structured sales system solutions.",
+    "Focusing on organizations with 50-500 employees ensures they have sufficient resources and complexity to benefit from outbound sales process building without being too large or bureaucratic.",
+    "Targeting firms in industries like technology, professional services, or SaaS aligns with their need for scalable outbound strategies and rapid deployment capabilities.",
+    "Companies at the growth stage, especially those in Series B or higher funding rounds, are likely to seek structured outbound systems to sustain their expansion and meet revenue targets.",
+    "Firms demonstrating recent operational shifts or expansion into new markets are actively seeking solutions to streamline and accelerate their outbound sales efforts."
   ],
   "firmographics": {
     "industry": [
-      "Business Services",
-      "Marketing & Advertising",
-      "Information Technology",
-      "Software as a Service"
+      "Technology",
+      "Professional Services",
+      "Software as a Service (SaaS)",
+      "Business & Productivity Software"
     ],
     "employees": "50-500",
-    "department_size": "5-20 sales team members",
-    "revenue": "1M-50M USD",
+    "department_size": "5-50",
+    "revenue": "5M-50M",
     "geography": [
       "North America",
       "Europe"
     ],
     "business_model": [
-      "SMB",
-      "Sales Enablement",
-      "Outbound Sales"
+      "B2B",
+      "SaaS",
+      "Consulting"
     ],
     "funding_stage": [
-      "Seed",
-      "Series A",
-      "Series B"
+      "Series B",
+      "Series C",
+      "Series D"
     ],
     "company_type": [
-      "Private",
-      "VC-backed"
+      "Private"
     ],
     "keywords": [
       "rapid scaling",
-      "outbound prospecting",
-      "sales growth",
-      "sales team expansion",
-      "growth-oriented"
+      "outbound outreach",
+      "sales process",
+      "growth phase",
+      "market expansion"
     ]
   },
   "buying_signals": [
     {
       "title": "Funding Announcements",
-      "description": "Companies announcing new funding rounds often seek to accelerate growth initiatives like outbound sales, indicating readiness to invest in strategic sales enablement tools.",
+      "description": "Detection of recent funding rounds (Series B or higher) indicates increased capacity and intent to invest in outbound sales infrastructure.",
       "type": "Company Data",
       "priority": "High",
-      "detection_method": "Enrichment source: Crunchbase, PitchBook, or similar funding databases"
+      "detection_method": "Crunchbase API, PitchBook, or similar funding data sources"
     },
     {
       "title": "Job Postings for Sales Roles",
-      "description": "Increased hiring for outbound sales or business development roles suggests scaling efforts and a need for improved outbound strategies.",
+      "description": "New job listings for outbound sales or business development roles suggest active scaling efforts and need for structured outreach systems.",
       "type": "Website",
       "priority": "Medium",
-      "detection_method": "Web scraping of job boards, company career pages, LinkedIn job postings"
+      "detection_method": "Website scraping, LinkedIn job search filters"
     },
     {
-      "title": "Growth Milestones",
-      "description": "Reports of revenue growth or employee increases (e.g., 50+ employees) indicate companies are expanding their sales efforts and may need strategic guidance.",
-      "type": "Company Data",
+      "title": "Website Technology Stack",
+      "description": "Use of outbound sales tools or CRM integrations (e.g., Outreach, SalesLoft, HubSpot) indicates readiness for outbound system deployment.",
+      "type": "Tech Stack",
       "priority": "Medium",
-      "detection_method": "Enrichment via LinkedIn, company press releases, or business directories"
+      "detection_method": "BuiltWith, Clearbit, or similar technology detection tools"
     },
     {
-      "title": "Website Content on Outbound Strategy",
-      "description": "Websites mentioning outbound outreach, prospecting, or sales acceleration signals active interest and potential pain points in outbound sales.",
-      "type": "Website",
-      "priority": "Low",
-      "detection_method": "Keyword search in website content: 'outbound prospecting', 'sales outreach', 'rapid growth', 'sales acceleration'"
+      "title": "Market Expansion News",
+      "description": "Press releases or news about entering new markets or launching new outbound campaigns signal active growth phases.",
+      "type": "News",
+      "priority": "Medium",
+      "detection_method": "Google News, PR distribution feeds"
     },
     {
       "title": "Conference Participation",
-      "description": "Participation in sales or marketing conferences indicates a focus on growth and outbound strategies, signaling readiness to adopt new solutions.",
+      "description": "Participation in outbound sales or growth-focused conferences indicates strategic focus on scaling outbound efforts.",
       "type": "Other",
       "priority": "Low",
-      "detection_method": "Monitoring event speaker lists, sponsorships, or conference attendee lists"
+      "detection_method": "Conference speaker lists, event websites"
     }
   ],
   "buying_signals_rationale": [
-    "Funding announcements and growth milestones are strong indicators of companies actively investing in scaling their outbound sales efforts, often requiring strategic guidance.",
-    "Job postings for outbound sales roles reflect operational expansion and a need for tools that support rapid onboarding and outbound prospecting.",
-    "Website mentions of outbound outreach and sales acceleration reveal companies' explicit focus on improving prospecting efficiency, signaling purchase intent.",
-    "Participation in industry conferences demonstrates a proactive approach to growth and openness to adopting new sales enablement solutions.",
-    "These signals collectively identify companies at inflection points where strategic outbound sales solutions can deliver immediate value, aligning with their growth and scaling needs."
+    "Funding announcements and recent investment rounds are strong indicators that companies are expanding their sales teams and infrastructure, creating immediate demand for outbound sales solutions.",
+    "Job postings for outbound sales roles reflect active hiring efforts, signaling companies are preparing to scale their outreach and need structured systems.",
+    "Detection of outbound sales tools in their tech stack demonstrates existing operational focus on outbound outreach, making them more likely to purchase complementary solutions.",
+    "Market expansion news and strategic initiatives reveal companies are in a growth inflection point, often requiring rapid deployment of outbound systems to capitalize on new opportunities.",
+    "Participation in relevant industry conferences indicates a strategic intent to improve outbound sales processes, aligning with their readiness to adopt new solutions."
   ],
   "metadata": {
-    "primary_context_source": "user_input",
+    "primary_context_source": "user_input|company_context|website_content",
     "sources_used": [
-      "website"
+      "website",
+      "company_context"
     ],
     "confidence_assessment": {
       "overall_confidence": "medium",
@@ -99,12 +99,15 @@
       "inference_level": "moderate",
       "recommended_improvements": [
         "Access to detailed customer success stories",
-        "More granular revenue and growth data",
-        "Additional insights into sales team size and operational complexity"
+        "More granular firmographic data",
+        "Additional signals from CRM or sales engagement platforms"
       ]
     },
-    "processing_notes": "Analysis based on website content and inferred company growth signals; firmographic filters tailored to SMBs and growth-stage companies with active outbound sales initiatives."
+    "processing_notes": "Analysis based on limited website content and inferred business dynamics; prioritization of signals related to growth and scaling activities."
   },
-  "_generated_at": "2025-07-15T17:14:12.837719",
-  "_step": "account"
+  "_generated_at": "2025-07-15T19:23:08.910506",
+  "_step": "account",
+  "_stale": true,
+  "_stale_reason": "Dependency 'overview' was regenerated",
+  "_stale_timestamp": "2025-07-15T19:24:23.929856"
 }

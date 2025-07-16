@@ -36,7 +36,7 @@ async def generate_step(
         projects = gtm_service.storage.list_projects()
         if not projects:
             console.print("[red]No GTM projects found.[/red]")
-            console.print("→ Create one with: [cyan]blossomer init <domain>[/cyan]")
+            console.print("→ Create one with: [cyan]blossomer init[/cyan]")
             raise typer.Exit(1)
         elif len(projects) == 1:
             domain = projects[0]["domain"]
@@ -59,7 +59,7 @@ async def generate_step(
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [cyan]blossomer init " + domain + "[/cyan]")
+        console.print("→ Create one with: [cyan]blossomer init[/cyan]")
         raise typer.Exit(1)
     
     # Check dependencies
@@ -70,7 +70,7 @@ async def generate_step(
     missing_deps = [dep for dep in required_deps if dep not in available_steps]
     if missing_deps:
         console.print(f"[red]Missing dependencies for {step}:[/red] {', '.join(missing_deps)}")
-        console.print("→ Generate dependencies first or run full flow with: [cyan]blossomer init " + domain + "[/cyan]")
+        console.print("→ Generate dependencies first or run full flow with: [cyan]blossomer init[/cyan]")
         raise typer.Exit(1)
     
     # Check if step already exists
