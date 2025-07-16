@@ -7,7 +7,15 @@ from app.schemas import ProductOverviewRequest, ProductOverviewResponse
 try:
     from fastapi import HTTPException
 except ImportError:
-    from starlette.exceptions import HTTPException
+    try:
+        from starlette.exceptions import HTTPException
+    except ImportError:
+        # Define a CLI-compatible exception for non-web contexts
+        class HTTPException(Exception):
+            def __init__(self, status_code: int, detail: str):
+                self.status_code = status_code
+                self.detail = detail
+                super().__init__(detail)
 
 logger = logging.getLogger(__name__)
 

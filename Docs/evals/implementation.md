@@ -68,11 +68,12 @@ This document provides step-by-step instructions for implementing the evaluation
 - **JSON Validation**: Enforced structured output with format validation
 
 ### **Model Flexibility Examples**
-```bash
-# Switch between models easily
-export EVAL_MODEL="gemini-1.5-flash"    # ~$0.0001/call
-export EVAL_MODEL="claude-3-5-haiku"    # ~$0.001/call  
-export EVAL_MODEL="gpt-4o-mini"         # ~$0.0002/call
+```python
+# Switch between models easily in code
+judge = ForgeJudge()
+judge.run_all_judges(data, website_content, model="gemini-1.5-flash")    # ~$0.0001/call
+judge.run_all_judges(data, website_content, model="claude-3-5-haiku")    # ~$0.001/call  
+judge.run_all_judges(data, website_content, model="gpt-4o-mini")         # ~$0.0002/call
 ```
 
 ## Implementation Roadmap

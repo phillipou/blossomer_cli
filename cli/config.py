@@ -13,8 +13,9 @@ from cli.utils.file_manager import ProjectManager
 class CLIConfig:
     """Configuration settings for the CLI."""
     
-    # API Configuration
-    openai_api_key: Optional[str] = None
+    # API Configuration  
+    forge_api_key: Optional[str] = None  # TensorBlock Forge unified API key
+    openai_api_key: Optional[str] = None  # Legacy - kept for backward compatibility
     
     # Editor Configuration  
     default_editor: str = "auto"
@@ -96,6 +97,8 @@ class ConfigManager:
         overrides = {}
         
         # API Keys
+        if os.getenv('FORGE_API_KEY'):
+            overrides['forge_api_key'] = os.getenv('FORGE_API_KEY')
         if os.getenv('OPENAI_API_KEY'):
             overrides['openai_api_key'] = os.getenv('OPENAI_API_KEY')
         
@@ -124,11 +127,16 @@ class ConfigManager:
         config = self.get_config()
         issues = []
         
-        # Check for required API key
-        if not config.openai_api_key:
+        # Check for required API key (prefer Forge, fallback to OpenAI)
+        if not config.forge_api_key and not config.openai_api_key:
             issues.append(
-                "OpenAI API key not found. Set OPENAI_API_KEY environment variable "
-                "or run: blossomer config set openai_api_key YOUR_KEY"
+                "No API key found. Set FORGE_API_KEY environment variable for unified access "
+                "or OPENAI_API_KEY for legacy OpenAI-only access"
+            )
+        elif not config.forge_api_key and config.openai_api_key:
+            issues.append(
+                "Consider migrating to FORGE_API_KEY for access to multiple LLM providers "
+                "(Gemini, Claude, GPT). Current setup limited to OpenAI only."
             )
         
         # Check projects path if specified
@@ -149,23 +157,50 @@ class ConfigManager:
         return Path.cwd() / "gtm_projects"
 
 
-def get_api_key() -> Optional[str]:
-    """Get OpenAI API key from configuration."""
+def get_forge_api_key() -> Optional[str]:
+    """Get TensorBlock Forge API key from configuration."""
     config_manager = ConfigManager()
     config = config_manager.get_config()
-    return config.openai_api_key
+    return config.forge_api_key
+
+
+def get_api_key() -> Optional[str]:
+    """Get API key from configuration (prefer Forge, fallback to OpenAI)."""
+    config_manager = ConfigManager()
+    config = config_manager.get_config()
+    return config.forge_api_key or config.openai_api_key
+
+
+def require_forge_api_key() -> str:
+    """Get TensorBlock Forge API key or raise error if not available."""
+    config_manager = ConfigManager()
+    config = config_manager.get_config()
+    api_key = config.forge_api_key
+    
+    if not api_key:
+        from cli.utils.logging import CLIError
+        raise CLIError(
+            "TensorBlock Forge API key not found",
+            suggestions=[
+                "Set environment variable: export FORGE_API_KEY=your_key", 
+                "Get your API key from https://tensorblock.co",
+                "Or run: blossomer config set forge_api_key your_key"
+            ]
+        )
+    return api_key
 
 
 def require_api_key() -> str:
-    """Get OpenAI API key or raise error if not available."""
+    """Get API key or raise error if not available (prefer Forge, fallback to OpenAI)."""
     api_key = get_api_key()
     if not api_key:
         from cli.utils.logging import CLIError
         raise CLIError(
-            "OpenAI API key not found",
+            "No API key found",
             suggestions=[
-                "Set environment variable: export OPENAI_API_KEY=your_key",
-                "Or run: blossomer config set openai_api_key your_key"
+                "Set environment variable: export FORGE_API_KEY=your_key (recommended)",
+                "Or set: export OPENAI_API_KEY=your_key (OpenAI only)",
+                "Get Forge API key from https://tensorblock.co for multi-provider access"
             ]
         )
     return api_key

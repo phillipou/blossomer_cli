@@ -5,7 +5,15 @@ from typing import Any, Type, Optional, Dict
 try:
     from fastapi import HTTPException
 except ImportError:
-    from starlette.exceptions import HTTPException
+    try:
+        from starlette.exceptions import HTTPException
+    except ImportError:
+        # Define a CLI-compatible exception for non-web contexts
+        class HTTPException(Exception):
+            def __init__(self, status_code: int, detail: str):
+                self.status_code = status_code
+                self.detail = detail
+                super().__init__(detail)
 from app.core.llm_singleton import get_llm_client
 from app.prompts.registry import render_prompt
 from app.services.web_content_service import WebContentService

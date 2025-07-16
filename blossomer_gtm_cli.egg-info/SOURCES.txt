@@ -2,6 +2,8 @@ README.md
 pyproject.toml
 app/__init__.py
 app/core/__init__.py
+app/core/forge_client.py
+app/core/forge_llm_service.py
 app/core/llm_singleton.py
 app/prompts/base.py
 app/prompts/models.py

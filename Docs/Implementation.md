@@ -89,13 +89,147 @@
 - **Tempfile** - Temporary file handling (built-in)
 
 ### LLM Integration:
-- **Existing Services** - Reuse current LLM service architecture
-- **OpenAI Python Client** - Already integrated
-- **Documentation:** https://platform.openai.com/docs/
+- **TensorBlock Forge** - Unified API for all LLM providers (MAJOR ARCHITECTURAL CHANGE)
+- **Documentation:** https://github.com/TensorBlock/forge
+- **Justification:** Eliminates provider-specific implementations, enables easy model switching, cost optimization
+
+## 🚨 MAJOR ARCHITECTURAL CHANGE: TensorBlock Forge Integration
+
+### Strategic Decision: Unified LLM Provider Access
+
+**Status:** 🔄 PLANNED - Major refactor required across codebase  
+**Priority:** HIGH - Should be implemented before Stage 4  
+**Impact:** Breaking changes to all LLM service implementations
+
+#### Current Problem
+- Individual provider implementations (OpenAI, Anthropic, Google Gemini)
+- Provider-specific API clients and error handling
+- Difficult model switching and cost optimization
+- Duplicated authentication and configuration logic
+
+#### TensorBlock Forge Solution
+- **Unified API**: OpenAI-compatible interface for 20+ providers
+- **Single Authentication**: One Forge API key for all providers
+- **Easy Model Switching**: Change models via environment variables
+- **Cost Optimization**: Test different providers for optimal cost/quality
+- **Future-Proof**: New providers added automatically
+
+#### Implementation Impact
+
+**Files Requiring Major Changes:**
+- `app/core/llm_singleton.py` - Replace provider-specific clients with Forge client
+- `app/services/*_service.py` - Update all LLM service calls to use Forge
+- `cli/services/*_service.py` - Migrate CLI services to Forge
+- Configuration files - Replace multiple API keys with single Forge key
+- Error handling - Standardize across unified Forge responses
+
+**New Dependencies:**
+- Remove: `openai`, `anthropic`, `google-generativeai` 
+- Add: `openai` (for Forge compatibility), `FORGE_API_KEY` environment variable
+
+**Benefits for Evaluation System:**
+- Easy A/B testing across models (Gemini vs Claude vs GPT-4)
+- Cost optimization through provider comparison
+- Unified error handling and retry logic
+- Single authentication system
+
+#### Migration Plan
+
+**Phase 1: Core Infrastructure**
+- [ ] Set up TensorBlock Forge account and API key
+- [ ] Create Forge client wrapper in `app/core/forge_client.py`
+- [ ] Update configuration management for Forge integration
+- [ ] Create model mapping and cost tracking utilities
+
+**Phase 2: Service Migration**  
+- [ ] Migrate `product_overview_service.py` to use Forge
+- [ ] Migrate `target_account_service.py` to use Forge
+- [ ] Migrate `target_persona_service.py` to use Forge  
+- [ ] Migrate `email_generation_service.py` to use Forge
+- [ ] Update CLI services to use new Forge-based implementations
+
+**Phase 3: Configuration & Testing**
+- [ ] Update environment variable handling (FORGE_API_KEY only)
+- [ ] Update all service calls to specify model as parameter
+- [ ] Update error handling for Forge-specific responses
+- [ ] Test with multiple providers (Gemini, Claude, OpenAI)
+- [ ] Update documentation and examples
+
+**Phase 4: Evaluation Integration**
+- [ ] Ensure evaluation system uses same Forge infrastructure
+- [ ] Implement cost tracking across main app and evaluations
+- [ ] Add model performance comparison utilities
+
+#### Technical Specifications
+
+**New Forge Client Structure:**
+```python
+# app/core/forge_client.py
+class ForgeClient:
+    def __init__(self, api_key: str = None):
+        self.client = OpenAI(
+            api_key=api_key or os.getenv("FORGE_API_KEY"),
+            base_url="https://api.tensorblock.co/v1"
+        )
+    
+    def chat_completion(self, messages, model: str, **kwargs):
+        # Unified interface - model specified per call
+        return self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+            **kwargs
+        )
+        
+    def get_cost_estimate(self, model: str, tokens: int) -> float:
+        # Cost tracking across providers
+```
+
+**Model Switching Examples:**
+```python
+# Specify model directly in API calls
+forge_client.chat_completion(
+    messages=messages,
+    model="gemini-1.5-flash"      # Cost: ~$0.0001/call
+)
+
+forge_client.chat_completion(
+    messages=messages,
+    model="claude-3-5-haiku"      # Cost: ~$0.001/call
+)
+
+# A/B test different models programmatically
+models_to_test = ["gemini-1.5-flash", "claude-3-5-haiku", "gpt-4o-mini"]
+for model in models_to_test:
+    result = forge_client.chat_completion(messages=messages, model=model)
+```
+
+**Breaking Changes:**
+- All LLM service constructors will change
+- Configuration files need FORGE_API_KEY instead of individual keys
+- Error handling will be standardized to Forge responses
+- Cost tracking will be unified across providers
+
+#### Migration Blockers & Considerations
+
+**Dependencies:**
+- Must complete before major feature development in Stage 4
+- Evaluation system implementation should use Forge from start
+- CLI command implementations may need updates
+
+**Testing Requirements:**
+- Comprehensive testing with multiple providers
+- Cost tracking validation across models
+- Error handling verification for Forge-specific failures
+- Performance comparison between old and new implementations
+
+**Risk Mitigation:**
+- Keep existing implementations as fallback during migration
+- Implement feature flags for gradual rollout
+- Extensive testing with multiple providers before full deployment
 
 ## Implementation Status
 
-**Current Status:** ✅ Stage 3 Complete + Guided Email Feature Complete - Ready for Stage 4  
+**Current Status:** ✅ Stage 3 Complete + Guided Email Feature Complete - Ready for Forge Migration  
 **Last Updated:** July 16, 2025
 
 ### Completed Stages
@@ -251,9 +385,25 @@ python3 -m cli.main generate overview   # Regenerate specific step
 python3 -m cli.main generate email      # Regenerate email with guided flow option
 ```
 
-### ⏳ Stage 4: Advanced Features & Polish (READY TO START)
+### 🔄 Stage 3.5: TensorBlock Forge Migration (HIGH PRIORITY)
+**Duration:** 3-5 days
+**Dependencies:** ✅ Stage 3 completion + TensorBlock Forge account setup
+**Impact:** Major refactor enabling unified LLM access and cost optimization
+
+#### Sub-steps:
+- [ ] **Set up TensorBlock Forge account and obtain API key**
+- [ ] **Create unified Forge client wrapper** (`app/core/forge_client.py`)
+- [ ] **Migrate all LLM services** to use Forge instead of individual providers
+- [ ] **Update configuration management** (FORGE_API_KEY only)
+- [ ] **Update CLI services** to use new Forge infrastructure
+- [ ] **Update all service calls** to specify model as parameter
+- [ ] **Update error handling** for unified Forge responses
+- [ ] **Test with multiple providers** (Gemini, Claude, OpenAI)
+- [ ] **Update evaluation system** to use same Forge infrastructure
+
+### ⏳ Stage 4: Advanced Features & Polish (BLOCKED BY FORGE MIGRATION)
 **Duration:** 1-2 weeks
-**Dependencies:** ✅ Stage 3 completion + ✅ Guided Email Feature completion  
+**Dependencies:** ✅ Stage 3 completion + ✅ Forge Migration completion  
 
 #### Sub-steps:
 - [ ] **Implement hypothesis capture** - Optional context inputs for target account and persona

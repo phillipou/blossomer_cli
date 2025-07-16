@@ -45,9 +45,10 @@ def test_llm_service_imports():
     print("🤖 Testing LLM service imports...")
     
     try:
-        # Test core LLM classes
-        from cli.services.llm_service import LLMClient, OpenAIProvider, LLMRequest, LLMResponse
-        print("  ✓ Core LLM classes imported successfully")
+        # Test core LLM classes (updated for Forge)
+        from app.core.forge_llm_service import ForgeLLMService, LLMRequest, LLMResponse
+        from cli.services.llm_singleton import get_llm_client
+        print("  ✓ Core LLM classes imported successfully (Forge-based)")
         
         # Test LLM singleton
         from cli.services.llm_singleton import get_llm_client
