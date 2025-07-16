@@ -48,6 +48,7 @@ cli/services/project_storage.py
 cli/services/target_account_service.py
 cli/services/target_persona_service.py
 cli/utils/__init__.py
+cli/utils/colors.py
 cli/utils/console.py
 cli/utils/debug.py
 cli/utils/domain.py

@@ -24,7 +24,7 @@ def export_assets(step: str = "all", output: Optional[str] = None, domain: Optio
         projects = gtm_service.storage.list_projects()
         if not projects:
             console.print("[red]No GTM projects found.[/red]")
-            console.print("→ Create one with: [cyan]blossomer init[/cyan]")
+            console.print("→ Create one with: [bold cyan]blossomer init[/bold cyan]")
             return
         elif len(projects) == 1:
             domain = projects[0]["domain"]
@@ -32,7 +32,7 @@ def export_assets(step: str = "all", output: Optional[str] = None, domain: Optio
             console.print("[red]Multiple projects found. Please specify domain:[/red]")
             for project in projects[:5]:  # Show first 5
                 console.print(f"  • {project['domain']}")
-            console.print("→ Use: [cyan]blossomer export <step> --domain <domain>[/cyan]")
+            console.print("→ Use: [bold cyan]blossomer export <step> --domain <domain>[/bold cyan]")
             return
     
     # Normalize domain
@@ -47,7 +47,7 @@ def export_assets(step: str = "all", output: Optional[str] = None, domain: Optio
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [cyan]blossomer init[/cyan]")
+        console.print("→ Create one with: [bold cyan]blossomer init[/bold cyan]")
         return
     
     # Get clean domain name for filenames
@@ -61,7 +61,7 @@ def export_assets(step: str = "all", output: Optional[str] = None, domain: Optio
         export_single_asset(normalized_domain, domain_name, step, output)
     else:
         console.print(f"[red]Unknown asset: {step}[/red]")
-        console.print("Available assets: [cyan]all, overview, account, persona, email[/cyan]")
+        console.print("Available assets: [bold cyan]all, overview, account, persona, email[/bold cyan]")
 
 
 def export_single_asset(domain: str, domain_name: str, step: str, output: Optional[str] = None) -> None:
@@ -71,7 +71,7 @@ def export_single_asset(domain: str, domain_name: str, step: str, output: Option
     step_data = gtm_service.storage.load_step_data(domain, step)
     if not step_data:
         console.print(f"[red]{step.title()} not found for {domain}[/red]")
-        console.print(f"→ Generate with: [cyan]blossomer generate {step}[/cyan]")
+        console.print(f"→ Generate with: [bold cyan]blossomer generate {step}[/bold cyan]")
         return
     
     # Get formatter and generate markdown
@@ -101,7 +101,7 @@ def export_single_asset(domain: str, domain_name: str, step: str, output: Option
     
     # Show success message
     file_size = output_path.stat().st_size / 1024  # KB
-    console.print(f"✅ {step.title()} exported: [cyan]{output_path}[/cyan] ({file_size:.1f}KB)")
+    console.print(f"✅ {step.title()} exported: [bold cyan]{output_path}[/bold cyan] ({file_size:.1f}KB)")
     
     # Show file preview path
     console.print(f"   Preview: [dim]file://{output_path.absolute()}[/dim]")
@@ -199,7 +199,7 @@ def export_all_assets(domain: str, domain_name: str, output: Optional[str] = Non
     console.print()
     console.print(Panel.fit(
         f"[bold green]📋 Complete report saved to:[/bold green]\n"
-        f"[cyan]{output_path}[/cyan] ({report_size:.1f}KB)\n\n"
+        f"[bold cyan]{output_path}[/bold cyan] ({report_size:.1f}KB)\n\n"
         f"Preview: [dim]file://{output_path.absolute()}[/dim]",
         title="[bold]Export Complete[/bold]",
         border_style="green"

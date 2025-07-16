@@ -1,34 +1,30 @@
 {
   "subjects": {
-    "primary": "outbound scaling",
+    "primary": "outbound delays",
     "alternatives": [
-      "sales system boost",
-      "outreach speed"
+      "scaling outbound",
+      "growth hurdles"
     ]
   },
   "email_body": [
     {
-      "text": "outbound scaling",
+      "text": "outbound delays",
       "type": "subject"
     },
     {
-      "text": "Noticed your team is ramping up outbound efforts, so I thought I’d check in.",
+      "text": "Noticed your site mentions scaling outbound—thought now's a good time to optimize your process",
       "type": "intro"
     },
     {
-      "text": "Many teams struggle to build fast, effective outreach systems without delays.",
+      "text": "Delays in onboarding and lack of clear outbound strategies hinder growth and responsiveness to market opportunities",
       "type": "pain-point"
     },
     {
-      "text": "Blossomer helps outbound teams develop rapid, actionable sales strategies that scale quickly.",
+      "text": "We helped another startup close 100 clients in a month",
       "type": "company-intro"
     },
     {
-      "text": "Would it make sense to share how we’re helping teams accelerate their outreach?",
-      "type": "emphasis"
-    },
-    {
-      "text": "Open to a quick chat?",
+      "text": "Happy to share our scaling playbook—interested?",
       "type": "cta"
     }
   ],
@@ -65,11 +61,14 @@
     }
   },
   "metadata": {
-    "generation_id": "ccfd0529-2e45-4973-a03f-9f5da15e8680",
+    "generation_id": "de70fa2d-80e4-4d40-a3bf-0f08f1a29220",
     "confidence": "high",
     "personalization_level": "medium",
-    "processing_time_ms": 3364
+    "processing_time_ms": 3616
   },
-  "_generated_at": "2025-07-15T20:54:00.065426",
-  "_step": "email"
+  "_generated_at": "2025-07-15T21:14:41.343322",
+  "_step": "email",
+  "_stale": true,
+  "_stale_reason": "Dependency 'overview' was regenerated",
+  "_stale_timestamp": "2025-07-15T21:38:56.655259"
 }

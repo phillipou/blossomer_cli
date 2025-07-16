@@ -16,6 +16,7 @@ from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
 from cli.utils.console import enter_immersive_mode, exit_immersive_mode
+from cli.utils.colors import Colors, format_project_status, format_step_flow
 
 console = Console()
 
@@ -34,7 +35,7 @@ async def init_interactive_flow(
         normalized = normalize_domain(domain)
         normalized_domain = normalized.url
     except Exception as e:
-        console.print(f"[red]Error:[/red] Invalid domain format: {e}")
+        console.print(Colors.format_error(f"Invalid domain format: {e}"))
         console.print("→ Try: acme.com or https://acme.com")
         raise typer.Exit(1)
     
@@ -49,16 +50,14 @@ async def init_interactive_flow(
         metadata = gtm_service.storage.load_metadata(normalized_domain)
         last_updated = metadata.updated_at if metadata else "Unknown"
         
-        console.print(Panel.fit(
-            f"[bold blue]Project already exists for {normalized_domain}[/bold blue]\n\n"
-            f"[bold]Current Status:[/bold]\n"
-            f"• Completed steps: [green]{', '.join(status['available_steps'])}[/green]\n"
-            f"• Progress: [cyan]{status['progress_percentage']:.0f}%[/cyan] complete\n"
-            f"• Last updated: [dim]{last_updated}[/dim]\n\n"
-            f"{'• [yellow]Some data is stale[/yellow]' if status.get('has_stale_data') else '• [green]All data is current[/green]'}",
-            title="[bold]Existing Project Found[/bold]",
-            border_style="blue"
-        ))
+        # Show compact project status
+        status_text = format_project_status(
+            normalized_domain, 
+            status['available_steps'], 
+            status['progress_percentage'],
+            status.get('has_stale_data', False)
+        )
+        console.print(status_text)
         
         if not yolo:
             try:
@@ -89,17 +88,8 @@ async def init_interactive_flow(
         # Enter immersive mode for new projects
         enter_immersive_mode()
         console.print()
-        console.print(Panel.fit(
-            f"[bold blue]🚀 Starting GTM Generation for {normalized_domain}[/bold blue]\n\n"
-            "This will create a complete go-to-market package:\n"
-            "• [green]1/5[/green] Company Overview\n"
-            "• [green]2/5[/green] Target Account Profile\n" 
-            "• [green]3/5[/green] Buyer Persona\n"
-            "• [green]4/5[/green] Email Campaign\n"
-            "• [dim]5/5[/dim] GTM Plan (coming soon)",
-            title="[bold]GTM Generation Flow[/bold]",
-            border_style="blue"
-        ))
+        console.print(Colors.format_section(f"Starting GTM generation for {normalized_domain}", "🚀"))
+        console.print(f"Creating: {format_step_flow(['Overview', 'Account Profile', 'Buyer Persona', 'Email Campaign'])}")
     
     try:
         # Step 1: Company Overview
@@ -155,23 +145,16 @@ async def init_interactive_flow(
         )
         
         # Completion message
-        console.print()
-        console.print(Panel.fit(
-            "[bold green]✓ GTM Generation Complete![/bold green]\n\n"
-            "[bold]Next steps:[/bold]\n"
-            f"• View results: [cyan]blossomer show all[/cyan]\n"
-            f"• Export report: [cyan]blossomer export[/cyan]\n"
-            f"• Edit content: [cyan]blossomer edit <step>[/cyan]",
-            title="[bold]Success[/bold]",
-            border_style="green"
-        ))
+        console.print(f"\n{Colors.format_success('GTM generation complete!')}")
+        next_commands = [Colors.format_command(cmd) for cmd in ['blossomer show all', 'blossomer export', 'blossomer edit <step>']]
+        console.print(f"→ Next: {' | '.join(next_commands)}")
         
     except KeyboardInterrupt:
-        console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
-        console.print("→ Resume with: [cyan]blossomer init " + domain + "[/cyan]")
+        console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
+        console.print(f"→ Resume with: {Colors.format_command('blossomer init ' + domain)}")
     except Exception as e:
-        console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print("→ Try: [cyan]blossomer init " + domain + "[/cyan] to resume")
+        console.print(f"\n{Colors.format_error(f'Error during generation: {e}')}")
+        console.print(f"→ Try: {Colors.format_command('blossomer init ' + domain)} to resume")
         raise typer.Exit(1)
 
 
@@ -214,8 +197,12 @@ async def run_step_with_choices(
             return
         # If "Regenerate", continue to generation
     
-    # Generate step with progress indicator
-    console.print(f"\n[{step_number}/4] [blue]Generating {step_name}...[/blue]")
+    # Generate step with compact progress indicator
+    console.print(f"\n{Colors.format_process(step_number, 4, step_name)}")
+    console.print("Analyzing your website to understand your business, products, and value proposition" if step_name == "Company Overview" else 
+                  "Identifying your ideal customer companies based on your business analysis" if step_name == "Target Account Profile" else
+                  "Creating detailed profiles of decision-makers at your target companies" if step_name == "Buyer Persona" else
+                  "Crafting personalized outreach emails based on your analysis")
     
     with Progress(
         SpinnerColumn(),
@@ -240,11 +227,11 @@ async def run_step_with_choices(
             progress.stop()
             
             # Success indicator
-            console.print(f"   [green]✓[/green] {step_name} generated successfully")
+            console.print(f"   {Colors.format_success(f'{step_name} generated successfully')}")
             
         except Exception as e:
             progress.stop()
-            console.print(f"   [red]✗[/red] Failed to generate {step_name}: {e}")
+            console.print(f"   {Colors.format_error(f'Failed to generate {step_name}: {e}')}")
             
             if not yolo:
                 retry = questionary.confirm("Would you like to retry this step?", default=None).ask()

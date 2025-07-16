@@ -22,9 +22,32 @@ from cli.utils.editor import detect_editor, open_file_in_editor
 from cli.utils.console import enter_immersive_mode, exit_immersive_mode
 from cli.utils.guided_email_builder import GuidedEmailBuilder
 from cli.utils.markdown_formatter import get_formatter
+from cli.utils.colors import Colors, format_project_status, format_step_flow
 from rich.markdown import Markdown
 
 console = Console()
+
+# Questionary styling for better UX - using the same cyan as step headers
+MENU_STYLE = questionary.Style([
+    ('question', 'bold cyan'),           # Question text - same as Company Overview header
+    ('pointer', 'bold cyan'),            # Arrow pointer - same cyan
+    ('highlighted', 'bold cyan'),        # Currently selected item - same cyan
+    ('selected', 'bold cyan'),           # After selection - same cyan
+    ('answer', 'bold cyan')              # Final answer display - same cyan
+])
+
+def show_menu_with_separator(question: str, choices: list, add_separator: bool = True):
+    """Show a questionary menu with visual separator and consistent styling"""
+    if add_separator:
+        console.print()
+        console.print("─" * 60)
+        console.print()
+    
+    return questionary.select(
+        question,
+        choices=choices,
+        style=MENU_STYLE
+    ).ask()
 
 
 def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool = False) -> None:
@@ -46,8 +69,8 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         normalized = normalize_domain(domain)
         normalized_domain = normalized.url
     except Exception as e:
-        console.print(f"[red]Error:[/red] Invalid domain format: {e}")
-        console.print("→ Try: acme.com or https://acme.com")
+        console.print(Colors.format_error(f"Invalid domain format: {e}"))
+        console.print(f"→ Try: {Colors.format_command('acme.com')} or {Colors.format_command('https://acme.com')}")
         raise typer.Exit(1)
     
     # Check if project already exists
@@ -59,18 +82,10 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
     # Enter immersive mode - clear console for fresh experience
     enter_immersive_mode()
     
-    # Welcome message for new project
+    # Welcome message for new project - compact style like existing projects
     console.print()
-    console.print(Panel.fit(
-        f"[bold blue]🚀 Starting GTM Generation for {normalized_domain}[/bold blue]\n\n"
-        "This will analyze your website and create:\n"
-        "• [green]1/4[/green] Company Overview & Business Analysis\n"
-        "• [green]2/4[/green] Target Account Profile\n" 
-        "• [green]3/4[/green] Buyer Persona\n"
-        "• [green]4/4[/green] Personalized Email Campaign",
-        title="[bold]GTM Generation[/bold]",
-        border_style="blue"
-    ))
+    console.print(f"🚀 [bold cyan]Starting GTM Generation for {normalized_domain}[/bold cyan]")
+    console.print(f"Creating: [green]Overview[/green] → [green]Account Profile[/green] → [green]Buyer Persona[/green] → [green]Email Campaign[/green]")
     
     if not yolo:
         ready = typer.confirm("Ready to start generation?", default=None)
@@ -130,22 +145,24 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         
         # Success message
         console.print()
-        console.print(Panel.fit(
-            "[bold green]✅ GTM Generation Complete![/bold green]\n\n"
+        console.print(Panel(
+            "[bold green]✅ GTM Generation Complete![/bold green]\n"
+            "\n"
             "[bold]Your go-to-market package is ready:[/bold]\n"
-            f"• View results: [cyan]blossomer show all[/cyan]\n"
-            f"• Edit content: [cyan]blossomer edit <step>[/cyan]\n"
-            f"• Export report: [cyan]blossomer export[/cyan]",
-            title="[bold]Success[/bold]",
-            border_style="green"
+            f"• View results: {Colors.format_command('blossomer show all')}\n"
+            f"• Edit content: {Colors.format_command('blossomer edit <step>')}\n"
+            f"• Export report: {Colors.format_command('blossomer export')}",
+            border_style="green",
+            expand=False,
+            padding=(1, 2)
         ))
         
     except KeyboardInterrupt:
-        console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
-        console.print(f"→ Resume with: [cyan]blossomer init[/cyan]")
+        console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
+        console.print(f"→ Resume with: [bold cyan]blossomer init[/bold cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print("→ Try again: [cyan]blossomer init[/cyan]")
+        console.print("→ Try again: [bold cyan]blossomer init[/bold cyan]")
         raise typer.Exit(1)
 
 
@@ -159,19 +176,27 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
     last_updated = metadata.updated_at if metadata else "Unknown"
     
     console.print()
-    console.print(Panel.fit(
-        f"[bold blue]Project already exists for {domain}[/bold blue]\n\n"
-        f"[bold]Current Status:[/bold]\n"
-        f"• Completed steps: [green]{', '.join(status['available_steps'])}[/green]\n"
-        f"• Progress: [cyan]{status['progress_percentage']:.0f}%[/cyan] complete\n"
-        f"• Last updated: [dim]{last_updated}[/dim]\n\n"
-        f"{'• [yellow]Some data may be outdated[/yellow]' if status.get('has_stale_data') else '• [green]All data is current[/green]'}",
-        title="[bold]Existing Project[/bold]",
-        border_style="blue"
+    # Show project status in bordered panel (Claude Code style)
+    status_content = (
+        f"[bold cyan]Project: {domain}[/bold cyan]\n"
+        f"\n"
+        f"[bold]Status:[/bold] {Colors.format_success(', '.join(status['available_steps']))} | "
+        f"[bold cyan]{status['progress_percentage']:.0f}%[/bold cyan] complete\n"
+        f"[dim]Last updated: {last_updated}[/dim]"
+    )
+    
+    if status.get('has_stale_data'):
+        status_content += f"\n{Colors.format_warning('Some data may need updates')}"
+    
+    console.print(Panel(
+        status_content,
+        border_style="cyan",
+        expand=False,
+        padding=(1, 2)
     ))
     
     if yolo:
-        console.print("[blue]YOLO mode: Updating all steps with fresh data[/blue]")
+        console.print(Colors.format_section("YOLO mode: Updating all steps with fresh data", "⚡"))
         start_from_step = "overview"
     else:
         console.print(f"Project '{domain}' already exists.")
@@ -186,14 +211,14 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             "❌ Cancel (view existing results)"
         ]
         
-        choice = questionary.select(
+        choice = show_menu_with_separator(
             "Where would you like to start updating?",
             choices=choices
-        ).ask()
+        )
         
-        if choice == "❌ Cancel (view existing results)":
+        if choice is None or choice == "❌ Cancel (view existing results)":
             console.print("Operation cancelled.")
-            console.print(f"→ View current results: [cyan]blossomer show all[/cyan]")
+            console.print(f"→ View current results: {Colors.format_command('blossomer show all')}")
             return
         elif choice == "🔄 Start from beginning (all steps)":
             start_from_step = "overview"
@@ -207,7 +232,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             start_from_step = "email"
     
     console.print()
-    console.print(f"[blue]→ Starting from {start_from_step} step and running all subsequent steps[/blue]")
+    console.print(f"→ Starting from {Colors.format_command(start_from_step)} step and running all subsequent steps")
     console.print()
     
     # Continue with generation flow - start from selected step and run all subsequent steps
@@ -272,22 +297,24 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         
         # Success message
         console.print()
-        console.print(Panel.fit(
-            "[bold green]✅ GTM Generation Complete![/bold green]\n\n"
+        console.print(Panel(
+            "[bold green]✅ GTM Generation Complete![/bold green]\n"
+            "\n"
             "[bold]Your go-to-market package is ready:[/bold]\n"
-            f"• View results: [cyan]blossomer show all[/cyan]\n"
-            f"• Edit content: [cyan]blossomer edit <step>[/cyan]\n"
-            f"• Export report: [cyan]blossomer export[/cyan]",
-            title="[bold]Success[/bold]",
-            border_style="green"
+            f"• View results: {Colors.format_command('blossomer show all')}\n"
+            f"• Edit content: {Colors.format_command('blossomer edit <step>')}\n"
+            f"• Export report: {Colors.format_command('blossomer export')}",
+            border_style="green",
+            expand=False,
+            padding=(1, 2)
         ))
         
     except KeyboardInterrupt:
-        console.print("\n[yellow]Generation interrupted. Progress has been saved.[/yellow]")
-        console.print("→ Resume with: [cyan]blossomer init[/cyan]")
+        console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
+        console.print("→ Resume with: [bold cyan]blossomer init[/bold cyan]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
-        console.print("→ Try again: [cyan]blossomer init[/cyan]")
+        console.print("→ Try again: [bold cyan]blossomer init[/bold cyan]")
 
 
 def run_generation_step(
@@ -301,9 +328,16 @@ def run_generation_step(
 ) -> None:
     """Run a single generation step with proper loading and user interaction"""
     
-    console.print(f"[bold][{step_number}/4] {step_name}[/bold]")
-    console.print(f"[dim]{explanation}[/dim]")
+    # Create a bordered panel for each step
     console.print()
+    console.print(Panel(
+        f"[bold cyan][{step_number}/4] {step_name}[/bold cyan]\n"
+        f"\n"
+        f"{explanation}",
+        border_style="cyan",
+        expand=False,
+        padding=(1, 2)
+    ))
     
     # Show loading animation during generation
     with Progress(
@@ -328,11 +362,11 @@ def run_generation_step(
             progress.update(task, description=f"→ completed in {elapsed:.1f}s")
             progress.stop()
             
-            console.print(f"   [green]✓[/green] {step_name} generated successfully")
+            console.print(f"   {Colors.format_success(f'{step_name} generated successfully')}")
             
         except Exception as e:
             progress.stop()
-            console.print(f"   [red]✗[/red] Failed to generate {step_name}: {e}")
+            console.print(f"   {Colors.format_error(f'Failed to generate {step_name}: {e}')}")
             raise
     
     console.print()
@@ -357,20 +391,25 @@ def run_generation_step(
 def run_email_generation_step(domain: str, yolo: bool = False) -> None:
     """Run the email generation step with guided mode choice"""
     
-    console.print(f"[bold][4/4] Email Campaign[/bold]")
-    console.print(f"[dim]Crafting personalized outreach emails based on your analysis[/dim]")
     console.print()
+    console.print(Panel(
+        f"[bold cyan][4/4] Email Campaign[/bold cyan]\n"
+        f"\n"
+        f"Crafting personalized outreach emails based on your analysis",
+        border_style="cyan",
+        expand=False,
+        padding=(1, 2)
+    ))
     
     # Ask for mode choice (unless in YOLO mode)
     if not yolo:
-        console.print("Generate email automatically or go through guided email builder?")
-        mode_choice = questionary.select(
-            "Choose mode:",
+        mode_choice = show_menu_with_separator(
+            "Generate email automatically or go through guided email builder?",
             choices=[
                 "Guided (interactive email builder)",
                 "Automatic (generate based on analysis)"
             ]
-        ).ask()
+        )
         
         is_guided = mode_choice.startswith("Guided")
     else:
@@ -492,35 +531,32 @@ def show_target_account_preview(domain: str) -> None:
         
         # Create compact preview
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("TARGET ACCOUNT - PREVIEW")
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print(f"\n🎯 [bold]TARGET ACCOUNT - Preview[/bold]")
         console.print()
         
         # Display raw markdown content without Rich's markdown rendering
         console.print(preview_markdown)
         
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
         file_size = (project_dir / "account.json").stat().st_size / 1024
-        console.print(f"✓ Full profile saved to: account.json ({file_size:.1f}KB)")
+        console.print(f"✓ Full profile saved to: account.json ({file_size:.1f}KB)")  
+
         console.print()
-        print()  # Add extra space before menu
-        print()  # Add more space before menu  
+        console.print()
         
         # Get user choice
-        choice = questionary.select(
+        choice = show_menu_with_separator(
             "What would you like to do?",
             choices=[
                 "Continue to next step",
                 "Edit full analysis in editor", 
                 "Abort"
             ]
-        ).ask()
+        )
         
         
         if choice == "Abort":
@@ -552,35 +588,32 @@ def show_company_overview_preview(domain: str) -> None:
         
         # Create compact preview
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("COMPANY OVERVIEW - Quick Summary")
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print(f"\n📋 [bold]COMPANY OVERVIEW - Preview[/bold]")
         console.print()
         
         # Display raw markdown content without Rich's markdown rendering
         console.print(preview_markdown)
         
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
         file_size = (project_dir / "overview.json").stat().st_size / 1024
-        console.print(f"✓ Full overview saved to: overview.json ({file_size:.1f}KB)")
+        console.print(f"✓ Full overview saved to: overview.json ({file_size:.1f}KB)")  
+
         console.print()
-        print()  # Add extra space before menu
-        print()  # Add more space before menu  
+        console.print()
         
         # Get user choice
-        choice = questionary.select(
+        choice = show_menu_with_separator(
             "What would you like to do?",
             choices=[
                 "Continue to next step",
                 "Edit full analysis in editor", 
                 "Abort"
             ]
-        ).ask()
+        )
         
         
         if choice == "Abort":
@@ -612,35 +645,32 @@ def show_buyer_persona_preview(domain: str) -> None:
         
         # Create compact preview
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("BUYER PERSONA - PREVIEW")
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print(f"\n👤 [bold]BUYER PERSONA - Preview[/bold]")
         console.print()
         
         # Display raw markdown content without Rich's markdown rendering
         console.print(preview_markdown)
         
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
         file_size = (project_dir / "persona.json").stat().st_size / 1024
-        console.print(f"✓ Full persona saved to: persona.json ({file_size:.1f}KB)")
+        console.print(f"✓ Full persona saved to: persona.json ({file_size:.1f}KB)")  
+
         console.print()
-        print()  # Add extra space before menu
-        print()  # Add more space before menu  
+        console.print()
         
         # Get user choice
-        choice = questionary.select(
+        choice = show_menu_with_separator(
             "What would you like to do?",
             choices=[
                 "Continue to next step",
                 "Edit full analysis in editor", 
                 "Abort"
             ]
-        ).ask()
+        )
         
         
         if choice == "Abort":
@@ -672,19 +702,15 @@ def show_email_campaign_preview(domain: str) -> None:
         
         # Create compact preview
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("EMAIL CAMPAIGN - PREVIEW")
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print(f"\n📧 [bold]EMAIL CAMPAIGN - Preview[/bold]")
         console.print()
         
         # Display raw markdown content without Rich's markdown rendering
         console.print(preview_markdown)
         
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
         # Show file save info
@@ -692,17 +718,18 @@ def show_email_campaign_preview(domain: str) -> None:
         file_size = (project_dir / "email.json").stat().st_size / 1024
         console.print(f"✓ Full campaign saved to: email.json ({file_size:.1f}KB)")
         console.print()
+        console.print()
         
         
         # Get user choice
-        choice = questionary.select(
+        choice = show_menu_with_separator(
             "What would you like to do?",
             choices=[
                 "Complete generation",
                 "Edit full campaign in editor", 
                 "Abort"
             ]
-        ).ask()
+        )
         
         
         if choice == "Abort":
@@ -727,9 +754,7 @@ def show_guided_email_campaign_preview(domain: str) -> None:
         
         # Create enhanced preview based on PRD spec
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("EMAIL CAMPAIGN - Preview")
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print(f"\n📧 [bold]EMAIL CAMPAIGN - Preview[/bold]")
         
         # Show main email content
         emails = email_data.get("emails", [])
@@ -763,7 +788,6 @@ def show_guided_email_campaign_preview(domain: str) -> None:
                 for alt in alt_subjects[:2]:
                     console.print(f'- "{alt}"')
         
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
         # Show file save info
