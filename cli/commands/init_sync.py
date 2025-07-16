@@ -169,67 +169,104 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
     ))
     
     if yolo:
-        console.print("[blue]YOLO mode: Updating with fresh data[/blue]")
-        update_project = True
+        console.print("[blue]YOLO mode: Updating all steps with fresh data[/blue]")
+        start_from_step = "overview"
     else:
         console.print(f"Project '{domain}' already exists.")
-        update_project = typer.confirm("Would you like to update it with fresh data?", default=None)
-    
-    if not update_project:
-        console.print("Operation cancelled.")
-        console.print(f"→ View current results: [cyan]blossomer show all[/cyan]")
-        return
+        
+        # Offer step selection menu
+        choices = [
+            "🔄 Start from beginning (all steps)",
+            "📊 Start from Company Overview", 
+            "🎯 Start from Target Account Profile",
+            "👤 Start from Buyer Persona",
+            "📧 Start from Email Campaign",
+            "❌ Cancel (view existing results)"
+        ]
+        
+        choice = questionary.select(
+            "Where would you like to start updating?",
+            choices=choices
+        ).ask()
+        
+        if choice == "❌ Cancel (view existing results)":
+            console.print("Operation cancelled.")
+            console.print(f"→ View current results: [cyan]blossomer show all[/cyan]")
+            return
+        elif choice == "🔄 Start from beginning (all steps)":
+            start_from_step = "overview"
+        elif choice == "📊 Start from Company Overview":
+            start_from_step = "overview"
+        elif choice == "🎯 Start from Target Account Profile":
+            start_from_step = "account"
+        elif choice == "👤 Start from Buyer Persona":
+            start_from_step = "persona"
+        elif choice == "📧 Start from Email Campaign":
+            start_from_step = "email"
     
     console.print()
-    console.print("[blue]→ Updating project with fresh website data[/blue]")
+    console.print(f"[blue]→ Starting from {start_from_step} step and running all subsequent steps[/blue]")
     console.print()
     
-    # Continue with generation flow - run all steps with fresh data
+    # Continue with generation flow - start from selected step and run all subsequent steps
     try:
+        step_order = ["overview", "account", "persona", "email"]
+        start_index = step_order.index(start_from_step)
+        steps_to_run = step_order[start_index:]
+        
+        step_counter = 1
+        
         # Step 1: Company Overview
-        run_generation_step(
-            step_name="Company Overview",
-            step_number=1,
-            explanation="Analyzing your website to understand your business, products, and value proposition",
-            generate_func=lambda: run_async_generation(
-                gtm_service.generate_company_overview(domain, None, True)
-            ),
-            domain=domain,
-            step_key="overview",
-            yolo=yolo
-        )
+        if "overview" in steps_to_run:
+            run_generation_step(
+                step_name="Company Overview",
+                step_number=step_counter,
+                explanation="Analyzing your website to understand your business, products, and value proposition",
+                generate_func=lambda: run_async_generation(
+                    gtm_service.generate_company_overview(domain, None, True)
+                ),
+                domain=domain,
+                step_key="overview",
+                yolo=yolo
+            )
+            step_counter += 1
         
         # Step 2: Target Account
-        run_generation_step(
-            step_name="Target Account Profile",
-            step_number=2,
-            explanation="Identifying your ideal customer companies based on your business analysis",
-            generate_func=lambda: run_async_generation(
-                gtm_service.generate_target_account(domain, force_regenerate=True)
-            ),
-            domain=domain,
-            step_key="account",
-            yolo=yolo
-        )
+        if "account" in steps_to_run:
+            run_generation_step(
+                step_name="Target Account Profile",
+                step_number=step_counter,
+                explanation="Identifying your ideal customer companies based on your business analysis",
+                generate_func=lambda: run_async_generation(
+                    gtm_service.generate_target_account(domain, force_regenerate=True)
+                ),
+                domain=domain,
+                step_key="account",
+                yolo=yolo
+            )
+            step_counter += 1
         
         # Step 3: Buyer Persona
-        run_generation_step(
-            step_name="Buyer Persona",
-            step_number=3,
-            explanation="Creating detailed profiles of decision-makers at your target companies",
-            generate_func=lambda: run_async_generation(
-                gtm_service.generate_target_persona(domain, force_regenerate=True)
-            ),
-            domain=domain,
-            step_key="persona",
-            yolo=yolo
-        )
+        if "persona" in steps_to_run:
+            run_generation_step(
+                step_name="Buyer Persona",
+                step_number=step_counter,
+                explanation="Creating detailed profiles of decision-makers at your target companies",
+                generate_func=lambda: run_async_generation(
+                    gtm_service.generate_target_persona(domain, force_regenerate=True)
+                ),
+                domain=domain,
+                step_key="persona",
+                yolo=yolo
+            )
+            step_counter += 1
         
         # Step 4: Email Campaign
-        run_email_generation_step(
-            domain=domain,
-            yolo=yolo
-        )
+        if "email" in steps_to_run:
+            run_email_generation_step(
+                domain=domain,
+                yolo=yolo
+            )
         
         # Success message
         console.print()
