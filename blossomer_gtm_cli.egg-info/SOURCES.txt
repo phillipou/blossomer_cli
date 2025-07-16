@@ -51,6 +51,7 @@ cli/utils/debug.py
 cli/utils/domain.py
 cli/utils/editor.py
 cli/utils/file_manager.py
+cli/utils/guided_email_builder.py
 cli/utils/logging.py
 tests/test_dependencies.py
 tests/test_domain_utils.py

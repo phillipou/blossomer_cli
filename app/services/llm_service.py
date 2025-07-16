@@ -482,9 +482,9 @@ class LLMClient:
             try:
                 model_name = getattr(provider, "model", None)
                 if model_name:
-                    print(f"Trying provider: {provider.name} (model: {model_name})")
+                    print(f"Using LLM Model: {provider.name} (model: {model_name})")
                 else:
-                    print(f"Trying provider: {provider.name}")
+                    print(f"Using LLM Model: {provider.name}")
                 # Removed per-request health check for performance
                 response = await provider.generate(request)
                 await cb.record_success()

@@ -35,19 +35,30 @@ async def generate_email_campaign_service(
         # Use the context orchestrator service for LLM generation
         service = ContextOrchestratorService(orchestrator=orchestrator)
 
-        # Determine which template to use based on preferences
-        template_type = "blossomer"  # Default to Blossomer template
+        # Handle guided mode preferences or default template
+        guided_mode = False
+        prompt_template = "email_generation_blossomer"  # Default template
+        
         if data.preferences and isinstance(data.preferences, dict):
-            template_type = data.preferences.get("template", "blossomer")
+            # Check if this is guided mode
+            if data.preferences.get("guided_mode"):
+                guided_mode = True
+                # For now, use the main template but with guided preferences
+                prompt_template = "email_generation_blossomer"
+                logger.info(f"Using guided mode with preferences: {data.preferences}")
+            else:
+                # Legacy template preference handling
+                template_type = data.preferences.get("template", "blossomer")
+                if template_type == "custom":
+                    prompt_template = "email_generation_custom"
+                else:
+                    prompt_template = "email_generation_blossomer"
         elif hasattr(data.preferences, "template"):
             template_type = data.preferences.template
-
-        # Map template type to actual template file
-        if template_type == "custom":
-            prompt_template = "email_generation_custom"
-        else:
-            # Default to Blossomer for any unrecognized template type
-            prompt_template = "email_generation_blossomer"
+            if template_type == "custom":
+                prompt_template = "email_generation_custom"
+            else:
+                prompt_template = "email_generation_blossomer"
 
         logger.info(f"Using template: {prompt_template} for generation {generation_id}")
 
@@ -78,7 +89,7 @@ async def generate_email_campaign_service(
         logger.info(
             f"Email generation {generation_id} completed in {processing_time}ms"
         )
-        print(
+        debug_print(
             f"[EmailGenerationService] Email generation {generation_id} response: {result}"
         )
         return result

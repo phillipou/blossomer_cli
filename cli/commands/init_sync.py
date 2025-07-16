@@ -20,6 +20,7 @@ from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
 from cli.utils.console import enter_immersive_mode, exit_immersive_mode
+from cli.utils.guided_email_builder import GuidedEmailBuilder
 
 console = Console()
 
@@ -109,15 +110,8 @@ def init_sync_flow(domain: str, context: Optional[str] = None, yolo: bool = Fals
         )
         
         # Step 4: Email Campaign
-        run_generation_step(
-            step_name="Email Campaign",
-            step_number=4,
-            explanation="Crafting personalized outreach emails based on your analysis",
-            generate_func=lambda: run_async_generation(
-                gtm_service.generate_email_campaign(normalized_domain, force_regenerate=True)
-            ),
+        run_email_generation_step(
             domain=normalized_domain,
-            step_key="email",
             yolo=yolo
         )
         
@@ -221,15 +215,8 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         )
         
         # Step 4: Email Campaign
-        run_generation_step(
-            step_name="Email Campaign",
-            step_number=4,
-            explanation="Crafting personalized outreach emails based on your analysis",
-            generate_func=lambda: run_async_generation(
-                gtm_service.generate_email_campaign(domain, force_regenerate=True)
-            ),
+        run_email_generation_step(
             domain=domain,
-            step_key="email",
             yolo=yolo
         )
         
@@ -315,6 +302,91 @@ def run_generation_step(
         console.print(f"[green]✓[/green] {step_name} completed!")
         
         # No additional confirmation needed - preview functions handle user choices
+
+
+def run_email_generation_step(domain: str, yolo: bool = False) -> None:
+    """Run the email generation step with guided mode choice"""
+    
+    console.print(f"[bold][4/4] Email Campaign[/bold]")
+    console.print(f"[dim]Crafting personalized outreach emails based on your analysis[/dim]")
+    console.print()
+    
+    # Ask for mode choice (unless in YOLO mode)
+    if not yolo:
+        console.print("Generate email automatically or go through guided email builder?")
+        mode_choice = questionary.select(
+            "Choose mode:",
+            choices=[
+                "Guided (interactive email builder)",
+                "Automatic (generate based on analysis)"
+            ]
+        ).ask()
+        
+        is_guided = mode_choice.startswith("Guided")
+    else:
+        is_guided = False
+    
+    console.print()
+    
+    if is_guided:
+        # Load persona and account data for guided builder
+        persona_data = gtm_service.storage.load_step_data(domain, "persona")
+        account_data = gtm_service.storage.load_step_data(domain, "account")
+        
+        # Run the guided email builder
+        builder = GuidedEmailBuilder(persona_data, account_data)
+        guided_preferences = builder.run_guided_flow()
+        
+        console.print()
+        console.print("Generating your personalized email campaign... ", end="")
+        
+        # Generate email with guided preferences
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            TimeElapsedColumn(),
+            console=console,
+            transient=False
+        ) as progress:
+            task = progress.add_task("→ Processing guided choices...", total=None)
+            start_time = time.time()
+            
+            try:
+                result = run_async_generation(
+                    gtm_service.generate_email_campaign(domain, preferences=guided_preferences, force_regenerate=True)
+                )
+                elapsed = time.time() - start_time
+                
+                progress.update(task, description=f"→ completed in {elapsed:.1f}s")
+                progress.stop()
+                
+                console.print(f"   [green]✓[/green] Email Campaign generated successfully")
+                
+            except Exception as e:
+                progress.stop()
+                console.print(f"   [red]✗[/red] Failed to generate Email Campaign: {e}")
+                raise
+    else:
+        # Use the original automatic generation
+        run_generation_step(
+            step_name="Email Campaign",
+            step_number=4,
+            explanation="Crafting personalized outreach emails based on your analysis",
+            generate_func=lambda: run_async_generation(
+                gtm_service.generate_email_campaign(domain, force_regenerate=True)
+            ),
+            domain=domain,
+            step_key="email",
+            yolo=yolo
+        )
+        return  # Return early since run_generation_step handles the preview
+    
+    console.print()
+    
+    # Show preview for guided mode (automatic mode handled by run_generation_step)
+    if not yolo:
+        show_guided_email_campaign_preview(domain)
+        console.print(f"[green]✓[/green] Email Campaign completed!")
 
 
 def edit_step_content(domain: str, step_key: str, step_name: str) -> None:
@@ -430,7 +502,6 @@ def show_target_account_preview(domain: str) -> None:
             ]
         ).ask()
         
-        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -500,7 +571,6 @@ def show_company_overview_preview(domain: str) -> None:
             ]
         ).ask()
         
-        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -575,7 +645,6 @@ def show_buyer_persona_preview(domain: str) -> None:
             ]
         ).ask()
         
-        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -653,7 +722,6 @@ def show_email_campaign_preview(domain: str) -> None:
             ]
         ).ask()
         
-        console.print("\\n\\n")  # Add multiple lines of space after menu
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -662,6 +730,87 @@ def show_email_campaign_preview(domain: str) -> None:
             # After editing, just continue to completion
             console.print()
         # If "Complete generation", just return and let the flow continue
+        
+    except Exception as e:
+        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
+
+
+def show_guided_email_campaign_preview(domain: str) -> None:
+    """Show enhanced email campaign preview for guided mode"""
+    try:
+        # Load the generated email data
+        email_data = gtm_service.storage.load_step_data(domain, "email")
+        if not email_data:
+            return
+        
+        # Create enhanced preview based on PRD spec
+        console.print()
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print("EMAIL CAMPAIGN - Preview")
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        
+        # Show main email content
+        emails = email_data.get("emails", [])
+        if emails:
+            first_email = emails[0]
+            subject = first_email.get("subject", "Your personalized subject line")
+            body = first_email.get("body", "Your personalized email content")
+            
+            console.print(f"Subject: {subject}")
+            console.print()
+            console.print("Hi {{FirstName}},")
+            console.print()
+            
+            # Show a preview of the body (first few lines)
+            body_lines = body.split('\n')[:4]
+            for line in body_lines:
+                console.print(line)
+            
+            if len(body.split('\n')) > 4:
+                console.print("...")
+            
+            console.print()
+            console.print("Best,")
+            console.print("{{Your name}}")
+            
+            # Show alternative subjects if available
+            alt_subjects = first_email.get("alternative_subjects", [])
+            if alt_subjects:
+                console.print()
+                console.print("Alternative subjects:")
+                for alt in alt_subjects[:2]:
+                    console.print(f'- "{alt}"')
+        
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
+        
+        # Show file save info
+        project_dir = gtm_service.storage.get_project_dir(domain)
+        file_size = (project_dir / "email.json").stat().st_size / 1024
+        console.print(f"✓ Full campaign saved to: email.json ({file_size:.1f}KB)")
+        console.print()
+        
+        # Get user choice
+        choice = questionary.select(
+            "What would you like to do?",
+            choices=[
+                "Continue to GTM plan",
+                "Edit full campaign in editor", 
+                "Abort"
+            ]
+        ).ask()
+        
+        
+        if choice == "Abort":
+            raise KeyboardInterrupt()
+        elif choice == "Edit full campaign in editor":
+            edit_step_content(domain, "email", "Email Campaign")
+            # After editing, show options again
+            console.print()
+            continue_choice = typer.confirm("Continue to next step?", default=None)
+            if not continue_choice:
+                raise KeyboardInterrupt()
+        # If "Continue to GTM plan", just return and let the flow continue
         
     except Exception as e:
         console.print(f"[yellow]Could not show preview: {e}[/yellow]")

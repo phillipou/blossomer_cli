@@ -1,34 +1,34 @@
 {
   "subjects": {
-    "primary": "outbound setup",
+    "primary": "outbound strategy",
     "alternatives": [
       "sales system boost",
-      "rapid outreach"
+      "rapid onboarding"
     ]
   },
   "email_body": [
     {
-      "text": "outbound setup",
+      "text": "outbound strategy",
       "type": "subject"
     },
     {
-      "text": "Noticed you're scaling outbound fast, so I thought I’d check in about your system deployment",
+      "text": "Noticed you're focusing on outbound sales and thought now's a good time to optimize your approach",
       "type": "intro"
     },
     {
-      "text": "Many teams struggle with slow setup delays that hold back outreach momentum",
+      "text": "Many SMBs struggle to scale outreach fast without slowing down sales cycles",
       "type": "pain-point"
     },
     {
-      "text": "Blossomer helps mid-market companies deploy outbound systems quickly, with proven strategies for rapid results",
+      "text": "Blossomer helps teams build outbound systems quickly, with proven strategies and fast onboarding",
       "type": "company-intro"
     },
     {
-      "text": "We focus on fast deployment so your team can start dialing sooner",
+      "text": "Would you be open to a quick chat on how we can support your efforts",
       "type": "emphasis"
     },
     {
-      "text": "Want to see how it works?",
+      "text": "Let me know if you're interested",
       "type": "cta"
     }
   ],
@@ -65,11 +65,11 @@
     }
   },
   "metadata": {
-    "generation_id": "d8910ac4-1e6c-4ade-8dfe-5b7d0a24191b",
+    "generation_id": "ebda6a8e-4448-4244-8e4a-c96a38242de2",
     "confidence": "high",
     "personalization_level": "medium",
-    "processing_time_ms": 3237
+    "processing_time_ms": 3606
   },
-  "_generated_at": "2025-07-15T16:54:03.233104",
+  "_generated_at": "2025-07-15T17:15:19.805668",
   "_step": "email"
 }
