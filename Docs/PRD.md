@@ -224,9 +224,9 @@ Step 2/4: Which pain point should we focus on?
 
 Based on your persona analysis, here are their key pain points:
 
-1. "Maintaining support quality during rapid scaling": As teams grow from 10 to 50 agents, consistency drops
-2. "Long agent onboarding times": New agents take 6+ weeks to reach full productivity
-3. "Lack of visibility into knowledge gaps": No way to identify what agents don't know until customers complain
+1. Maintaining support quality during rapid scaling
+2. Long agent onboarding times
+3. Lack of visibility into knowledge gaps
 4. Other (specify custom instructions to the LLM)
 
 Select pain point [1-4]: 1
@@ -237,10 +237,10 @@ Step 3/4: How should we personalize this email?
 
 Based on your buying signals analysis, here are personalization options:
 
-1. Reference recent Series B funding: "Congrats on the Series B - scaling challenges ahead?"
-2. Reference hiring spree: "Saw you're hiring 10+ support agents this quarter"  
-3. Reference company growth metrics: "With 200% YoY growth, support must be challenging"
-4. Reference tech stack adoption: "Notice you recently adopted Zendesk - scaling pains?"
+1. Recent Series B funding
+2. Hiring spree activity  
+3. Company growth metrics
+4. Tech stack adoption
 5. Other (specify custom instructions to the LLM)
 
 Select personalization [1-5]: 1
@@ -754,12 +754,25 @@ The implementation extracts data from target_persona.json:
 3. **Personalization**: Shows buying_signals array options + "Other" option for custom instructions
 4. **Call-to-Action**: Shows 5 predefined CTA types + "Other" option for custom text
 
+### UI/UX Improvements
+
+✅ **Clean Display Formatting**: 
+- **Step 2**: Shows only content after colon (e.g., "Faster lead engagement, increased outreach" instead of full verbose descriptions)
+- **Step 3**: Shows only text before colon (e.g., "Recent Series B funding" instead of full personalization examples)
+- **Hardcoded CTAs**: Fixed CTA options for consistent experience across all sessions
+
+✅ **Enhanced User Experience**:
+- Clean, readable option lists without overwhelming detail
+- Consistent numbering that adapts to actual data array sizes
+- Professional presentation that matches CLI design standards
+
 ### Testing Results
 
 ✅ **Content Extraction**: All emphasis types correctly extract unique options from persona data
 ✅ **Dynamic Sizing**: Handles arrays of any size with proper numbering
 ✅ **Fallback Behavior**: Provides defaults when persona data is missing
 ✅ **Template Integration**: Guided mode variables correctly passed to email generation template
+✅ **UI Formatting**: Clean, readable displays without verbose text clutter
 
 ## Prompt Updates Required
 
