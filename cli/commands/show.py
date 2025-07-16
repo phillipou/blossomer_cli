@@ -332,32 +332,14 @@ def show_buyer_persona(data: dict) -> None:
 
 
 def show_email_campaign(data: dict) -> None:
-    """Format email campaign data"""
+    """Format email campaign data using markdown formatter"""
+    from cli.utils.markdown_formatter import get_formatter
+    from rich.markdown import Markdown
     
-    email = data.get("email_content", {})
-    
-    # Email details
-    if "subject_line" in email:
-        console.print(Panel(
-            email["subject_line"],
-            title="[bold]Subject Line[/bold]",
-            border_style="green"
-        ))
-    
-    if "email_body" in email:
-        console.print()
-        console.print(Panel(
-            email["email_body"],
-            title="[bold]Email Body[/bold]",
-            border_style="blue"
-        ))
-    
-    # Alternative subject lines
-    if "alternative_subject_lines" in email:
-        console.print()
-        console.print("[bold]Alternative Subject Lines:[/bold]")
-        for alt in email["alternative_subject_lines"]:
-            console.print(f"  • {alt}")
+    # Use markdown formatter for consistent display
+    formatter = get_formatter('email')
+    preview_markdown = formatter.format(data, preview=True, max_chars=800)
+    console.print(Markdown(preview_markdown))
 
 
 def show_gtm_plan(data: dict) -> None:

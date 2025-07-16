@@ -127,9 +127,15 @@ def show(
 
 
 @app.command()
-def export() -> None:
-    """📄 Export assets as markdown report."""
-    console.print("[red]Command not yet implemented[/red]")
+def export(
+    step: str = typer.Argument("all", help="Step to export: all, overview, account, persona, email"),
+    output: Optional[str] = typer.Option(None, "--output", help="Custom output file path"),
+    domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
+) -> None:
+    """📄 Export GTM assets as formatted markdown reports."""
+    from cli.commands.export import export_assets
+    
+    export_assets(step, output, domain)
 
 
 @app.command()
