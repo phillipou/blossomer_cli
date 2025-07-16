@@ -105,7 +105,11 @@ class GuidedEmailBuilder:
         
         choices = []
         for i, option in enumerate(content_options, 1):
-            choices.append(f"{i}. \"{option['value']}\": {option['description']}")
+            # For step 2: show only the text after the colon (if there is one)
+            display_text = option['value']
+            if ':' in display_text:
+                display_text = display_text.split(':', 1)[1].strip()
+            choices.append(f"{i}. {display_text}")
         
         # Add "Other" option with dynamic numbering
         other_num = len(content_options) + 1
@@ -151,7 +155,11 @@ class GuidedEmailBuilder:
         
         choices = []
         for i, option in enumerate(personalization_options, 1):
-            choices.append(f"{i}. {option['title']}: \"{option['example']}\"")
+            # For step 3: show only the text before the colon (if there is one)
+            display_text = option['title']
+            if ':' in display_text:
+                display_text = display_text.split(':', 1)[0].strip()
+            choices.append(f"{i}. {display_text}")
         
         # Add "Other" option with dynamic numbering
         other_num = len(personalization_options) + 1
@@ -224,7 +232,7 @@ class GuidedEmailBuilder:
         
         choices = []
         for i, option in enumerate(cta_options, 1):
-            choices.append(f"{i}. {option['label']}\n   \"{option['text']}\"")
+            choices.append(f"{i}. {option['label']} (e.g. {option['text']})")
         
         # Add "Other" option with dynamic numbering
         other_num = len(cta_options) + 1
