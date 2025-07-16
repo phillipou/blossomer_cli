@@ -19,7 +19,7 @@ from rich.text import Text
 from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
-from cli.utils.console import enter_immersive_mode, exit_immersive_mode
+from cli.utils.console import enter_immersive_mode, exit_immersive_mode, ensure_breathing_room
 from cli.utils.guided_email_builder import GuidedEmailBuilder
 from cli.utils.markdown_formatter import get_formatter
 from cli.utils.colors import Colors, format_project_status, format_step_flow
@@ -43,11 +43,51 @@ def show_menu_with_separator(question: str, choices: list, add_separator: bool =
         console.print("─" * 60)
         console.print()
     
-    return questionary.select(
+    result = questionary.select(
         question,
         choices=choices,
         style=MENU_STYLE
     ).ask()
+    
+    # Add bottom padding after questionary prompt to prevent cramped feeling
+    ensure_breathing_room(console)
+    
+    # Handle CTRL+C (questionary returns None when interrupted)
+    if result is None:
+        raise KeyboardInterrupt()
+    
+    return result
+
+
+def capture_hypotheses() -> dict:
+    """Capture optional user hypotheses for target account and persona"""
+    console.print()
+    console.print("🎯 [bold cyan]Optional Context (press Enter to skip)[/bold cyan]")
+    console.print()
+    
+    account_hypothesis = questionary.text(
+        "Target Account Hypothesis (press Enter to skip):",
+        style=MENU_STYLE
+    ).ask()
+    
+    persona_hypothesis = questionary.text(
+        "Target Persona Hypothesis (press Enter to skip):",
+        style=MENU_STYLE
+    ).ask()
+    
+    # Build context object
+    context = {}
+    if account_hypothesis and account_hypothesis.strip():
+        context["account_hypothesis"] = account_hypothesis.strip()
+    if persona_hypothesis and persona_hypothesis.strip():
+        context["persona_hypothesis"] = persona_hypothesis.strip()
+    
+    if context:
+        console.print()
+        console.print("✓ Context captured. Starting analysis...")
+        console.print()
+    
+    return context if context else None
 
 
 def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool = False) -> None:
@@ -59,6 +99,12 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
             "Enter the company domain to analyze:",
             placeholder="e.g., acme.com"
         ).ask()
+        
+        ensure_breathing_room(console)
+        
+        # Handle CTRL+C (questionary returns None when interrupted)
+        if domain is None:
+            raise KeyboardInterrupt()
         
         if not domain:
             console.print("[yellow]No domain provided. Exiting.[/yellow]")
@@ -87,8 +133,19 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
     console.print(f"🚀 [bold cyan]Starting GTM Generation for {normalized_domain}[/bold cyan]")
     console.print(f"Creating: [green]Overview[/green] → [green]Account Profile[/green] → [green]Buyer Persona[/green] → [green]Email Campaign[/green]")
     
+    # Capture hypotheses (if not in YOLO mode and context not provided)
+    hypothesis_context = None
+    if not yolo and context is None:
+        hypothesis_context = capture_hypotheses()
+    elif context:
+        hypothesis_context = {"general_context": context}
+    
     if not yolo:
         ready = typer.confirm("Ready to start generation?", default=None)
+        ensure_breathing_room(console)
+        # Handle CTRL+C (typer.confirm returns None when interrupted)
+        if ready is None:
+            raise KeyboardInterrupt()
         if not ready:
             console.print("Operation cancelled.")
             return
@@ -104,7 +161,7 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
             step_number=1,
             explanation="Analyzing your website to understand your business, products, and value proposition",
             generate_func=lambda: run_async_generation(
-                gtm_service.generate_company_overview(normalized_domain, context, True)
+                gtm_service.generate_company_overview(normalized_domain, context or hypothesis_context, True)
             ),
             domain=normalized_domain,
             step_key="overview",
@@ -117,7 +174,12 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
             step_number=2,
             explanation="Identifying your ideal customer companies based on your business analysis",
             generate_func=lambda: run_async_generation(
-                gtm_service.generate_target_account(normalized_domain, force_regenerate=True)
+                gtm_service.generate_target_account(
+                    normalized_domain, 
+                    hypothesis=hypothesis_context.get("account_hypothesis") if hypothesis_context else None,
+                    additional_context=hypothesis_context.get("general_context") if hypothesis_context else None,
+                    force_regenerate=True
+                )
             ),
             domain=normalized_domain,
             step_key="account",
@@ -130,7 +192,12 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
             step_number=3,
             explanation="Creating detailed profiles of decision-makers at your target companies",
             generate_func=lambda: run_async_generation(
-                gtm_service.generate_target_persona(normalized_domain, force_regenerate=True)
+                gtm_service.generate_target_persona(
+                    normalized_domain, 
+                    hypothesis=hypothesis_context.get("persona_hypothesis") if hypothesis_context else None,
+                    additional_context=hypothesis_context.get("general_context") if hypothesis_context else None,
+                    force_regenerate=True
+                )
             ),
             domain=normalized_domain,
             step_key="persona",
@@ -566,7 +633,9 @@ def show_target_account_preview(domain: str) -> None:
             # After editing, show options again
             console.print()
             continue_choice = typer.confirm("Continue to next step?", default=None)
-            if not continue_choice:
+            ensure_breathing_room(console)
+            # Handle CTRL+C (typer.confirm returns None when interrupted)
+            if continue_choice is None or not continue_choice:
                 raise KeyboardInterrupt()
         # If "Continue to next step", just return and let the flow continue
         
@@ -623,7 +692,9 @@ def show_company_overview_preview(domain: str) -> None:
             # After editing, show options again
             console.print()
             continue_choice = typer.confirm("Continue to next step?", default=None)
-            if not continue_choice:
+            ensure_breathing_room(console)
+            # Handle CTRL+C (typer.confirm returns None when interrupted)
+            if continue_choice is None or not continue_choice:
                 raise KeyboardInterrupt()
         # If "Continue to next step", just return and let the flow continue
         
@@ -680,7 +751,9 @@ def show_buyer_persona_preview(domain: str) -> None:
             # After editing, show options again
             console.print()
             continue_choice = typer.confirm("Continue to next step?", default=None)
-            if not continue_choice:
+            ensure_breathing_room(console)
+            # Handle CTRL+C (typer.confirm returns None when interrupted)
+            if continue_choice is None or not continue_choice:
                 raise KeyboardInterrupt()
         # If "Continue to next step", just return and let the flow continue
         
@@ -806,6 +879,7 @@ def show_guided_email_campaign_preview(domain: str) -> None:
             ]
         ).ask()
         
+        ensure_breathing_room(console)
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -814,7 +888,9 @@ def show_guided_email_campaign_preview(domain: str) -> None:
             # After editing, show options again
             console.print()
             continue_choice = typer.confirm("Continue to next step?", default=None)
-            if not continue_choice:
+            ensure_breathing_room(console)
+            # Handle CTRL+C (typer.confirm returns None when interrupted)
+            if continue_choice is None or not continue_choice:
                 raise KeyboardInterrupt()
         # If "Continue to GTM plan", just return and let the flow continue
         
