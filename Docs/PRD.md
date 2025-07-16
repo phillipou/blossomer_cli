@@ -78,10 +78,10 @@ Target Market Signals:
 Options:
 [C]ontinue to next step (or press Enter)
 [E]dit full analysis in editor
-[R]egenerate with changes
+
 [A]bort (or press Ctrl+C)
 
-Choice [C/e/r/a]: C
+Choice [c/e/a]: C
 
 ```
 
@@ -122,10 +122,9 @@ Top Buying Signals:
 Options:
 [C]ontinue to next step
 [E]dit full profile in editor
-[R]egenerate with changes
 [A]bort
 
-Choice [C/e/r/a]: C
+Choice [c/e/a]: C
 
 ```
 
@@ -162,17 +161,165 @@ What gets their attention:
 Options:
 [C]ontinue to next step
 [E]dit full persona in editor
-[R]egenerate with changes
 [A]bort
 
-Choice [C/e/r/a]: C
+Choice [c/e/a]: C
 
 ```
+Step 3 - Buyer Persona:
+[3/5] 👤 Building buyer persona... done (6s)
 
-**Step 4 - Email Campaign:**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BUYER PERSONA - Quick Summary
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Title: VP of Customer Success
+Reports to: COO or CEO
+Team: 15-30 direct reports
 
-```
-[4/5] ✉️  Creating email campaign... done (4s)
+Key Priorities:
+- Reduce ticket resolution time
+- Improve CSAT scores  
+- Scale team efficiently
+
+Biggest Challenges:
+- Maintaining quality during growth
+- Long agent onboarding times
+- Lack of visibility into knowledge gaps
+
+What gets their attention:
+- ROI data from similar companies
+- Time-to-value under 30 days
+- Integration with existing stack
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Full persona saved to: persona.json (4.2KB)
+
+Options:
+[C]ontinue to GTM plan
+[E]dit full campaign in editor
+[A]bort
+
+Choice [c/e/a]: C
+
+Generate email automatically or go through guided email builder?
+[A]utomatic / [G]uided
+
+Choice [A/g]: G
+Step 4 - Email Campaign (Guided Mode):
+Email Guide Step 1: Select Point of Emphasis
+📧 Email Campaign Builder - Guided Mode
+
+Step 1/4: What should your email emphasize?
+
+1. Pain Point: Focus on challenges they're experiencing
+2. Capability: Focus on what your solution can do
+3. Desired Outcome: Focus on the results they want
+
+Select emphasis [1-3]: 1
+✓ Focusing on pain points
+Email Guide Step 2: Select Specific Pain Point
+Step 2/4: Which pain point should we focus on?
+
+Based on your persona analysis, here are their key pain points:
+
+1. Maintaining support quality during rapid scaling
+   "As teams grow from 10 to 50 agents, consistency drops"
+
+2. Long agent onboarding times  
+   "New agents take 6+ weeks to reach full productivity"
+
+3. Lack of visibility into knowledge gaps
+   "No way to identify what agents don't know until customers complain"
+
+4. Other (specify your own)
+
+Select pain point [1-4]: 1
+✓ Selected: Quality challenges during scaling
+Email Guide Step 3: Select Personalization Angle
+Step 3/4: How should we personalize this email?
+
+Based on your target account analysis:
+
+1. No personalization (generic approach)
+
+2. Reference recent Series B funding
+   "Congrats on the Series B - scaling challenges ahead?"
+
+3. Reference hiring spree  
+   "Saw you're hiring 10+ support agents this quarter"
+
+4. Reference company growth metrics
+   "With 200% YoY growth, support must be challenging"
+
+5. Other (specify your own)
+
+Select personalization [1-5]: 2
+✓ Will reference Series B funding
+Email Guide Step 4: Select Call-to-Action
+Step 4/4: What should the call-to-action be?
+
+1. Ask for a meeting
+   "Worth a quick 15-min call next week?"
+
+2. Ask if it's a priority  
+   "Is improving support efficiency a Q1 priority?"
+
+3. Ask for feedback
+   "Curious if this resonates with your experience?"
+
+4. Offer free help
+   "Happy to share our scaling playbook - interested?"
+
+5. Invite to resource
+   "We have a guide on this - should I send it over?"
+
+Select CTA [1-5]: 1
+
+✓ Will ask for a meeting
+
+Generating your personalized email campaign... done (4s)
+Email Preview After Generation:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EMAIL CAMPAIGN - Preview
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Subject: support quality dropping post-series b?
+
+Hi {{FirstName}},
+
+Congrats on the Series B! With that kind of growth, 
+I imagine maintaining support quality is getting 
+harder. 
+
+Most teams your size see consistency drop as they 
+scale from 10 to 50 agents. Different agents give 
+different answers, and there's no way to catch it 
+until customers complain.
+
+We help companies like yours maintain quality 
+through real-time knowledge gap detection. Worth 
+a quick 15-min call next week to discuss?
+
+Best,
+{{Your name}}
+
+Alternative subjects:
+- "scaling support without losing quality?"
+- "series b growing pains in support?"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Full campaign saved to: email.json (2.8KB)
+
+Options:
+[C]ontinue to GTM plan
+[E]dit full campaign in editor
+[A]bort
+
+Choice [c/e/a]: C
+
+Step 4 - Email Campaign (Automatic Mode):
+[If user selected [A]utomatic at the persona step]
+
+[4/5] ✉️ Auto-generating email campaign... done (4s)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EMAIL CAMPAIGN - Quick Preview
@@ -181,20 +328,20 @@ Subject: reduce support resolution time?
 
 Hi {{FirstName}},
 
-Noticed {{Company}}'s recent Series B - congrats!
-With rapid growth, maintaining support quality
-gets harder.
+Noticed {{Company}}'s recent Series B - congrats! 
+With rapid growth, maintaining support quality 
+gets harder. 
 
-Most teams your size see 40% longer resolution
-times as they scale. We help identify knowledge
+Most teams your size see 40% longer resolution 
+times as they scale. We help identify knowledge 
 gaps in real-time so agents get answers faster.
 
-Worth a quick chat to see if this could help
+Worth a quick chat to see if this could help 
 {{Company}}?
 
 Alternative subjects:
-• "support scaling challenges at {{Company}}?"
-• "40% faster ticket resolution - interested?"
+- "support scaling challenges at {{Company}}?"
+- "40% faster ticket resolution - interested?"
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ✓ Full campaign saved to: email.json (2.8KB)
@@ -202,12 +349,10 @@ Alternative subjects:
 Options:
 [C]ontinue to GTM plan
 [E]dit full campaign in editor
-[R]egenerate with changes
 [A]bort
 
-Choice [C/e/r/a]: C
+Choice [c/e/a]: C
 
-```
 
 **Step 5 - GTM Plan (NEW):**
 
@@ -695,5 +840,5 @@ The CLI should:
 
 - Beautiful **interactive prompts** that match your UX design
 - Better than `input()` or Typer's basic prompts
-- Supports the **[C/e/r/a]** style choices in your spec
+- Supports the **[c/e/a]** style choices in your spec
 - Auto-completion, validation, and styling

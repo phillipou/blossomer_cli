@@ -1,3 +1,2 @@
 [console_scripts]
-gtm = cli.main:main
-gtm-cli = cli.main:main
+blossomer = cli.main:main

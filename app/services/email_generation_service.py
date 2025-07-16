@@ -13,6 +13,12 @@ from app.schemas import (
 )
 
 logger = logging.getLogger(__name__)
+# Import debug utility for conditional debug printing
+try:
+    from cli.utils.debug import debug_print
+except ImportError:
+    # Fallback if running outside CLI context
+    debug_print = print
 
 
 async def generate_email_campaign_service(
@@ -75,7 +81,7 @@ async def generate_email_campaign_service(
         logger.info(
             f"Email generation {generation_id} completed in {processing_time}ms"
         )
-        print(
+        debug_print(
             f"[EmailGenerationService] Email generation {generation_id} response: {result}"
         )
         return result

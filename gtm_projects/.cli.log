@@ -1,9 +1,0 @@
-2025-07-15 14:04:13,405 - root - INFO - Testing CLI logger
-2025-07-15 14:04:13,406 - root - INFO - SUCCESS: Operation completed successfully
-2025-07-15 14:04:13,406 - root - WARNING - This is a warning message
-2025-07-15 14:04:13,406 - root - ERROR - This is an error message
-2025-07-15 14:04:13,406 - root - DEBUG - This is a debug message
-2025-07-15 14:04:13,407 - root - INFO - PROGRESS [1/5]: 🔍 Analyzing company...
-2025-07-15 14:04:13,407 - root - DEBUG - MICRO: Fetching website content ...
-2025-07-15 14:04:13,407 - root - DEBUG - MICRO: Fetching website content done
-2025-07-15 14:04:13,407 - root - ERROR - Invalid domain format: invalid..domain

@@ -417,6 +417,8 @@ def show_target_account_preview(domain: str) -> None:
         file_size = (project_dir / "account.json").stat().st_size / 1024
         console.print(f"✓ Full profile saved to: account.json ({file_size:.1f}KB)")
         console.print()
+        print()  # Add extra space before menu
+        print()  # Add more space before menu  
         
         # Get user choice
         choice = questionary.select(
@@ -485,6 +487,8 @@ def show_company_overview_preview(domain: str) -> None:
         file_size = (project_dir / "overview.json").stat().st_size / 1024
         console.print(f"✓ Full overview saved to: overview.json ({file_size:.1f}KB)")
         console.print()
+        print()  # Add extra space before menu
+        print()  # Add more space before menu  
         
         # Get user choice
         choice = questionary.select(
@@ -558,6 +562,8 @@ def show_buyer_persona_preview(domain: str) -> None:
         file_size = (project_dir / "persona.json").stat().st_size / 1024
         console.print(f"✓ Full persona saved to: persona.json ({file_size:.1f}KB)")
         console.print()
+        print()  # Add extra space before menu
+        print()  # Add more space before menu  
         
         # Get user choice
         choice = questionary.select(
