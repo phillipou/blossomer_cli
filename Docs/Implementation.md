@@ -268,6 +268,173 @@ python3 -m cli.main generate email      # Regenerate email with guided flow opti
 - [ ] Implement thorough testing suite
 - [ ] Create installation and deployment scripts
 
+## 📄 JSON-to-Markdown Utility Project
+
+### Overview
+Create a utility system that converts GTM analysis JSON files to well-formatted Markdown for preview display and export functionality.
+
+### Use Cases
+1. **Preview Mode**: Generate truncated, clean markdown for showing content snippets in CLI commands
+2. **Export Mode**: Generate complete, formatted markdown reports for external use
+
+### Architecture Design
+
+#### File Location
+- **Primary File**: `cli/utils/markdown_formatter.py`
+- **Integration Points**: `cli/commands/show.py` (preview), `cli/commands/export.py` (full export)
+
+#### Class Structure
+```python
+# Base formatter with common functionality
+class MarkdownFormatter:
+    def format(self, data: dict, preview: bool = False, max_chars: int = 500) -> str
+    
+# Specialized formatters for each JSON schema
+class OverviewFormatter(MarkdownFormatter)    # overview.json
+class AccountFormatter(MarkdownFormatter)     # account.json  
+class PersonaFormatter(MarkdownFormatter)     # persona.json
+class EmailFormatter(MarkdownFormatter)       # email.json
+
+# Factory function for easy instantiation
+def get_formatter(step_type: str) -> MarkdownFormatter
+```
+
+### Implementation Tasks
+
+#### Core Formatter Development
+- [ ] **Create base MarkdownFormatter class** with common functionality
+  - [ ] Character truncation logic for preview mode
+  - [ ] Common markdown formatting utilities (headers, lists, tables)
+  - [ ] Metadata section generation
+  - [ ] Error handling for malformed data
+
+- [ ] **Implement OverviewFormatter** for company analysis JSON
+  - [ ] Company name and description (priority content)
+  - [ ] Business insights and capabilities as lists
+  - [ ] Use case analysis and positioning insights
+  - [ ] Target customer insights and objections
+  - [ ] Preview: Company name + description + top 3 insights
+
+- [ ] **Implement AccountFormatter** for target account JSON
+  - [ ] Account name and description header
+  - [ ] Firmographics as formatted table
+  - [ ] Buying signals as prioritized list with descriptions
+  - [ ] Rationale as bullet points
+  - [ ] Preview: Name + description + top 3 buying signals
+
+- [ ] **Implement PersonaFormatter** for buyer persona JSON
+  - [ ] Persona name and description header
+  - [ ] Demographics table (job titles, departments, seniority)
+  - [ ] Use cases with pain points and outcomes
+  - [ ] Buying signals and objections as sections
+  - [ ] Goals and purchase journey
+  - [ ] Preview: Name + description + primary use case
+
+- [ ] **Implement EmailFormatter** for email campaign JSON
+  - [ ] Subject line variations as header
+  - [ ] Email body with segment type annotations
+  - [ ] Breakdown explanation for each segment type
+  - [ ] Generation metadata and personalization info
+  - [ ] Preview: Primary subject + first 2 email segments
+
+#### Utility Functions
+- [ ] **Create formatter factory function** for easy instantiation
+  - [ ] Map step types to formatter classes
+  - [ ] Handle unknown step types gracefully
+  - [ ] Support future formatter additions
+
+- [ ] **Implement preview mode logic**
+  - [ ] Smart content prioritization (most valuable content first)
+  - [ ] Character counting with word boundaries
+  - [ ] Graceful truncation with ellipsis
+  - [ ] Preserve markdown structure in truncated content
+
+- [ ] **Implement full export mode**
+  - [ ] Complete formatting with all sections
+  - [ ] Rich markdown features (tables, code blocks, lists)
+  - [ ] Consistent header hierarchy
+  - [ ] Metadata appendix with generation details
+
+#### Integration Points
+- [ ] **Update show command** to use preview formatting
+  - [ ] Import formatter utility
+  - [ ] Replace current JSON display with markdown preview
+  - [ ] Maintain Rich terminal formatting
+  - [ ] Add character limit option
+
+- [ ] **Create export command** for full markdown generation
+  - [ ] New CLI command: `export <step|all> [--output file.md]`
+  - [ ] Single step export vs. complete report
+  - [ ] Meaningful filename generation (gtm-report-domain-date.md)
+  - [ ] File overwrite confirmation prompts
+
+#### Testing & Validation
+- [ ] **Add unit tests** for all formatter classes
+  - [ ] Test with real JSON data from gtm_projects
+  - [ ] Test preview mode character limits
+  - [ ] Test malformed data handling
+  - [ ] Test markdown syntax validity
+
+- [ ] **Integration testing**
+  - [ ] Test show command preview integration
+  - [ ] Test export command functionality
+  - [ ] Test with various project states (complete, partial, stale)
+
+### Technical Specifications
+
+#### Markdown Structure Standards
+```markdown
+# {Company Name} - GTM Analysis
+
+## Company Overview
+- **Description**: {description}
+- **URL**: {company_url}
+
+### Key Insights
+- {insight 1}
+- {insight 2}
+
+## Target Account Profile
+**{target_account_name}**
+
+{target_account_description}
+
+### Firmographics
+| Attribute | Value |
+|-----------|-------|
+| Industry | {industries} |
+| Employees | {employee_range} |
+
+### Buying Signals
+1. **{signal_title}** ({priority})
+   {signal_description}
+   *Detection: {detection_method}*
+```
+
+#### Content Prioritization for Preview
+1. **Overview**: Company name → description → top 3 business insights
+2. **Account**: Target name → description → top 3 buying signals  
+3. **Persona**: Persona name → description → primary use case
+4. **Email**: Primary subject → intro → pain point segments
+
+#### Character Limits
+- **Short Preview**: 200 characters (for command summaries)
+- **Medium Preview**: 500 characters (for step previews)
+- **Long Preview**: 1000 characters (for detailed views)
+
+### Dependencies
+- **Existing**: Uses current JSON schemas and project structure
+- **New**: No additional external dependencies required
+- **Integration**: Enhances existing `show` command, enables new `export` command
+
+### Success Criteria
+1. ✅ All JSON types can be converted to readable markdown
+2. ✅ Preview mode shows most important content within character limits
+3. ✅ Export mode generates complete, well-formatted reports
+4. ✅ Integration works seamlessly with existing CLI commands
+5. ✅ Handles malformed data gracefully with clear error messages
+6. ✅ Maintains performance for large JSON files
+
 ## Detailed Implementation Strategy
 
 ### Codebase Cleanup and Adaptation

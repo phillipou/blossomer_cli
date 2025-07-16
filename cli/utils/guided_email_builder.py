@@ -11,7 +11,7 @@ console = Console()
 
 
 class GuidedEmailBuilder:
-    """Interactive guided email builder with 4 steps matching PRD specifications"""
+    """Interactive guided email builder with 5 steps matching PRD specifications"""
     
     def __init__(self, persona_data: Dict[str, Any], account_data: Dict[str, Any]):
         self.persona_data = persona_data
@@ -22,16 +22,17 @@ class GuidedEmailBuilder:
         self.buying_signals = persona_data.get('buying_signals', [])
     
     def run_guided_flow(self) -> Dict[str, Any]:
-        """Run the complete 4-step guided email building flow"""
+        """Run the complete 5-step guided email building flow"""
         
         console.print()
         console.print(Panel.fit(
             "[bold blue]📧 Email Campaign Builder - Guided Mode[/bold blue]\n\n"
-            "We'll walk you through 4 steps to create the perfect email:\n"
-            "• [green]1/4[/green] What should your email emphasize?\n"
-            "• [green]2/4[/green] Which specific pain point to focus on?\n" 
-            "• [green]3/4[/green] How should we personalize this email?\n"
-            "• [green]4/4[/green] What should the call-to-action be?",
+            "We'll walk you through 5 steps to create the perfect email:\n"
+            "• [green]1/5[/green] What should your email emphasize?\n"
+            "• [green]2/5[/green] Which specific content to focus on?\n" 
+            "• [green]3/5[/green] Add social proof (optional)\n"
+            "• [green]4/5[/green] How should we personalize this email?\n"
+            "• [green]5/5[/green] What should the call-to-action be?",
             title="[bold]Guided Email Builder[/bold]",
             border_style="blue"
         ))
@@ -42,17 +43,21 @@ class GuidedEmailBuilder:
         # Step 2: Specific Content (based on emphasis choice)
         selected_content = self._step_2_content_selection(emphasis)
         
-        # Step 3: Personalization Angle
-        personalization = self._step_3_personalization()
+        # Step 3: Social Proof Collection
+        social_proof = self._step_3_social_proof()
         
-        # Step 4: Call-to-Action
-        cta = self._step_4_call_to_action()
+        # Step 4: Personalization Angle  
+        personalization = self._step_4_personalization()
+        
+        # Step 5: Call-to-Action
+        cta = self._step_5_call_to_action()
         
         # Return configuration for email generation
         return {
             "guided_mode": True,
             "emphasis": emphasis["type"],
             "selected_content": selected_content,
+            "social_proof": social_proof,
             "personalization": personalization,
             "call_to_action": cta
         }
@@ -60,7 +65,7 @@ class GuidedEmailBuilder:
     def _step_1_emphasis(self) -> Dict[str, Any]:
         """Step 1: Select point of emphasis"""
         console.print()
-        console.print("[bold]Step 1/4: What should your email emphasize?[/bold]")
+        console.print("[bold]Step 1/5: What should your email emphasize?[/bold]")
         console.print()
         
         choices = [
@@ -95,7 +100,7 @@ class GuidedEmailBuilder:
         """Step 2: Select specific content based on emphasis choice"""
         emphasis_type = emphasis["type"]
         
-        console.print(f"[bold]Step 2/4: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
+        console.print(f"[bold]Step 2/5: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
         console.print()
         console.print(f"Based on your persona analysis, here are their key {emphasis_type.replace('_', ' ')}s:")
         console.print()
@@ -143,9 +148,31 @@ class GuidedEmailBuilder:
         
         return selected_content
     
-    def _step_3_personalization(self) -> Dict[str, Any]:
-        """Step 3: Select personalization angle"""
-        console.print("[bold]Step 3/4: How should we personalize this email?[/bold]")
+    def _step_3_social_proof(self) -> Optional[str]:
+        """Step 3: Collect social proof (optional)"""
+        console.print("[bold]Step 3/5: Add Social Proof (Optional)[/bold]")
+        console.print()
+        console.print("Social proof examples: \"We worked with Deel recently and doubled their QA coverage\"")
+        console.print("Leave blank to skip, or enter your social proof:")
+        console.print()
+        
+        social_proof = questionary.text(
+            "[Enter social proof or press Enter to skip]:",
+            placeholder="e.g., We helped TechCorp reduce support response time by 40% in 30 days"
+        ).ask()
+        
+        if social_proof and social_proof.strip():
+            console.print("✓ Social proof added")
+            console.print()
+            return social_proof.strip()
+        else:
+            console.print("✓ Skipping social proof")
+            console.print()
+            return None
+    
+    def _step_4_personalization(self) -> Dict[str, Any]:
+        """Step 4: Select personalization angle"""
+        console.print("[bold]Step 4/5: How should we personalize this email?[/bold]")
         console.print()
         console.print("Based on your target account analysis:")
         console.print()
@@ -192,9 +219,9 @@ class GuidedEmailBuilder:
         
         return selected_personalization
     
-    def _step_4_call_to_action(self) -> Dict[str, Any]:
-        """Step 4: Select call-to-action"""
-        console.print("[bold]Step 4/4: What should the call-to-action be?[/bold]")
+    def _step_5_call_to_action(self) -> Dict[str, Any]:
+        """Step 5: Select call-to-action"""
+        console.print("[bold]Step 5/5: What should the call-to-action be?[/bold]")
         console.print()
         
         cta_options = [

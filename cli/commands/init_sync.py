@@ -21,6 +21,8 @@ from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
 from cli.utils.console import enter_immersive_mode, exit_immersive_mode
 from cli.utils.guided_email_builder import GuidedEmailBuilder
+from cli.utils.markdown_formatter import get_formatter
+from rich.markdown import Markdown
 
 console = Console()
 
@@ -484,51 +486,21 @@ def show_target_account_preview(domain: str) -> None:
         if not account_data:
             return
         
-        # Extract key information for preview
-        profile_name = account_data.get("target_account_name", "Target Companies")
-        description = account_data.get("target_account_description", "")
-        firmographics = account_data.get("firmographics", {})
-        rationale = account_data.get("target_account_rationale", [])
+        # Use markdown formatter for preview
+        formatter = get_formatter('account')
+        preview_markdown = formatter.format(account_data, preview=True, max_chars=400)
         
         # Create compact preview
         console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("TARGET ACCOUNT - Quick Summary [DUMMY DATA⚠️]")
+        console.print("TARGET ACCOUNT - PREVIEW")
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
         
-        console.print(f"Profile: {profile_name}")
+        # Display raw markdown content without Rich's markdown rendering
+        console.print(preview_markdown)
         
-        # Show size and geography if available
-        size_info = []
-        if "employees" in firmographics:
-            size_info.append(f"{firmographics['employees']} employees")
-        if "revenue" in firmographics:
-            size_info.append(f"{firmographics['revenue']} revenue")
-        if size_info:
-            console.print(f"Size: {', '.join(size_info)}")
-        
-        if "geography" in firmographics and firmographics["geography"]:
-            geo_list = firmographics["geography"]
-            if isinstance(geo_list, list):
-                console.print(f"Geography: {', '.join(geo_list)}")
-        
-        # Show rationale points (max 3)
-        if rationale:
-            console.print()
-            console.print("Why this profile:")
-            for point in rationale[:3]:
-                console.print(f"• {point}")
-        
-        # Top Buying Signals placeholder
-        buying_signals = account_data.get("buying_signals", [])
-        if buying_signals:
-            console.print()
-            console.print("Top Buying Signals:")
-            # Show top 3 high priority signals
-            high_priority = [s for s in buying_signals if s.get("priority") == "high"]
-            for signal in high_priority[:3]:
-                console.print(f"• {signal.get('title', 'Signal')}")
-        
+        console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
@@ -574,31 +546,22 @@ def show_company_overview_preview(domain: str) -> None:
         if not overview_data:
             return
         
-        # Extract key information for preview
-        product_name = overview_data.get("product_name", "Company Product")
-        product_category = overview_data.get("product_category", "Business Solution")
-        business_model = overview_data.get("business_model", "")
-        key_capabilities = overview_data.get("key_capabilities", [])
+        # Use markdown formatter for preview (same as before)
+        formatter = get_formatter('overview')
+        preview_markdown = formatter.format(overview_data, preview=True, max_chars=400)
         
         # Create compact preview
         console.print()
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print("COMPANY OVERVIEW - Quick Summary")
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
         
-        console.print(f"Product: {product_name}")
-        console.print(f"Category: {product_category}")
-        if business_model:
-            console.print(f"Model: {business_model}")
+        # Display raw markdown content without Rich's markdown rendering
+        console.print(preview_markdown)
         
-        # Show key capabilities (max 3)
-        if key_capabilities:
-            console.print()
-            console.print("Key Capabilities:")
-            for capability in key_capabilities[:3]:
-                console.print(f"• {capability}")
-        
-        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
         # Show file save info
@@ -643,35 +606,21 @@ def show_buyer_persona_preview(domain: str) -> None:
         if not persona_data:
             return
         
-        # Extract key information for preview
-        job_title = persona_data.get("job_title", "Decision Maker")
-        reports_to = persona_data.get("reports_to", "")
-        team_size = persona_data.get("team_size", "")
-        use_cases = persona_data.get("use_cases", [])
+        # Use markdown formatter for preview
+        formatter = get_formatter('persona')
+        preview_markdown = formatter.format(persona_data, preview=True, max_chars=400)
         
         # Create compact preview
         console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("BUYER PERSONA - Quick Summary [DUMMY DATA⚠️]")
+        console.print("BUYER PERSONA - PREVIEW")
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
         
-        console.print(f"Title: {job_title}")
-        if reports_to:
-            console.print(f"Reports to: {reports_to}")
-        if team_size:
-            console.print(f"Team: {team_size}")
+        # Display raw markdown content without Rich's markdown rendering
+        console.print(preview_markdown)
         
-        # Show use cases (max 3)
-        if use_cases:
-            console.print()
-            console.print("Key Priorities:")
-            for use_case in use_cases[:3]:
-                if isinstance(use_case, dict):
-                    title = use_case.get("use_case", use_case.get("title", "Priority"))
-                else:
-                    title = str(use_case)
-                console.print(f"• {title}")
-        
+        console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()
         
@@ -717,38 +666,23 @@ def show_email_campaign_preview(domain: str) -> None:
         if not email_data:
             return
         
-        # Extract key information for preview
-        campaign_name = email_data.get("campaign_name", "Email Campaign")
-        email_count = len(email_data.get("emails", []))
-        campaign_strategy = email_data.get("campaign_strategy", {})
+        # Use markdown formatter for preview
+        formatter = get_formatter('email')
+        preview_markdown = formatter.format(email_data, preview=True, max_chars=400)
         
         # Create compact preview
         console.print()
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        console.print("EMAIL CAMPAIGN - Quick Summary [DUMMY DATA⚠️]")
+        console.print("EMAIL CAMPAIGN - PREVIEW")
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
         
-        console.print(f"Campaign: {campaign_name}")
-        console.print(f"Emails: {email_count} in sequence")
+        # Display raw markdown content without Rich's markdown rendering
+        console.print(preview_markdown)
         
-        # Show strategy highlights
-        if campaign_strategy:
-            tone = campaign_strategy.get("tone", "")
-            approach = campaign_strategy.get("approach", "")
-            if tone:
-                console.print(f"Tone: {tone}")
-            if approach:
-                console.print(f"Approach: {approach}")
-        
-        # Show first email preview
-        emails = email_data.get("emails", [])
-        if emails:
-            first_email = emails[0]
-            subject = first_email.get("subject", "")
-            if subject:
-                console.print()
-                console.print("First Email Preview:")
-                console.print(f"• Subject: {subject}")
+        console.print()
+        console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        console.print()
         
         console.print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         console.print()

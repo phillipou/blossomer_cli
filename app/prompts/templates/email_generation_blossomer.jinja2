@@ -227,6 +227,7 @@ Generate a Blossomer-style email using the following context:
 {% if preferences.selected_content.custom_instructions %}- Custom Instructions: {{ preferences.selected_content.custom_instructions }}{% endif %}
 - Personalization: {{ preferences.personalization.title }} - {{ preferences.personalization.example }}
 {% if preferences.personalization.custom_instructions %}- Personalization Instructions: {{ preferences.personalization.custom_instructions }}{% endif %}
+{% if preferences.social_proof %}- Social Proof: {{ preferences.social_proof }}{% endif %}
 - Call-to-Action: {{ preferences.call_to_action.text }} (Intent: {{ preferences.call_to_action.intent }})
 {% if preferences.call_to_action.custom and preferences.call_to_action.text %}- Custom CTA: {{ preferences.call_to_action.text }}{% endif %}
 {%- else -%}
