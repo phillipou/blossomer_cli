@@ -1,434 +1,319 @@
 # Implementation Plan for Blossomer GTM CLI Tool
 
-## Feature Analysis
+## Current Architecture Overview
 
-### Identified Features:
+### Core CLI Features (✅ Implemented)
+- **`init <domain>`** - Interactive 5-step GTM project generation
+- **`show <asset>`** - Rich formatted asset display with syntax highlighting
+- **`generate <step>`** - Individual step regeneration with dependency tracking
+- **Hypothesis capture** - Optional context inputs for target account and persona
+- **YOLO mode** - Non-interactive batch generation
+- **System editor integration** - Auto-detected editor with fallbacks
+- **Project state management** - Automatic dependency tracking and stale detection
 
-**Core Commands:**
-- **`init <domain>`** - Start new GTM project with interactive flow through 5 steps
-- **`show <asset>`** - Display generated assets with rich formatting  
-- **`export`** - Export assets as markdown report
-- **`generate <step>`** - Manually run/re-run specific steps
-- **`edit <file>`** - Open generated file in system editor
-- **`list`** - Show all GTM projects
+### 5-Step Generation Flow (✅ Working)
+1. **Company Overview** - Domain analysis and business insights extraction
+2. **Target Account** - Ideal customer profile with firmographics
+3. **Buyer Persona** - Detailed persona with demographics and use cases
+4. **Email Campaign** - Personalized email with guided 4-step builder
+5. **GTM Plan** - 30-day execution roadmap (schema needs completion)
 
-**5-Step Generation Flow:**
-1. **Company Overview** - Analyze domain and extract business insights
-2. **Target Account** - Generate ideal customer profile with firmographics
-3. **Buyer Persona** - Create detailed persona with demographics and use cases
-4. **Email Campaign** - Generate personalized email with subject lines and segments
-5. **GTM Plan** - Create 30-day execution roadmap with tools and metrics
+### Technical Infrastructure (✅ Completed)
+- **TensorBlock Forge Integration** - Unified LLM access across 19+ models
+- **Rich Terminal UI** - Beautiful formatting with progress indicators
+- **JSON File Storage** - Structured project data with metadata
+- **Error Handling** - Actionable error messages with recovery options
 
-**Interactive Features:**
-- Progressive disclosure with user choices at each step
-- Optional hypothesis capture for target account and persona context
-- Real-time editing with system editor integration
-- Error recovery with retry/skip options
-- YOLO mode for one-shot generation
-- Context preservation across steps
+## Key Technology Stack (✅ In Use)
 
-**Output Management:**
-- JSON file storage for each step
-- Rich terminal formatting with progress indicators
-- Export to markdown reports
-- Project state management
+### Core Framework
+- **Typer** - CLI framework with type hints and auto-completion
+- **Rich** - Terminal formatting with progress indicators and syntax highlighting
+- **Questionary** - Interactive prompts with [C/e/r/a] choice patterns
+- **Pydantic** - Data validation and schema management
+- **TensorBlock Forge** - Unified LLM access across multiple providers
 
-### Feature Categorization:
+### LLM Integration Benefits
+- **Single API Key** - One FORGE_API_KEY for all providers (OpenAI, Anthropic, Gemini, xAI, Deepseek)
+- **Cost Optimization** - GPT-4.1-nano at $0.000015/1K tokens (10x cheaper than alternatives)
+- **Model Switching** - Easy A/B testing across providers via model parameters
+- **Unified Error Handling** - Consistent error patterns across all providers
 
-**Must-Have Features:**
-- Core CLI framework with Typer
-- Interactive 5-step GTM flow
-- LLM integration for content generation
-- JSON file storage and management
-- Rich terminal formatting
-- Basic error handling
 
-**Should-Have Features:**
-- System editor integration with smart detection
-- Project state management
-- Export functionality
-- YOLO mode for power users
-- Dependency regeneration
-- Progress indicators with micro-progress states
-- Smart domain format handling
-- Time-to-value metrics and cost tracking
-- Copy-paste friendly command output
+## Current Implementation Status
 
-**Nice-to-Have Features:**
-- Advanced error recovery
-- API rate limit handling
-- CLI auto-completion
-- Custom prompt templates
-- Batch processing capabilities
-
-## Recommended Tech Stack
-
-### CLI Framework:
-- **Typer** - Modern CLI framework with type hints
-- **Documentation:** https://typer.tiangolo.com/
-- **Justification:** Built by FastAPI team, excellent type safety, auto-completion, matches existing Pydantic patterns
-
-### Terminal Formatting:
-- **Rich** - Beautiful terminal formatting and progress bars
-- **Documentation:** https://rich.readthedocs.io/en/latest/
-- **Justification:** Perfect for creating the formatted output shown in PRD, markdown rendering, progress indicators
-
-### Interactive Prompts:
-- **Questionary** - Beautiful interactive CLI prompts
-- **Documentation:** https://github.com/tmbo/questionary
-- **Justification:** Superior UX for the [C/e/r/a] choice patterns, validation, auto-completion
-
-### Core Dependencies:
-- **Pydantic** - Data validation (already in use)
-- **Documentation:** https://docs.pydantic.dev/latest/
-- **Justification:** Already integrated, perfect for CLI argument validation
-
-### File Handling:
-- **Pathlib** - Modern path handling (built-in)
-- **JSON** - File storage (built-in)
-- **Tempfile** - Temporary file handling (built-in)
-
-### LLM Integration:
-- **TensorBlock Forge** - Unified API for all LLM providers (MAJOR ARCHITECTURAL CHANGE)
-- **Documentation:** https://github.com/TensorBlock/forge
-- **Justification:** Eliminates provider-specific implementations, enables easy model switching, cost optimization
-
-## ✅ COMPLETED: TensorBlock Forge Integration
-
-### Strategic Decision: Unified LLM Provider Access
-
-**Status:** ✅ COMPLETED - All services migrated to unified Forge infrastructure  
-**Completed:** July 17, 2025 (commit: b0401ea)  
-**Impact:** Complete migration from individual providers to unified access
-
-#### Problem Solved
-- ✅ Eliminated individual provider implementations (OpenAI, Anthropic, Google Gemini)
-- ✅ Unified API client and error handling
-- ✅ Easy model switching and cost optimization achieved
-- ✅ Single authentication and configuration system
-
-#### TensorBlock Forge Solution
-- **Unified API**: OpenAI-compatible interface for 20+ providers
-- **Single Authentication**: One Forge API key for all providers
-- **Easy Model Switching**: Change models via environment variables
-- **Cost Optimization**: Test different providers for optimal cost/quality
-- **Future-Proof**: New providers added automatically
-
-#### Implementation Impact
-
-**Files Requiring Major Changes:**
-- `app/core/llm_singleton.py` - Replace provider-specific clients with Forge client
-- `app/services/*_service.py` - Update all LLM service calls to use Forge
-- `cli/services/*_service.py` - Migrate CLI services to Forge
-- Configuration files - Replace multiple API keys with single Forge key
-- Error handling - Standardize across unified Forge responses
-
-**New Dependencies:**
-- Remove: `openai`, `anthropic`, `google-generativeai` 
-- Add: `openai` (for Forge compatibility), `FORGE_API_KEY` environment variable
-
-**Benefits for Evaluation System:**
-- Easy A/B testing across models (Gemini vs Claude vs GPT-4)
-- Cost optimization through provider comparison
-- Unified error handling and retry logic
-- Single authentication system
-
-#### ✅ Completed Migration
-
-**Phase 1: Core Infrastructure** ✅ COMPLETED
-- [x] Set up TensorBlock Forge account and API key
-- [x] Create unified Forge client wrapper (`app/core/forge_client.py`)
-- [x] Update configuration management for FORGE_API_KEY
-- [x] Create cost tracking and model recommendation utilities
-
-**Phase 2: Service Migration** ✅ COMPLETED  
-- [x] Create new simplified Forge LLM service (`app/core/forge_llm_service.py`)
-- [x] Migrate `app/core/llm_singleton.py` to use Forge client
-- [x] Update CLI services to use new Forge infrastructure
-- [x] Replace complex provider management with unified interface
-
-**Phase 3: Configuration & Testing** ✅ COMPLETED
-- [x] Update environment variable handling (FORGE_API_KEY with OpenAI fallback)
-- [x] Update all service calls to use unified interface
-- [x] Update error handling for CLI context with CLIException
-- [x] Test with OpenAI models via Forge (4/5 tests passing)
-- [x] Switch to GPT-4.1-nano as default for cost optimization
-
-**Phase 4: Architecture Benefits** ✅ ACHIEVED
-- [x] Single API key for all providers (OpenAI, Anthropic, Gemini, xAI, Deepseek)
-- [x] Cost optimization: GPT-4.1-nano ($0.000015/1K) vs gpt-4o-mini ($0.00015/1K)
-- [x] Model switching via parameters instead of provider switching
-- [x] Unified error handling and response format
-
-#### Technical Specifications
-
-**New Forge Client Structure:**
-```python
-# app/core/forge_client.py
-class ForgeClient:
-    def __init__(self, api_key: str = None):
-        self.client = OpenAI(
-            api_key=api_key or os.getenv("FORGE_API_KEY"),
-            base_url="https://api.tensorblock.co/v1"
-        )
-    
-    def chat_completion(self, messages, model: str, **kwargs):
-        # Unified interface - model specified per call
-        return self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            **kwargs
-        )
-        
-    def get_cost_estimate(self, model: str, tokens: int) -> float:
-        # Cost tracking across providers
-```
-
-**Model Switching Examples:**
-```python
-# Specify model directly in API calls
-forge_client.chat_completion(
-    messages=messages,
-    model="gemini-1.5-flash"      # Cost: ~$0.0001/call
-)
-
-forge_client.chat_completion(
-    messages=messages,
-    model="claude-3-5-haiku"      # Cost: ~$0.001/call
-)
-
-# A/B test different models programmatically
-models_to_test = ["gemini-1.5-flash", "claude-3-5-haiku", "gpt-4o-mini"]
-for model in models_to_test:
-    result = forge_client.chat_completion(messages=messages, model=model)
-```
-
-**✅ Implemented Changes:**
-- All LLM services now use unified Forge interface
-- Configuration supports FORGE_API_KEY with OpenAI fallback
-- Error handling standardized with CLIException for CLI context
-- Cost tracking unified across providers with model recommendations
-
-#### Migration Blockers & Considerations
-
-**Dependencies:**
-- Must complete before major feature development in Stage 4
-- Evaluation system implementation should use Forge from start
-- CLI command implementations may need updates
-
-**Testing Requirements:**
-- Comprehensive testing with multiple providers
-- Cost tracking validation across models
-- Error handling verification for Forge-specific failures
-- Performance comparison between old and new implementations
-
-**Risk Mitigation:**
-- Keep existing implementations as fallback during migration
-- Implement feature flags for gradual rollout
-- Extensive testing with multiple providers before full deployment
-
-## Implementation Status
-
-**Current Status:** ✅ Stage 3.5 Complete (Forge Migration) - Ready for Advanced Features  
+**Status:** ✅ Core CLI Complete + Evaluation System Complete - Focus on Remaining Features  
 **Last Updated:** July 17, 2025
 
-### Completed Stages
+### ✅ Completed Core Features
+- **Interactive CLI Commands** - Full 5-step GTM generation with rich UX
+- **TensorBlock Forge Integration** - Unified LLM access with optimal model selection
+- **Hypothesis Capture** - Optional context inputs for better personalization
+- **Guided Email Builder** - 4-step interactive email generation
+- **Project Management** - State tracking, dependency management, stale detection
+- **System Editor Integration** - Auto-detected editor with fallback options
+- **YOLO Mode** - Non-interactive batch generation for power users
+- **✅ Evaluation System** - Complete prompt quality assurance with CLI integration
 
-#### ✅ Stage 1: Foundation & Setup (COMPLETED)
-**Duration:** Completed in 1 day
-**Dependencies:** None
-
-#### Sub-steps:
-- [x] Set up CLI project structure using Typer
-- [x] Install and configure Rich for terminal formatting
-- [x] Install and configure Questionary for interactive prompts
-- [x] Create base CLI app with global options (--help, --version, --quiet, --verbose, --no-color, --yolo)
-- [x] Implement smart domain format normalization (acme.com, www.acme.com, https://acme.com)
-- [x] Add smart editor detection ($EDITOR, VS Code, vim, nano fallbacks)
-- [x] Implement project directory management (gtm_projects/ structure)
-- [x] Set up logging and error handling framework with actionable error messages
-- [x] Create configuration management for API keys and settings
-- [x] Remove unnecessary web app components from existing codebase
-- [x] Adapt existing Pydantic schemas for CLI use
-
-**Git Commits:**
-- `07bf3f8` Initial project documentation and planning
-- `f7c54a4` Set up CLI framework with Typer, Rich, and Questionary
-- `a7ac035` Clean up web app components by moving to archive
-- `763ba1a` Preserve core generation services and prompts for CLI reuse
-- `f54eb20` Complete Stage 1: Foundation & Setup
-
-**What's Working in Stage 1:**
-- ✅ CLI framework with beautiful Rich formatting
-- ✅ Interactive prompts with Questionary  
-- ✅ Smart domain normalization (`acme.com` → `https://acme.com`)
-- ✅ Editor auto-detection with fallbacks
-- ✅ Project file management with metadata tracking
-- ✅ Professional logging with actionable error messages
-- ✅ Configuration system with environment variable support
-- ✅ Clean project structure with web components archived
-
-**Testing:** All foundation components tested and working. Run testing commands:
+### 🎯 Current Working Commands
 ```bash
-python3 -m cli.main --help          # CLI help
-python3 -m cli.main demo             # Rich formatting test
-python3 -m cli.utils.domain          # Domain normalization test
-python3 -m cli.utils.editor          # Editor detection test
-python3 -m cli.utils.file_manager    # File management test
-```
-
-## Implementation Stages
-
-### Stage 1: Foundation & Setup ✅ COMPLETED
-
-#### ✅ Stage 2: Core Generation Engine (COMPLETED)
-**Duration:** Completed in 1 day
-**Dependencies:** ✅ Stage 1 completion
-
-#### Sub-steps:
-- [x] Adapt existing LLM services for CLI context (remove web dependencies)
-- [x] Implement company overview generation (reuse existing product_overview_service.py)
-- [x] Implement target account generation (reuse existing target_account_service.py)  
-- [x] Implement buyer persona generation (reuse existing target_persona_service.py)
-- [x] Implement email campaign generation (reuse existing email_generation_service.py)
-- [ ] Create new GTM plan generation service (deferred - needs schema/template)
-- [ ] Add CLI summary field generation to all prompt templates (deferred - for Stage 3)
-- [x] Implement JSON file storage and retrieval for each step
-- [x] Create data dependency tracking between steps
-
-**Git Commits:**
-- `a00847d` Add CLI-adapted LLM services
-- `d802480` Add CLI-adapted generation services for Steps 1-4
-- `3f5578c` Add comprehensive project storage system
-- `f34e791` Add GTM generation orchestration service
-- `bfff997` Add comprehensive testing suite for Stage 2
-
-**What's Working in Stage 2:**
-- ✅ CLI-adapted LLM services (removed FastAPI/HTTPException dependencies)
-- ✅ Complete 4-step generation pipeline (overview → account → persona → email)
-- ✅ JSON file storage system with gtm_projects/{domain}/*.json structure
-- ✅ Data dependency tracking and stale detection
-- ✅ Project lifecycle management (create/delete/list/status)
-- ✅ GTM orchestration service for complete flow management
-- ✅ Force regeneration with automatic dependent step marking
-- ✅ Comprehensive testing suite with unit and integration tests
-
-**Testing:** All core generation components tested and working. Run testing commands:
-```bash
-cd tests && python3 run_all_tests.py     # Comprehensive component tests (NEW)
-python3 interactive_test.py              # Interactive usage scenarios  
-python3 -c "from cli.services.gtm_generation_service import gtm_service; print('✓ GTM service ready')"
-
-# Individual test modules:
-cd tests && python3 test_domain_utils.py     # Domain normalization tests
-cd tests && python3 test_project_storage.py  # Project storage tests
-cd tests && python3 test_dependencies.py     # Dependency tracking tests
-cd tests && python3 test_services.py         # Service integration tests
-```
-
-#### ✅ Stage 3: Interactive CLI Commands (COMPLETED)
-**Duration:** Completed in 1 day
-**Dependencies:** ✅ Stage 2 completion
-
-#### Sub-steps:
-- [x] Implement `init` command with full interactive flow
-- [x] Add micro-progress indicators (→ Fetching website... ✓, → Processing with AI... ✓)
-- [x] Implement user choice handling [C/e/r/a] with keyboard shortcuts (Enter, Ctrl+C)
-- [x] Add system editor integration with auto-detection
-- [x] Implement `show` command with Rich formatting and syntax highlighting
-- [x] Implement `generate` command for individual step regeneration
-- [x] Add dependency regeneration when editing earlier steps
-- [x] Implement project state management and existing project handling
-- [x] Add YOLO mode (--yolo flag) for non-interactive generation
-- [ ] Add time-to-value and cost tracking display (deferred to Stage 4)
-
-**Git Commits:**
-- `c4958b3` added interactive email guide
-- `d720c3b` fixed email_generation.jinja2 prompt bug
-- `97b28ef` Implement guided email setup with 4-step interactive flow
-- `52c6d3a` Improve existing project handling in init command
-
-**What's Working in Stage 3:**
-- ✅ Full interactive `init` command with 5-step flow
-- ✅ Micro-progress indicators with Rich formatting and timing
-- ✅ User choice handling [Continue/Edit/Regenerate/Abort] with Questionary
-- ✅ System editor integration with auto-detection and fallbacks
-- ✅ Rich-formatted `show` command with syntax highlighting and asset summaries
-- ✅ Individual step regeneration via `generate` command with dependency checking
-- ✅ Automatic dependency regeneration when editing earlier steps
-- ✅ Project state management and existing project detection
-- ✅ YOLO mode for non-interactive batch generation
-- ✅ Comprehensive error handling with actionable recovery options
-- ✅ Stale data detection and warnings
-
-**🆕 Guided Email Feature (COMPLETED):**
-- ✅ **4-Step Interactive Email Builder**: Use Case → Pain Point → Capability → Desired Outcome selection
-- ✅ **Dynamic Content Extraction**: Pulls from target_persona.json use_cases and buying_signals arrays
-- ✅ **Custom Instructions Support**: "Other" option with custom LLM instructions for steps 2 & 3
-- ✅ **Template Integration**: Updated email_generation_blossomer.jinja2 to handle guided mode variables
-- ✅ **Clean UI Formatting**: Simplified display text (content after colon for step 2, text before colon for step 3)
-- ✅ **Hardcoded CTA Options**: Consistent call-to-action choices across sessions
-- ✅ **Dynamic Array Handling**: Supports variable array sizes with proper numbering
-- ✅ **Graceful Fallbacks**: Uses defaults when persona data is incomplete
-
-**Testing:** All Stage 3 components tested and working. Run commands:
-```bash
-python3 -m cli.main --help              # CLI help and command overview
-python3 -m cli.main init --help         # Interactive flow help
-python3 -m cli.main show --help         # Asset display help  
-python3 -m cli.main generate --help     # Individual generation help
-
-# Example usage:
-python3 -m cli.main init acme.com       # Start interactive GTM generation (includes guided email)
+# Core GTM Generation
+python3 -m cli.main init acme.com       # Start interactive GTM generation
 python3 -m cli.main show all            # Display all assets with formatting
 python3 -m cli.main generate overview   # Regenerate specific step
-python3 -m cli.main generate email      # Regenerate email with guided flow option
+python3 -m cli.main generate email      # Regenerate email with guided flow
+
+# Evaluation System
+python3 -m cli.main eval list           # List available evaluations
+python3 -m cli.main eval run product_overview --sample-size 5
+python3 -m cli.main eval run all        # Run all evaluations
 ```
 
-### ✅ Stage 3.5: TensorBlock Forge Migration (COMPLETED)
-**Duration:** 1 day (completed July 17, 2025)
-**Dependencies:** ✅ Stage 3 completion + TensorBlock Forge account setup
-**Impact:** Complete migration enabling unified LLM access and cost optimization
+### 🚧 Remaining Development Tasks
 
-#### Completed Sub-steps:
-- [x] **Set up TensorBlock Forge account and obtain API key**
-- [x] **Create unified Forge client wrapper** (`app/core/forge_client.py`)
-- [x] **Create simplified Forge LLM service** (`app/core/forge_llm_service.py`)
-- [x] **Update configuration management** (FORGE_API_KEY with OpenAI fallback)
-- [x] **Update CLI services** to use new Forge infrastructure
-- [x] **Update all service calls** to use unified interface with model parameters
-- [x] **Update error handling** for CLI context with CLIException
-- [x] **Test with OpenAI models via Forge** (comprehensive test suite created)
-- [x] **Switch to GPT-4.1-nano** for 10x cost reduction
+#### High Priority (Next Features)
+- [ ] **Complete GTM Plan Generation** - Finish 5th step with proper schema/template
+- [ ] **Implement `export` command** - Markdown report generation with meaningful naming
+- [ ] **Implement `edit` command** - File editing with dependency cascade handling
+- [ ] **Implement `list` command** - Project overview and management
+- [ ] **Add `status` command** - Quick project health check
 
-#### Migration Results:
-- **Cost Reduction**: 10x cheaper with GPT-4.1-nano ($0.000015/1K vs $0.00015/1K)
-- **Unified Access**: Single API key for 19+ models across 5 providers
-- **Simplified Architecture**: Removed complex circuit breaker and provider management
-- **Future-Proof**: Easy model switching and automatic new model support
+#### Medium Priority (Polish & UX)
+- [ ] **Copy-paste friendly output** - Completion summaries with next steps
+- [ ] **Enhanced error handling** - More actionable error messages
+- [ ] **API rate limit handling** - Retry logic with exponential backoff
+- [ ] **CLI auto-completion** - Shell completion support
+- [ ] **Performance optimization** - Caching and response time improvements
 
-### ⏳ Stage 4: Advanced Features & Polish
-**Duration:** 1-2 weeks
-**Dependencies:** ✅ Stage 3 completion + ✅ Forge Migration completion  
+#### Low Priority (Deployment)
+- [ ] **Installation scripts** - Easy setup and deployment
+- [ ] **Comprehensive help** - Enhanced documentation with examples
+- [ ] **Testing suite expansion** - More comprehensive test coverage
 
-#### Sub-steps:
-- [x] **Implement hypothesis capture** - Optional context inputs for target account and persona ✅ COMPLETED
-  - [x] Add hypothesis capture prompts to init command before Step 1
-  - [x] Update target account and persona generation to use hypothesis context
-  - [x] Support --context flag for non-interactive hypothesis provision
-  - [x] Add hypothesis data to project metadata for regeneration
-- [ ] Implement `export` command with meaningful file naming (gtm-report-acme-com-jan15.md)
-- [ ] Implement `edit` command with dependency cascade handling
-- [ ] Implement `list` command with project overview
-- [ ] Add `status` command for quick project overview
-- [ ] Add copy-paste friendly command output at completion
-- [ ] Add comprehensive error handling with actionable next steps
-- [ ] Implement API rate limit handling with retry logic
-- [ ] Add CLI auto-completion support and consistent exit codes
-- [ ] Create comprehensive help documentation with examples
-- [ ] Add performance optimization and caching
-- [ ] Implement thorough testing suite
-- [ ] Create installation and deployment scripts
+## 🧪 Evaluation System for Prompt Quality
+
+### Overview
+Automated evaluation system to ensure prompt templates maintain consistent quality and handle edge cases appropriately. Built to mirror the app architecture exactly while providing efficient quality assurance.
+
+### Architecture Design
+
+#### Core Infrastructure (`evals/core/`)
+- **Unified Runner**: Single command interface for all prompt evaluations
+- **Reusable Judges**: Shared deterministic and LLM-based evaluation logic
+- **Jinja2 Templates**: LLM judge prompts stored as easily editable .j2 files
+- **Dataset Management**: Sampling and test case handling
+- **Results System**: Parsing, rendering, and reporting
+
+#### Prompt-Specific Evaluations (`evals/prompts/{prompt_name}/`)
+- **Configuration**: YAML-based prompt-specific settings
+- **Custom Judges**: Prompt-specific evaluation logic
+- **Test Data**: CSV files with edge cases and context variations
+- **Schema Validation**: Expected output format validation
+
+### Evaluation Flow
+1. **Sample test cases** from CSV dataset (configurable size)
+2. **Generate outputs** using same services as CLI application
+3. **Run deterministic checks** (JSON validation, schema compliance, format rules)
+4. **Execute LLM judges** (traceability, actionability, redundancy, context steering)
+5. **Aggregate results** and generate reports
+6. **Parse and render** results in readable format
+
+### Key Features
+
+#### Mirror App Architecture
+- **Same Services**: Uses identical generation services as CLI
+- **Same Data Flow**: Input → Service → Output exactly matches app behavior
+- **Same Error Handling**: Consistent error patterns and recovery
+- **Same Configuration**: Uses TensorBlock Forge integration
+
+#### Cost-Effective Design
+- **Ultra-Cheap Models**: GPT-4.1-nano (~$0.000015 per judge call)
+- **Deterministic First**: Fast checks eliminate expensive LLM calls on bad outputs
+- **Batch Processing**: Efficient evaluation of multiple test cases
+- **Configurable Sampling**: Test with small samples during development
+
+#### Jinja2 Template System
+```python
+# Judge prompts are stored as .j2 files for easy editing
+evals/core/judges/templates/
+├── traceability.j2      # Evidence-based claim verification
+├── actionability.j2     # Specificity and discovery value
+├── redundancy.j2        # Content overlap detection
+└── context_steering.j2  # Context handling appropriateness
+```
+
+#### Evaluation Types
+
+**Deterministic Checks (Zero Cost):**
+- **D-1 Valid JSON**: Basic parsing validation
+- **D-2 Schema Compliance**: Field presence and type validation
+- **D-3 Format Compliance**: "Key: Value" pattern validation
+- **D-4 Field Cardinality**: Array length validation (3-5 items)
+- **D-5 URL Preservation**: Input/output URL matching
+
+**LLM Judge Checks (Ultra-Low Cost):**
+- **L-1 Traceability**: Sample factual claims for website evidence or [ASSUMPTION] tags
+- **L-2 Actionability**: Evaluate specificity, discovery value, evidence-based claims
+- **L-3 Content Redundancy**: Check Jaccard similarity between sections
+- **L-4 Context Steering**: Validate appropriate handling of valid/noise/none context
+
+### Usage Examples
+
+#### Basic Evaluation
+```bash
+# CLI integration (preferred method)
+python3 -m cli.main eval run product_overview --sample-size 3
+python3 -m cli.main eval run all --sample-size 5
+
+# Direct runner access (for development)
+python3 -m evals.core.runner product_overview --sample-size 3
+python3 -m evals.core.runner all --sample-size 5
+```
+
+#### Adding New Prompt Evaluation
+```bash
+# Use the CLI to create a new evaluation
+python3 -m cli.main eval create new_prompt \
+  --service-module "app.services.new_service" \
+  --service-function "new_service_function" \
+  --create-sample-data
+
+# Or manually:
+# 1. Create directory: evals/prompts/new_prompt/
+# 2. Add configuration: config.yaml
+# 3. Define test cases: data.csv
+# 4. Create output schema: schema.json
+# 5. Run: python3 -m cli.main eval run new_prompt
+```
+
+### Quality Criteria
+
+#### "Good" Output Definition
+- **Traceable**: Claims backed by website evidence or marked assumptions
+- **Actionable**: Insights lead to specific discovery questions
+- **Structured**: Follows exact JSON schema and formatting rules
+- **Comprehensive**: Covers all required business analysis areas
+- **Context-Aware**: Appropriately incorporates or ignores user context
+
+#### Success Metrics
+- **Deterministic Pass Rate**: >95% on valid inputs
+- **LLM Judge Pass Rate**: >90% on quality criteria
+- **Context Steering**: 100% appropriate handling of noise vs valid context
+- **Cost Efficiency**: <$0.10 per full evaluation run
+- **Execution Time**: <5 minutes for full evaluation
+
+### Implementation Benefits
+
+#### For Development
+- **Rapid Iteration**: Test prompt changes quickly with sample datasets
+- **Edge Case Detection**: Systematic testing of failure modes
+- **Regression Prevention**: Catch quality degradation early
+- **Usage Tracking**: Monitor evaluation usage across model changes
+
+#### For Production
+- **Quality Assurance**: Consistent output quality across different inputs
+- **Model Comparison**: A/B test different LLM providers easily
+- **Performance Monitoring**: Track quality metrics over time
+- **Documentation**: Clear evaluation criteria and expected behaviors
+
+### Future Extensions
+
+#### Additional Prompts
+- **Target Account Evaluation**: Firmographic accuracy, buying signal relevance
+- **Buyer Persona Evaluation**: Demographic consistency, use case alignment
+- **Email Generation Evaluation**: Subject line effectiveness, personalization quality
+- **GTM Plan Evaluation**: Actionability, timeline feasibility, metric relevance
+
+#### Advanced Features
+- **Comparative Analysis**: Compare outputs across different model versions
+- **Trend Analysis**: Track quality metrics over time
+- **Automated Alerts**: Notify on quality degradation
+- **Human Validation**: Integrate human feedback into evaluation pipeline
+
+### Technical Implementation
+
+#### Dependencies
+- **TensorBlock Forge**: Unified LLM access (already integrated)
+- **Existing Services**: Reuse all current generation services
+- **Jinja2**: Template rendering (already used in app)
+- **pandas**: Dataset handling
+- **Rich**: Terminal output formatting
+
+#### Configuration Management
+```yaml
+# evals/prompts/product_overview/config.yaml
+name: "Product Overview Evaluation"
+service: "app.services.product_overview_service"
+schema: "schema.json"
+judges:
+  deterministic: ["json", "schema", "format", "cardinality"]
+  llm: ["traceability", "actionability", "redundancy", "context_steering"]
+models:
+  default: "OpenAI/gpt-4.1-nano"
+  fallback: "Gemini/models/gemini-1.5-flash"
+```
+
+This evaluation system ensures prompt quality while remaining practical, efficient, and closely aligned with the actual application architecture.
+
+### ✅ Implementation Complete (July 17, 2025)
+1. **✅ Refactored existing evaluation code** - Clean up current spaghetti code
+2. **✅ Created unified evaluation runner** - Single command interface
+3. **✅ Jinja2 judge templates** - Easy prompt editing (already implemented)
+4. **✅ Added support for multiple prompts** - Extensible architecture
+5. **✅ Integrated with main CLI workflow** - Continuous quality assurance
+
+### 🎯 Current Evaluation Commands
+```bash
+# List available evaluations
+python3 -m cli.main eval list
+
+# Validate a prompt configuration
+python3 -m cli.main eval validate product_overview
+
+# Run single evaluation
+python3 -m cli.main eval run product_overview --sample-size 5
+
+# Run all evaluations
+python3 -m cli.main eval run all --sample-size 3
+
+# Create new evaluation
+python3 -m cli.main eval create my_prompt \
+  --service-module "app.services.my_service" \
+  --service-function "my_service_function" \
+  --create-sample-data
+```
+
+### 📊 Evaluation System Architecture (✅ Complete & Cleaned)
+- **Core Framework** (`evals/core/`): Config, dataset, results, judges
+- **CLI Integration** (`cli/commands/eval.py`): User-friendly command interface
+- **Prompt Configs** (`evals/prompts/`): Per-prompt configurations and datasets
+- **Rich Output**: Progress bars, detailed results, usage tracking
+- **Extensible Design**: Easy to add new prompt evaluations
+
+### 🧹 Cleanup Completed (July 17, 2025)
+**Legacy Code Removed:**
+- `evals/product_overview/` - Old promptfoo-based evaluation system (~15 files)
+- `evals/common/` - Old environment setup utilities
+- `Docs/evals/implementation.md` - Obsolete promptfoo documentation
+- `Docs/evals/product_overview_eval_spec.md` - Old evaluation specification
+
+**Archived for Reference:**
+- Old evaluation results → `archive/old_evals/results/`
+- Legacy documentation → `archive/old_evals/`
+- Utility functions → `archive/old_evals/common/`
+
+**Final Clean Structure:**
+```
+evals/
+├── core/                    # ✅ Unified evaluation framework
+│   ├── config.py           # YAML configuration management
+│   ├── dataset.py          # CSV test case loading
+│   ├── results.py          # Rich terminal output
+│   ├── runner.py           # Single command interface
+│   └── judges/             # Evaluation logic
+└── prompts/                # ✅ Per-prompt configurations
+    └── product_overview/   # Product overview evaluation
+```
 
 ## 📄 JSON-to-Markdown Utility Project
 
@@ -597,32 +482,9 @@ def get_formatter(step_type: str) -> MarkdownFormatter
 5. ✅ Handles malformed data gracefully with clear error messages
 6. ✅ Maintains performance for large JSON files
 
-## Detailed Implementation Strategy
+## Key Implementation Patterns
 
-### Codebase Cleanup and Adaptation
-
-**Files to Remove:**
-- Remove all FastAPI/web server components (`app/api/`)
-- Remove web-specific database models and routes
-- Remove authentication and rate limiting for web users
-- Remove development cache and web scraping components
-
-**Files to Adapt:**
-- Reuse `app/services/` (LLM services, content processing)
-- Reuse `app/prompts/` (templates and prompt management)
-- Reuse `app/schemas/` (Pydantic models, adapt for CLI context)
-- Adapt `app/core/llm_singleton.py` for CLI environment
-
-**New Files to Create:**
-- `cli/` directory for all CLI-specific code
-- `cli/main.py` - Main Typer app entry point
-- `cli/commands/` - Individual command implementations
-- `cli/utils/` - CLI utilities (formatting, file management)
-- `cli/config.py` - Configuration management
-- `setup.py` or `pyproject.toml` - Package installation
-
-### File Storage Architecture
-
+### Project Storage Structure (✅ Implemented)
 ```
 gtm_projects/
 ├── {domain}/
@@ -637,66 +499,35 @@ gtm_projects/
 └── .gtm-cli-state.json    # Global state/preferences
 ```
 
-### Error Handling Strategy
+### Data Flow & Dependencies (✅ Working)
+1. **Company Overview** → Target Account
+2. **Company Overview + Target Account** → Buyer Persona  
+3. **All Previous Steps** → Email Campaign
+4. **All Previous Steps** → GTM Plan
 
-**Generation Failures:**
-- Implement retry logic with exponential backoff
-- Provide skip options for non-critical steps
-- Allow manual editing to fix context issues
-- Save partial progress to prevent data loss
+### Error Handling Philosophy (✅ Implemented)
+- **Fail fast with clear messages** - Technical founders need actionable feedback
+- **Graceful degradation** - Always offer next steps (→ Try: ..., → Or: ...)
+- **No silent failures** - Every error guides the user to success
+- **Save partial progress** - Prevent data loss on failures
 
-**API Issues:**
-- Rate limit detection and automatic retry
-- API key validation and rotation support
-- Graceful degradation with cached responses
-- Clear error messaging with recovery options
+## Development Guidelines
 
-### Data Flow Design
+### Code Quality Standards
+- **Type hints everywhere** - Typer + Pydantic make this natural
+- **Docstrings for public functions** - Keep them concise and practical
+- **Follow existing patterns** - Match the style in `app/services/`
+- **No premature optimization** - Get it working first, optimize if needed
 
-**Step Dependencies:**
-1. Company Overview → Target Account
-2. Company Overview + Target Account → Buyer Persona  
-3. All Previous → Email Campaign
-4. All Previous → GTM Plan
+### Testing Philosophy
+- **Integration tests over unit tests** - Test the full user workflow
+- **Happy path first** - Core functionality must work perfectly
+- **Error scenarios second** - Test common failure modes
+- Use Typer's built-in testing utilities
 
-**Regeneration Logic:**
-- When a step is regenerated, mark all dependent steps as stale
-- Offer to regenerate dependent steps or continue with existing data
-- Maintain data integrity across the dependency chain
-
-## Resource Links
-
-- [Typer Documentation](https://typer.tiangolo.com/)
-- [Rich Documentation](https://rich.readthedocs.io/en/latest/)
-- [Questionary Documentation](https://github.com/tmbo/questionary)
-- [Pydantic Documentation](https://docs.pydantic.dev/latest/)
-- [OpenAI Python Client](https://platform.openai.com/docs/)
-- [Click Documentation](https://click.palletsprojects.com/) (Typer's foundation)
-- [Python Packaging Tutorial](https://packaging.python.org/tutorials/packaging-projects/)
-- [CLI Best Practices Guide](https://clig.dev/)
-
-## Quality Assurance
-
-### Testing Strategy
-- Unit tests for each generation service
-- Integration tests for complete workflows
-- CLI functional tests using Typer's testing utilities
-- Error scenario testing (API failures, invalid inputs)
-- Performance testing for large projects
-
-### Code Quality
-- Type hints throughout (leveraging Typer's type system)
-- Comprehensive docstrings and inline documentation
-- Linting with flake8/black for consistent formatting
-- Pre-commit hooks for code quality enforcement
-
-### User Experience
-- Comprehensive help text with practical examples
-- Clear error messages with actionable next steps (→ Try: ..., → Or: ...)
-- Intuitive command structure following CLI conventions
-- Responsive feedback with micro-progress indicators
-- Copy-paste friendly output for common next steps
-- Smart defaults (domain normalization, editor detection)
-- Time-to-value and cost feedback for technical founders
-- Graceful handling of interruptions (Ctrl+C)
-- Consistent exit codes (0=success, 1=user error, 2=system error)
+### User Experience Principles
+- **Fail fast with clear messages** - Technical founders need actionable feedback
+- **Graceful degradation** - Always offer next steps (→ Try: ..., → Or: ...)
+- **No silent failures** - Every error should guide the user to success
+- **Ship working software** - Perfect is the enemy of good
+- **Technical founders appreciate directness** - Clear, honest feedback

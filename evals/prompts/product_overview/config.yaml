@@ -1,0 +1,11 @@
+name: "Product Overview Evaluation"
+service:
+  module: "app.services.product_overview_service"
+  function: "generate_product_overview_service"
+schema: "schema.json"
+judges:
+  deterministic: ["D-1", "D-2", "D-3", "D-4", "D-5"]
+  llm: ["traceability", "actionability", "redundancy", "context_steering"]
+models:
+  default: "OpenAI/gpt-4.1-nano"
+  fallback: "Gemini/models/gemini-1.5-flash"

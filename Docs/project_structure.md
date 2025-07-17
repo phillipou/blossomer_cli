@@ -65,6 +65,34 @@ blossomer-cli/
 │   └── fixtures/                # Test data and fixtures
 │       ├── sample_projects/     # Sample GTM projects for testing
 │       └── mock_responses/      # Mock LLM responses
+├── evals/                       # Evaluation system for prompt quality
+│   ├── __init__.py
+│   ├── core/                    # Shared evaluation infrastructure
+│   │   ├── __init__.py
+│   │   ├── runner.py           # Main evaluation orchestrator
+│   │   ├── judges/             # Reusable judge implementations
+│   │   │   ├── __init__.py
+│   │   │   ├── deterministic.py # Base deterministic checks
+│   │   │   ├── llm_judge.py    # Base LLM judge using .j2 templates
+│   │   │   └── templates/      # Judge prompt templates
+│   │   │       ├── traceability.j2
+│   │   │       ├── actionability.j2
+│   │   │       ├── redundancy.j2
+│   │   │       └── context_steering.j2
+│   │   ├── dataset.py          # Dataset sampling and management
+│   │   ├── results.py          # Results parsing and rendering
+│   │   └── config.py           # Configuration management
+│   └── prompts/                # Individual prompt evaluations
+│       ├── product_overview/   # Company overview prompt eval
+│       │   ├── config.yaml     # Prompt-specific configuration
+│       │   ├── judges.py       # Custom judges for this prompt
+│       │   ├── data.csv        # Test data
+│       │   └── schema.json     # Expected output schema
+│       └── email_generation/   # Email generation prompt eval
+│           ├── config.yaml
+│           ├── judges.py
+│           ├── data.csv
+│           └── schema.json
 ├── docs/                        # Documentation
 │   ├── Implementation.md        # This implementation plan
 │   ├── project_structure.md     # This file
@@ -132,6 +160,35 @@ blossomer-cli/
 - `cli/`: Tests specific to CLI commands and utilities
 - `fixtures/`: Sample data for testing generation workflows
 - Integration tests for complete user workflows
+
+### Evaluation Directory (`evals/`)
+
+**Purpose:** Automated evaluation system for prompt quality and consistency.
+
+**Core Infrastructure (`evals/core/`):**
+- **`runner.py`**: Main evaluation orchestrator with unified CLI interface
+- **`judges/`**: Reusable evaluation framework
+  - `deterministic.py`: Fast, zero-cost validation (JSON, schema, format)
+  - `llm_judge.py`: LLM-as-judge using Jinja2 templates
+  - `templates/`: Judge prompt templates for consistency
+- **`dataset.py`**: Test case sampling and management
+- **`results.py`**: Results parsing and rendering
+- **`config.py`**: Configuration management
+
+**Prompt Evaluations (`evals/prompts/`):**
+- **Individual prompt directories**: Each prompt gets its own evaluation suite
+- **`config.yaml`**: Prompt-specific configuration and judge selection
+- **`judges.py`**: Custom judge implementations for specific prompts
+- **`data.csv`**: Test cases covering edge cases and context variations
+- **`schema.json`**: Expected output schema for validation
+
+**Key Features:**
+- **Unified Interface**: Single command for all evaluations (`python -m evals.core.runner`)
+- **Mirrors App Architecture**: Uses same services and data flow as CLI
+- **Jinja2 Templates**: LLM judge prompts are easily editable .j2 files
+- **Cost-Effective**: Ultra-cheap models (GPT-4.1-nano) for evaluation
+- **Extensible**: Easy to add new prompt evaluations
+- **TensorBlock Forge Integration**: Unified LLM access across providers
 
 ### Project Storage (`gtm_projects/`)
 

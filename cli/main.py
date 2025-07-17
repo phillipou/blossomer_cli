@@ -175,6 +175,11 @@ def status() -> None:
     console.print("[red]Command not yet implemented[/red]")
 
 
+# Add eval subcommand
+from cli.commands.eval import app as eval_app
+app.add_typer(eval_app, name="eval", help="🧪 Run evaluations on prompt templates")
+
+
 # Demo function to test Rich formatting
 @app.command(hidden=True)
 def demo() -> None:

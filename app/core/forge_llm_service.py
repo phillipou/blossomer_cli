@@ -66,38 +66,53 @@ class ForgeLLMService:
     Replaces complex provider management with unified Forge access.
     """
     
-    def __init__(self, default_model: str = "OpenAI/gpt-4.1-nano"):
+    def __init__(self, default_model: str = "OpenAI/gpt-4.1-nano", use_evals_key: bool = False):
         """
         Initialize the Forge LLM service.
         
         Args:
             default_model: Default model to use when none is specified
+            use_evals_key: If True, use FORGE_API_KEY_EVALS for separate cost tracking
         """
         self.default_model = default_model
+        self.use_evals_key = use_evals_key
         self.forge_client: Optional[ForgeClient] = None
         self._initialize_client()
     
     def _initialize_client(self):
         """Initialize the Forge client with API key checking."""
         try:
-            # Check if we have a Forge API key
-            forge_key = os.getenv("FORGE_API_KEY")
-            openai_key = os.getenv("OPENAI_API_KEY")
-            
-            if forge_key:
-                self.forge_client = get_forge_client()
-                logging.info("Initialized Forge LLM service with unified API access")
-            elif openai_key:
-                logging.warning(
-                    "Using legacy OpenAI API key. Consider migrating to FORGE_API_KEY "
-                    "for access to multiple providers (Gemini, Claude, GPT)"
-                )
-                # We'll still use Forge client but with OpenAI key
-                self.forge_client = get_forge_client()
+            # Check API key based on use_evals_key setting
+            if self.use_evals_key:
+                forge_key = os.getenv("FORGE_API_KEY_EVALS")
+                if forge_key:
+                    from app.core.forge_client import ForgeClient
+                    self.forge_client = ForgeClient(api_key=forge_key)
+                    logging.info("Initialized Forge LLM service with FORGE_API_KEY_EVALS for evaluation cost tracking")
+                else:
+                    raise CLIException(
+                        "FORGE_API_KEY_EVALS environment variable not set. "
+                        "This is required for evaluation cost tracking."
+                    )
             else:
-                raise CLIException(
-                    "No API key available. Set FORGE_API_KEY or OPENAI_API_KEY environment variable."
-                )
+                # Use regular API key
+                forge_key = os.getenv("FORGE_API_KEY")
+                openai_key = os.getenv("OPENAI_API_KEY")
+                
+                if forge_key:
+                    self.forge_client = get_forge_client()
+                    logging.info("Initialized Forge LLM service with unified API access")
+                elif openai_key:
+                    logging.warning(
+                        "Using legacy OpenAI API key. Consider migrating to FORGE_API_KEY "
+                        "for access to multiple providers (Gemini, Claude, GPT)"
+                    )
+                    # We'll still use Forge client but with OpenAI key
+                    self.forge_client = get_forge_client()
+                else:
+                    raise CLIException(
+                        "No API key available. Set FORGE_API_KEY or OPENAI_API_KEY environment variable."
+                    )
                     
         except Exception as e:
             logging.error(f"Failed to initialize Forge client: {e}")
@@ -282,20 +297,25 @@ class ForgeLLMService:
 _forge_llm_service: Optional[ForgeLLMService] = None
 
 
-def get_forge_llm_service(default_model: str = "OpenAI/gpt-4.1-nano") -> ForgeLLMService:
+def get_forge_llm_service(default_model: str = "OpenAI/gpt-4.1-nano", use_evals_key: bool = False) -> ForgeLLMService:
     """
     Get the global Forge LLM service instance.
     
     Args:
         default_model: Default model to use
+        use_evals_key: If True, use FORGE_API_KEY_EVALS for separate cost tracking
         
     Returns:
         ForgeLLMService instance
     """
     global _forge_llm_service
     
-    if _forge_llm_service is None:
-        _forge_llm_service = ForgeLLMService(default_model=default_model)
+    if _forge_llm_service is None or use_evals_key:
+        # For evals, create a new instance with the evaluation API key
+        if use_evals_key:
+            return ForgeLLMService(default_model=default_model, use_evals_key=True)
+        else:
+            _forge_llm_service = ForgeLLMService(default_model=default_model)
     
     return _forge_llm_service
 

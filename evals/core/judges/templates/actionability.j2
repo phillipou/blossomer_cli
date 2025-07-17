@@ -1,0 +1,54 @@
+You are evaluating if a company analysis provides actionable insights for sales discovery calls.
+
+## Analysis to Evaluate
+**Description:** {{ analysis.description }}
+
+**Business Profile Insights:**
+{% for insight in analysis.business_profile_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Positioning Insights:**
+{% for insight in analysis.positioning_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Target Customer Insights:**
+{% for insight in analysis.target_customer_insights %}
+- {{ insight }}
+{% endfor %}
+
+## Evaluation Criteria
+1. **SPECIFICITY**: Are insights specific to this company (not generic statements)?
+2. **DISCOVERY VALUE**: Do insights suggest clear follow-up questions for sales calls?
+3. **EVIDENCE-BASED**: Are claims grounded in observable information?
+
+## Pass Criteria
+All three criteria must be met for a passing grade.
+
+## Response Format
+Respond with valid JSON in this exact format:
+```json
+{
+  "pass": true/false,
+  "criteria_met": number,
+  "total_criteria": 3,
+  "details": [
+    {
+      "criterion": "specificity",
+      "pass": true/false,
+      "reason": "brief explanation"
+    },
+    {
+      "criterion": "discovery_value", 
+      "pass": true/false,
+      "reason": "brief explanation"
+    },
+    {
+      "criterion": "evidence_based",
+      "pass": true/false,
+      "reason": "brief explanation"
+    }
+  ]
+}
+```

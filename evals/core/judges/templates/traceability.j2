@@ -1,0 +1,36 @@
+You are evaluating if factual claims in a company analysis are properly supported by evidence.
+
+## Website Content
+{{ website_content }}
+
+## Claims to Evaluate
+{% for claim in claims %}
+{{ claim.number }}. [{{ claim.field }}] {{ claim.claim }}
+{% endfor %}
+
+## Task
+For each claim, determine if it either:
+1. Cites specific website text/content, OR
+2. Carries an [ASSUMPTION] tag, OR  
+3. Is clearly supported by website evidence
+
+## Pass Criteria
+At least {{ (claims|length * 0.6)|round|int }} out of {{ claims|length }} claims must be properly supported.
+
+## Response Format
+Respond with valid JSON in this exact format:
+```json
+{
+  "pass": true/false,
+  "supported_claims": number,
+  "total_claims": {{ claims|length }},
+  "details": [
+    {
+      "claim_number": 1,
+      "claim": "the actual claim text",
+      "supported": true/false,
+      "reason": "brief explanation of why it's supported or not"
+    }
+  ]
+}
+```

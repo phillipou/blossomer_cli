@@ -244,6 +244,45 @@ blossomer export persona --domain acme.com  # Specific domain
 - **Complete documentation**: All analysis, insights, and metadata
 - **Shareable reports**: Perfect for stakeholder presentations
 
+#### `eval COMMAND`
+Run quality assurance evaluations on prompt templates
+
+**Commands:**
+- `eval list` - List all available prompt evaluations
+- `eval run PROMPT` - Run evaluation on a specific prompt
+- `eval validate PROMPT` - Validate prompt configuration and dataset
+- `eval create PROMPT` - Create new prompt evaluation
+
+**Options:**
+- `--sample-size N` - Number of test cases to sample (default: 5)
+- `--output PATH` - Save results to JSON file
+- `--verbose` - Enable detailed output with debugging info
+
+**Examples:**
+```bash
+# List available evaluations
+blossomer eval list
+
+# Run evaluation on product overview prompt
+blossomer eval run product_overview --sample-size 10
+
+# Validate prompt configuration
+blossomer eval validate product_overview
+
+# Run all evaluations with verbose output
+blossomer eval run all --verbose --sample-size 3
+
+# Save results to file
+blossomer eval run product_overview --output results.json
+```
+
+**Evaluation Features:**
+- **Deterministic checks**: JSON validation, schema compliance, format rules
+- **LLM judges**: Traceability, actionability, redundancy, context steering
+- **Cost-effective**: Uses GPT-4.1-nano for ultra-low cost evaluation
+- **Rich output**: Progress bars, detailed failure analysis, pass/fail rates
+- **Quality assurance**: Ensures consistent prompt template performance
+
 ### Not Yet Implemented
 
 These commands show "Command not yet implemented":
@@ -285,7 +324,7 @@ export BLOSSOMER_DEBUG=true        # Enable debug output
 
 ### Project Structure
 
-Generated projects are stored in `gtm_projects/`:
+Generated projects are stored in `gtm_projects/`, evaluations in `evals/`:
 
 ```
 gtm_projects/
@@ -296,6 +335,19 @@ gtm_projects/
 │   ├── persona.json      # Buyer persona
 │   ├── email.json        # Email campaign
 │   └── export/           # Future: exported assets
+
+evals/
+├── core/                 # Evaluation framework
+│   ├── config.py        # Configuration management
+│   ├── dataset.py       # Test case handling
+│   ├── results.py       # Results display
+│   ├── runner.py        # Main evaluation runner
+│   └── judges/          # Evaluation logic
+└── prompts/             # Per-prompt configurations
+    └── product_overview/
+        ├── config.yaml  # Evaluation configuration
+        ├── data.csv     # Test cases
+        └── schema.json  # Expected output schema
 ```
 
 ## Development
@@ -345,6 +397,7 @@ blossomer-cli/
 - **Project storage** and retrieval
 - **Domain normalization** and validation
 - **Existing project handling** with update options
+- **Evaluation system**: Quality assurance for prompt templates with deterministic and LLM judges
 
 ### ⚠️ Planned Features
 - **GTM Plan generation** (step 5) - roadmap and execution plan

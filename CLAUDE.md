@@ -147,3 +147,6 @@ def save_project_data(domain: str, step: str, data: dict):
 2. Prioritize user experience over code elegance
 3. Ask "Does this help ship faster?" before adding complexity
 4. Follow the 5-step flow specifications exactly
+
+## Security and Ethical Considerations
+- Always ask for my permission to run code that will make an API request to an LLM since it'll cost me $$$

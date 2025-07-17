@@ -1,0 +1,46 @@
+You are evaluating if a company analysis appropriately handles user-provided context.
+
+## User Context
+**Context Type:** {{ context_type }}
+**User Input:** {{ user_context }}
+
+## Generated Analysis
+{{ analysis | tojson(indent=2) }}
+
+## Evaluation Rules
+{% if context_type == "valid" %}
+**Valid Context**: Analysis should incorporate relevant details from user context.
+The analysis should show clear evidence of using the user-provided information to enhance insights.
+{% elif context_type == "noise" %}
+**Noise Context**: Analysis should ignore gibberish and focus on core website content.
+The analysis should not be influenced by irrelevant or nonsensical context.
+{% endif %}
+
+## Pass Criteria
+{% if context_type == "valid" %}
+- At least one insight clearly incorporates user-provided information
+- The incorporation should be natural and relevant
+- User context should enhance rather than distract from the analysis
+{% elif context_type == "noise" %}
+- Analysis ignores irrelevant context and stays focused on website content
+- No signs of confusion or distraction from the noise context
+- Insights remain coherent and website-focused
+{% endif %}
+
+## Response Format
+Respond with valid JSON in this exact format:
+```json
+{
+  "pass": true/false,
+  "context_type": "{{ context_type }}",
+  "appropriate_handling": true/false,
+  "details": [
+    {
+      "aspect": "context_incorporation",
+      "pass": true/false,
+      "evidence": "specific example from analysis",
+      "reason": "brief explanation"
+    }
+  ]
+}
+```
