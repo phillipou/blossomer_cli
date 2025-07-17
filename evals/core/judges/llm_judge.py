@@ -72,14 +72,22 @@ class LLMJudge:
         
         # Define available judges
         judge_functions = {
-            "traceability": self._judge_traceability,
-            "actionability": self._judge_actionability,
-            "redundancy": self._judge_redundancy,
-            "context_steering": self._judge_context_steering
+            "content_integrity": self._judge_content_integrity,
+            "business_insight": self._judge_business_insight
         }
         
         # Get enabled judges from config
         enabled_judges = self.config.llm_judges or list(judge_functions.keys())
+        
+        # Validate that all requested judges exist
+        invalid_judges = [judge for judge in enabled_judges if judge not in judge_functions]
+        if invalid_judges:
+            available_judges = list(judge_functions.keys())
+            raise ValueError(
+                f"Invalid LLM judge(s) in config: {invalid_judges}. "
+                f"Available judges are: {available_judges}. "
+                f"Please update your config.yaml to use the correct judge names."
+            )
         
         all_passed = True
         
@@ -87,21 +95,44 @@ class LLMJudge:
             if judge_name in judge_functions:
                 try:
                     judge_result = await judge_functions[judge_name](parsed_output, test_case)
-                    results["judges"][judge_name] = judge_result
                     
                     # Track calls
                     results["total_calls"] += 1
                     
-                    if not judge_result.get("pass", False):
-                        all_passed = False
+                    # Handle new format where each judge returns multiple individual checks
+                    if isinstance(judge_result, dict) and any(key in judge_result for key in ["evidence_support", "context_handling", "content_distinctness", "industry_sophistication", "strategic_depth", "authentic_voice_capture", "actionable_specificity"]):
+                        # New format: multiple individual checks
+                        for check_name, check_result in judge_result.items():
+                            # Validate that each check_result is a dict
+                            if not isinstance(check_result, dict):
+                                raise ValueError(
+                                    f"Judge {judge_name} returned invalid format for check '{check_name}'. "
+                                    f"Expected dict, got {type(check_result).__name__}: {check_result}"
+                                )
+                            results["judges"][check_name] = check_result
+                            if not check_result.get("pass", False):
+                                all_passed = False
+                    else:
+                        # Legacy format or unexpected format
+                        if not isinstance(judge_result, dict):
+                            raise ValueError(
+                                f"Judge {judge_name} returned invalid format. "
+                                f"Expected dict, got {type(judge_result).__name__}: {judge_result}"
+                            )
+                        results["judges"][judge_name] = judge_result
+                        if not judge_result.get("pass", False):
+                            all_passed = False
                         
                 except Exception as e:
                     # Only show debug info in verbose mode
                     # if self.console:
                     #     self.console.print(f"❌ LLM Judge {judge_name} failed: {e}", style="red")
                     results["judges"][judge_name] = {
+                        "check_name": judge_name,
+                        "description": f"Judge category {judge_name} evaluation",
+                        "inputs_evaluated": [{"field": "error", "value": str(e)}],
                         "pass": False,
-                        "error": f"Judge evaluation failed: {str(e)}"
+                        "rationale": f"Judge evaluation failed: {str(e)}"
                     }
                     all_passed = False
         
@@ -161,15 +192,8 @@ class LLMJudge:
             # Parse response
             if expected_format == "json":
                 result = json.loads(response.text)
-                # Ensure the result has the required standardized structure
-                if "check_name" not in result:
-                    result["check_name"] = template_name
-                if "description" not in result:
-                    result["description"] = f"LLM evaluation using {template_name} template"
-                if "inputs_evaluated" not in result:
-                    result["inputs_evaluated"] = [{"field": "context", "value": "Template context"}]
-                if "rationale" not in result:
-                    result["rationale"] = "LLM evaluation result"
+                # For new multi-check format, just return as-is
+                # The templates should return properly formatted individual checks
             else:
                 result = {"response": response.text}
             
@@ -189,97 +213,26 @@ class LLMJudge:
             }
     
     
-    async def _judge_traceability(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
-        """L-1: Traceability check - verify claims are evidence-based."""
-        
-        # Sample factual claims from insight fields
-        insight_fields = [
-            "business_profile_insights",
-            "use_case_analysis_insights",
-            "positioning_insights"
-        ]
-        
-        all_claims = []
-        for field in insight_fields:
-            if field in data and isinstance(data[field], list):
-                all_claims.extend([(field, claim) for claim in data[field]])
-                # Only show debug info in verbose mode
-                # if self.console:
-                #     self.console.print(f"🔍 Traceability - Found {len(data[field])} claims in {field}")
-        
-        # Only show debug info in verbose mode
-        # if self.console:
-        #     self.console.print(f"🔍 Traceability - Total claims found: {len(all_claims)}")
-        
-        if not all_claims:
-            return {
-                "pass": False,
-                "error": "No claims found to evaluate"
-            }
-        
-        # Sample up to 5 claims
-        sampled_claims = random.sample(all_claims, min(5, len(all_claims)))
+    async def _judge_business_insight(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """L-2: Business insight check - evaluate sophisticated understanding that would impress founders."""
         
         context = {
-            "website_content": test_case.get("website_content", ""),
-            "claims": [
-                {
-                    "field": field,
-                    "claim": claim,
-                    "number": i + 1
-                }
-                for i, (field, claim) in enumerate(sampled_claims)
-            ]
-        }
-        
-        # Only show debug info in verbose mode
-        # if self.console:
-        #     self.console.print(f"🔍 Traceability - Calling judge with {len(context['claims'])} claims")
-        
-        return await self._call_judge("traceability", context)
-    
-    async def _judge_actionability(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
-        """L-2: Actionability check - evaluate specificity and discovery value."""
-        
-        context = {
-            "analysis": {
-                "description": data.get("description", ""),
-                "business_profile_insights": data.get("business_profile_insights", []),
-                "positioning_insights": data.get("positioning_insights", []),
-                "target_customer_insights": data.get("target_customer_insights", [])
-            }
-        }
-        
-        return await self._call_judge("actionability", context)
-    
-    async def _judge_redundancy(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
-        """L-3: Content redundancy check - ensure sections don't duplicate content."""
-        
-        context = {
-            "description": data.get("description", ""),
-            "business_insights": data.get("business_profile_insights", [])
-        }
-        
-        return await self._call_judge("redundancy", context)
-    
-    async def _judge_context_steering(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
-        """L-4: Context steering check - validate appropriate context usage."""
-        
-        context_type = test_case.get("context_type", "none")
-        
-        if context_type == "none":
-            return {
-                "pass": True,
-                "reason": "No context provided - auto-pass"
-            }
-        
-        context = {
-            "user_context": test_case.get("user_inputted_context", ""),
-            "context_type": context_type,
             "analysis": data
         }
         
-        return await self._call_judge("context_steering", context)
+        return await self._call_judge("business_insight", context)
+    
+    async def _judge_content_integrity(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """L-1: Content integrity check - evaluate evidence support, context handling, and content distinctness."""
+        
+        context = {
+            "analysis": data,
+            "context_type": test_case.get("context_type", "none"),
+            "user_context": test_case.get("user_inputted_context", ""),
+            "website_content": test_case.get("website_content", "")
+        }
+        
+        return await self._call_judge("content_integrity", context)
 
 
 # For standalone testing

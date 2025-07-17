@@ -1,0 +1,256 @@
+{
+  "prompt_name": "Product Overview Evaluation",
+  "timestamp": "2025-07-17T15:30:19.594756",
+  "evaluation_time": 18.899578094482422,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://mandrel.tech",
+        "context_type": "noise",
+        "account_profile_name": "Flying Elephant Enterprises",
+        "persona_profile_name": "Rainbow Unicorn Manager",
+        "persona_hypothesis": "Purple elephants dancing in the moonlight with glittering infrastructure that speaks in ancient DevOps languages",
+        "account_hypothesis": "Companies made of crystallized cloud formations that employ sentient automation scripts as their primary workforce",
+        "expected_company_name": "Mandrel"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"company_name\":\"Mandrel, Inc.\",\"company_url\":\"https://mandrel.tech\",\"description\":\"Mandrel provides audit-ready financial books with real-time revenue, cost, and inventory insights, delivered through..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "company_name": "Mandrel, Inc.",
+              "company_url": "https://mandrel.tech",
+              "description": "Mandrel provides audit-ready financial books with real-time revenue, cost, and inventory insights, delivered through a combination of software and expert review. Their platform supports scalable accounting processes for consumer brands and other growing companies, emphasizing accuracy and compliance.",
+              "business_profile_insights": [
+                "Category: Cloud-based Accounting and Financial Reporting",
+                "Business Model: Subscription-based SaaS with full-service accounting support, targeting growing brands needing audit-ready financials and real-time insights",
+                "Existing Customers: Companies in consumer brands and other scalable businesses, leveraging Mandrel's accurate, expert-reviewed financials for compliance and growth"
+              ],
+              "capabilities": [
+                "Audit-Ready Financials: Produces accurate, compliant financial statements reviewed by experts",
+                "Real-Time Financial Insights: Provides live revenue, cost, and inventory data for decision-making",
+                "Seamless Integrations: Connects with existing tech stacks to ensure data accuracy and completeness"
+              ],
+              "use_case_analysis_insights": [
+                "Process Impact: Transforms financial reporting workflows by automating data collection and review, enabling faster and more reliable audits",
+                "Problems Addressed: Solves inefficiencies in manual bookkeeping, reduces errors, and ensures compliance with audit standards",
+                "Current State: Users typically rely on manual data entry, spreadsheets, or disconnected systems, leading to delays and inaccuracies"
+              ],
+              "positioning_insights": [
+                "Key Market Belief: Current manual and disconnected accounting methods are too slow, error-prone, and insufficient for scaling companies needing audit readiness",
+                "Unique Approach: Combines software automation with expert review to deliver scalable, accurate financials that meet audit standards",
+                "Language Used: Emphasizes 'audit-ready', 'real-time', 'seamless integrations', and 'expert-reviewed' to convey reliability and sophistication"
+              ],
+              "objections": [
+                "Cost Concerns: Potential clients may worry about subscription fees and additional costs for expert review",
+                "Implementation Complexity: Concerns about integrating Mandrel with existing systems and workflows",
+                "Change Management: Resistance from teams accustomed to manual processes or legacy systems"
+              ],
+              "target_customer_insights": [
+                "Target Accounts: Growing consumer brands and scalable businesses that require accurate, audit-ready financials and real-time data for compliance and growth",
+                "Key Personas: Finance managers, CFOs, or controllers focused on compliance, audit readiness, and scalable financial operations, motivated by reducing errors and streamlining reporting"
+              ],
+              "metadata": {
+                "sources_used": [
+                  "website"
+                ],
+                "context_quality": "medium",
+                "assessment_summary": "Analysis based on available website content",
+                "assumptions_made": [
+                  "[ASSUMPTION] The focus on audit-ready books and real-time insights indicates targeting mid-sized to large companies needing compliance.",
+                  "[ASSUMPTION] Seamless integrations suggest compatibility with common ERP or accounting tools.",
+                  "[ASSUMPTION] The mention of expert review implies a hybrid SaaS + professional service model."
+                ],
+                "discovery_gaps": [
+                  "Technical architecture details and specific integration points",
+                  "Pricing tiers and scalability options",
+                  "Security, compliance standards, and data privacy measures",
+                  "Customer onboarding and implementation process"
+                ]
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 10/10 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: Cloud-based Accounting and Financial Reporting",
+                  "Business Model: Subscription-based SaaS with full-service accounting support, targeting growing brands needing audit-ready financials and real-time insights",
+                  "Existing Customers: Companies in consumer brands and other scalable businesses, leveraging Mandrel's accurate, expert-reviewed financials for compliance and growth"
+                ]
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": [
+                  "Process Impact: Transforms financial reporting workflows by automating data collection and review, enabling faster and more reliable audits",
+                  "Problems Addressed: Solves inefficiencies in manual bookkeeping, reduces errors, and ensures compliance with audit standards",
+                  "Current State: Users typically rely on manual data entry, spreadsheets, or disconnected systems, leading to delays and inaccuracies"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Current manual and disconnected accounting methods are too slow, error-prone, and insufficient for scaling companies needing audit readiness",
+                  "Unique Approach: Combines software automation with expert review to deliver scalable, accurate financials that meet audit standards",
+                  "Language Used: Emphasizes 'audit-ready', 'real-time', 'seamless integrations', and 'expert-reviewed' to convey reliability and sophistication"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Growing consumer brands and scalable businesses that require accurate, audit-ready financials and real-time data for compliance and growth",
+                  "Key Personas: Finance managers, CFOs, or controllers focused on compliance, audit readiness, and scalable financial operations, motivated by reducing errors and streamlining reporting"
+                ]
+              },
+              {
+                "field": "capabilities",
+                "value": [
+                  "Audit-Ready Financials: Produces accurate, compliant financial statements reviewed by experts",
+                  "Real-Time Financial Insights: Provides live revenue, cost, and inventory data for decision-making",
+                  "Seamless Integrations: Connects with existing tech stacks to ensure data accuracy and completeness"
+                ]
+              },
+              {
+                "field": "objections",
+                "value": [
+                  "Cost Concerns: Potential clients may worry about subscription fees and additional costs for expert review",
+                  "Implementation Complexity: Concerns about integrating Mandrel with existing systems and workflows",
+                  "Change Management: Resistance from teams accustomed to manual processes or legacy systems"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "capabilities",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "objections",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "target_customer_insights",
+                "value": "2 items (expected 2-3)"
+              }
+            ],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://mandrel.tech"
+              },
+              {
+                "field": "company_url",
+                "value": "https://mandrel.tech"
+              }
+            ],
+            "pass": true,
+            "rationale": "Input URL is correctly preserved in the output company_url field."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {},
+        "total_calls": 0
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"company_name\":\"Mandrel, Inc.\",\"company_url\":\"https://mandrel.tech\",\"description\":\"Mandrel provides audit-ready financial books with real-time revenue, cost, and inventory insights, delivered through a combination of software and expert review. Their platform supports scalable accounting processes for consumer brands and other growing companies, emphasizing accuracy and compliance.\",\"business_profile_insights\":[\"Category: Cloud-based Accounting and Financial Reporting\",\"Business Model: Subscription-based SaaS with full-service accounting support, targeting growing brands needing audit-ready financials and real-time insights\",\"Existing Customers: Companies in consumer brands and other scalable businesses, leveraging Mandrel's accurate, expert-reviewed financials for compliance and growth\"],\"capabilities\":[\"Audit-Ready Financials: Produces accurate, compliant financial statements reviewed by experts\",\"Real-Time Financial Insights: Provides live revenue, cost, and inventory data for decision-making\",\"Seamless Integrations: Connects with existing tech stacks to ensure data accuracy and completeness\"],\"use_case_analysis_insights\":[\"Process Impact: Transforms financial reporting workflows by automating data collection and review, enabling faster and more reliable audits\",\"Problems Addressed: Solves inefficiencies in manual bookkeeping, reduces errors, and ensures compliance with audit standards\",\"Current State: Users typically rely on manual data entry, spreadsheets, or disconnected systems, leading to delays and inaccuracies\"],\"positioning_insights\":[\"Key Market Belief: Current manual and disconnected accounting methods are too slow, error-prone, and insufficient for scaling companies needing audit readiness\",\"Unique Approach: Combines software automation with expert review to deliver scalable, accurate financials that meet audit standards\",\"Language Used: Emphasizes 'audit-ready', 'real-time', 'seamless integrations', and 'expert-reviewed' to convey reliability and sophistication\"],\"objections\":[\"Cost Concerns: Potential clients may worry about subscription fees and additional costs for expert review\",\"Implementation Complexity: Concerns about integrating Mandrel with existing systems and workflows\",\"Change Management: Resistance from teams accustomed to manual processes or legacy systems\"],\"target_customer_insights\":[\"Target Accounts: Growing consumer brands and scalable businesses that require accurate, audit-ready financials and real-time data for compliance and growth\",\"Key Personas: Finance managers, CFOs, or controllers focused on compliance, audit readiness, and scalable financial operations, motivated by reducing errors and streamlining reporting\"],\"metadata\":{\"sources_used\":[\"website\"],\"context_quality\":\"medium\",\"assessment_summary\":\"Analysis based on available website content\",\"assumptions_made\":[\"[ASSUMPTION] The focus on audit-ready books and real-time insights indicates targeting mid-sized to large companies needing compliance.\",\"[ASSUMPTION] Seamless integrations suggest compatibility with common ERP or accounting tools.\",\"[ASSUMPTION] The mention of expert review implies a hybrid SaaS + professional service model.\"],\"discovery_gaps\":[\"Technical architecture details and specific integration points\",\"Pricing tiers and scalability options\",\"Security, compliance standards, and data privacy measures\",\"Customer onboarding and implementation process\"]}}",
+      "test_case_id": 1
+    }
+  ]
+}

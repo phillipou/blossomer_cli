@@ -5,7 +5,7 @@ service:
 schema: "schema.json"
 judges:
   deterministic: ["D-1", "D-2", "D-3", "D-4", "D-5"]
-  llm: ["traceability", "actionability", "redundancy", "context_steering"]
+  llm: ["content_integrity", "business_insight"]
 models:
   default: "OpenAI/gpt-4.1-nano"
   fallback: "Gemini/models/gemini-1.5-flash"

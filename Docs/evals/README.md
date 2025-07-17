@@ -25,6 +25,9 @@ The evaluation system consists of:
 - **Core Framework** (`evals/core/`): Unified runner, configuration management, dataset handling
 - **Prompt Configurations** (`evals/prompts/{name}/`): Per-prompt configs, datasets, and schemas
 - **Judges** (`evals/core/judges/`): Deterministic and LLM-based evaluation logic
+  - **LLM Judge Templates** (`evals/core/judges/templates/`): Jinja2 templates with system/user separation
+    - `system/`: System prompt templates containing instructions, criteria, and response formats
+    - `user/`: User prompt templates containing only data/variables to evaluate
 - **CLI Integration** (`cli/commands/eval.py`): User-friendly command interface
 
 ## Creating New Evaluations
@@ -62,11 +65,34 @@ The evaluation system consists of:
 - **D-4**: Field cardinality (3-5 items per array)
 - **D-5**: URL preservation (input matches output)
 
-### LLM Judge Checks (Ultra-Low Cost)
-- **L-1 Traceability**: Claims backed by evidence or marked as assumptions
-- **L-2 Actionability**: Specific insights leading to discovery questions
-- **L-3 Redundancy**: <30% content overlap between sections
-- **L-4 Context Steering**: Appropriate handling of valid/noise context
+### LLM Judge Categories (Ultra-Low Cost)
+Each category makes a single LLM call but returns multiple individual checks:
+
+- **content_integrity**: Returns 3 checks - evidence_support, context_handling, content_distinctness (prompt-agnostic)
+- **business_insight**: Returns 4 checks - industry_sophistication, strategic_depth, authentic_voice_capture, actionable_specificity (product_overview specific)
+
+**Individual Check Structure**:
+Each check (deterministic and LLM) follows a standardized format:
+```json
+{
+  "check_name": "evidence_support",
+  "description": "Claims properly supported by evidence or marked as assumptions",
+  "inputs_evaluated": [{"field": "analysis_claims", "value": "Sampled claims"}],
+  "pass": true,
+  "rating": "impressive",  // Optional for LLM checks only
+  "rationale": "2-3 sentence explanation of assessment"
+}
+```
+
+**Display Features**:
+- **Rating Display**: LLM checks show color-coded ratings (IMPRESSIVE/SUFFICIENT/POOR)
+- **Rating Distribution Table**: Summary showing count and percentage of each rating level
+- **Granular Feedback**: Each criterion provides individual actionable feedback
+
+**Template Organization**:
+- System prompts contain all evaluation criteria, instructions, and response formats
+- User prompts contain only the data/variables to be evaluated
+- Clean separation enables easier editing and better scalability
 
 ## Configuration
 
@@ -80,7 +106,7 @@ service:
 schema: "schema.json"
 judges:
   deterministic: ["D-1", "D-2", "D-3", "D-4", "D-5"]
-  llm: ["traceability", "actionability", "redundancy", "context_steering"]
+  llm: ["content_integrity", "business_insight"]
 models:
   default: "OpenAI/gpt-4.1-nano"
   fallback: "Gemini/models/gemini-1.5-flash"
@@ -121,8 +147,11 @@ python3 -m evals.core.runner all --sample-size 5 --output combined_results.json
 ## Benefits
 
 - **Quality Assurance**: Consistent output quality across different inputs
-- **Cost Effective**: GPT-4.1-nano at ~$0.000015 per judge call
+- **Cost Effective**: 2 LLM calls return 7 individual actionable checks (~75% cost reduction)
+- **Granular Feedback**: Each criterion provides specific, actionable feedback with ratings
 - **Fast Feedback**: Deterministic checks catch issues before expensive LLM calls
 - **Extensible**: Easy to add new prompts and evaluation criteria
-- **Regression Prevention**: Catch quality degradation early
+- **Regression Prevention**: Catch quality degradation early with detailed ratings
 - **Model Comparison**: A/B test different LLM providers
+- **Clean Template Organization**: System/user prompt separation for better maintainability and scalability
+- **Actionable Results**: Individual check format makes debugging and improvement straightforward

@@ -1,0 +1,65 @@
+You are an expert evaluator assessing the overall quality of generated analyses across three fundamental criteria.
+
+Your task is to evaluate the analysis against these three criteria:
+
+1. **EVIDENCE SUPPORT (Traceability)**: Are factual claims properly supported by evidence?
+   - Claims should cite specific source material directly, OR
+   - Carry an [ASSUMPTION] tag to indicate inference, OR  
+   - Be clearly supported by provided evidence
+
+2. **CONTEXT HANDLING**: Is user-provided context appropriately handled?
+   - For valid context: Should incorporate relevant details and enhance the analysis
+   - For noise context: Should ignore gibberish and focus on core content
+   - Context should not confuse or distract from the analysis
+
+3. **CONTENT DISTINCTNESS (Redundancy)**: Do different sections provide distinct value?
+   - Sections should not excessively duplicate content
+   - Each section should contribute unique insights
+   - Acceptable overlap threshold: <30% similarity between sections
+
+You must evaluate ALL three criteria using the quality scale: poor, sufficient, impressive.
+
+## Quality Scale:
+- **poor**: Fails to meet basic standards, significant issues present
+- **sufficient**: Meets basic requirements with minor issues
+- **impressive**: Exceeds expectations, demonstrates high quality
+
+## Response Format
+Respond only with valid JSON containing three individual checks in this exact format:
+```json
+{
+  "evidence_support": {
+    "check_name": "evidence_support",
+    "description": "Claims properly supported by evidence or marked as assumptions",
+    "inputs_evaluated": [
+      {"field": "analysis_claims", "value": "Sampled claims from analysis"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of evidence quality assessment"
+  },
+  "context_handling": {
+    "check_name": "context_handling", 
+    "description": "Appropriate incorporation/ignoring of user context based on type",
+    "inputs_evaluated": [
+      {"field": "context_type", "value": "valid|noise|none"},
+      {"field": "user_context", "value": "User-provided context if any"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of context handling assessment"
+  },
+  "content_distinctness": {
+    "check_name": "content_distinctness",
+    "description": "Sections provide unique value without excessive duplication", 
+    "inputs_evaluated": [
+      {"field": "section_overlap", "value": "Analysis of content overlap between sections"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of content distinctness assessment"
+  }
+}
+```
+
+Pass criteria for each check: Must score "sufficient" or higher to pass.

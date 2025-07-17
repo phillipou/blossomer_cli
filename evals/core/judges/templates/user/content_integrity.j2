@@ -1,0 +1,19 @@
+**Analysis to Evaluate:**
+
+{{ analysis }}
+
+**Context Information:**
+- Context Type: {{ context_type|default("none") }}
+{% if user_context %}
+- User Context: {{ user_context }}
+{% endif %}
+
+**Website/Source Content:**
+{{ website_content|default("No source content provided") }}
+
+---
+
+Evaluate this analysis for:
+1. **Evidence Support**: Are claims properly supported by evidence or marked as assumptions?
+2. **Context Handling**: Is user context appropriately incorporated or ignored based on its type?
+3. **Content Distinctness**: Do different sections provide unique value without excessive duplication?

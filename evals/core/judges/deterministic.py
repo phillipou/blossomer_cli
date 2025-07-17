@@ -57,6 +57,17 @@ class DeterministicJudge:
             if self._is_check_enabled(name)
         ]
         
+        # Validate that all requested checks exist
+        if self.config.deterministic_checks:
+            valid_check_ids = [name.split("_")[0] for name, _ in checks]
+            invalid_checks = [check for check in self.config.deterministic_checks if check not in valid_check_ids]
+            if invalid_checks:
+                raise ValueError(
+                    f"Invalid deterministic check(s) in config: {invalid_checks}. "
+                    f"Available checks are: {valid_check_ids}. "
+                    f"Please update your config.yaml to use the correct check names."
+                )
+        
         results["total_checks"] = len(enabled_checks)
         
         # Parse JSON once if possible

@@ -75,10 +75,16 @@ blossomer-cli/
 │   │   │   ├── deterministic.py # Base deterministic checks
 │   │   │   ├── llm_judge.py    # Base LLM judge using .j2 templates
 │   │   │   └── templates/      # Judge prompt templates
-│   │   │       ├── traceability.j2
-│   │   │       ├── actionability.j2
-│   │   │       ├── redundancy.j2
-│   │   │       └── context_steering.j2
+│   │   │       ├── system/     # System prompt templates (instructions)
+│   │   │       │   ├── traceability.j2
+│   │   │       │   ├── actionability.j2
+│   │   │       │   ├── redundancy.j2
+│   │   │       │   └── context_steering.j2
+│   │   │       └── user/       # User prompt templates (data only)
+│   │   │           ├── traceability.j2
+│   │   │           ├── actionability.j2
+│   │   │           ├── redundancy.j2
+│   │   │           └── context_steering.j2
 │   │   ├── dataset.py          # Dataset sampling and management
 │   │   ├── results.py          # Results parsing and rendering
 │   │   └── config.py           # Configuration management
@@ -185,10 +191,11 @@ blossomer-cli/
 **Key Features:**
 - **Unified Interface**: Single command for all evaluations (`python -m evals.core.runner`)
 - **Mirrors App Architecture**: Uses same services and data flow as CLI
-- **Jinja2 Templates**: LLM judge prompts are easily editable .j2 files
+- **Jinja2 Templates**: LLM judge prompts with system/user separation for clean organization
 - **Cost-Effective**: Ultra-cheap models (GPT-4.1-nano) for evaluation
 - **Extensible**: Easy to add new prompt evaluations
 - **TensorBlock Forge Integration**: Unified LLM access across providers
+- **Template Refactoring**: System prompts contain instructions, user prompts contain only data
 
 ### Project Storage (`gtm_projects/`)
 

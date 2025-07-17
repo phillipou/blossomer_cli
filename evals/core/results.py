@@ -50,6 +50,9 @@ class ResultsManager:
         # Display individual check results
         self._display_individual_checks(results.get('detailed_results', []))
         
+        # Display rating summary for LLM checks
+        self._display_rating_summary(results.get('detailed_results', []))
+        
         # Display final summary table
         self._display_check_summary(results.get('detailed_results', []))
     
@@ -129,6 +132,7 @@ class ResultsManager:
         check_name = check_result.get('check_name', 'unknown')
         description = check_result.get('description', 'No description')
         passed = check_result.get('pass', False)
+        rating = check_result.get('rating')
         rationale = check_result.get('rationale', check_result.get('error', 'No rationale provided'))
         
         # Status icon
@@ -140,6 +144,15 @@ class ResultsManager:
         
         # Display description
         self.console.print(f"{indent}       {description}", style="dim")
+        
+        # Display rating if available (for LLM judges)
+        if rating:
+            rating_color = {
+                "impressive": "green",
+                "sufficient": "yellow", 
+                "poor": "red"
+            }.get(rating, "white")
+            self.console.print(f"{indent}       ⭐ Rating: {rating.upper()}", style=rating_color)
         
         # Display rationale
         self.console.print(f"{indent}       → {rationale}", style="yellow" if not passed else "dim")
@@ -214,6 +227,54 @@ class ResultsManager:
             )
         
         self.console.print(summary_table)
+    
+    def _display_rating_summary(self, detailed_results: List[Dict[str, Any]]) -> None:
+        """Display rating distribution for LLM judge checks."""
+        if not detailed_results:
+            return
+        
+        # Count ratings from LLM checks
+        rating_counts = {"impressive": 0, "sufficient": 0, "poor": 0}
+        total_llm_checks = 0
+        
+        for case in detailed_results:
+            llm_results = case.get('llm_results', {})
+            if llm_results and 'judges' in llm_results:
+                for judge_name, judge_result in llm_results['judges'].items():
+                    rating = judge_result.get('rating')
+                    if rating and rating in rating_counts:
+                        rating_counts[rating] += 1
+                        total_llm_checks += 1
+        
+        # Only display if we have LLM checks with ratings
+        if total_llm_checks == 0:
+            return
+        
+        self.console.print(f"\n⭐ LLM Judge Rating Distribution")
+        
+        rating_table = Table()
+        rating_table.add_column("Rating", style="cyan")
+        rating_table.add_column("Count", style="blue")
+        rating_table.add_column("Percentage", style="magenta")
+        
+        for rating in ["impressive", "sufficient", "poor"]:
+            count = rating_counts[rating]
+            percentage = (count / total_llm_checks) * 100 if total_llm_checks > 0 else 0
+            
+            # Color code the rating
+            rating_color = {
+                "impressive": "green",
+                "sufficient": "yellow",
+                "poor": "red"
+            }.get(rating, "white")
+            
+            rating_display = Text(rating.upper(), style=rating_color)
+            rating_table.add_row(rating_display, str(count), f"{percentage:.1f}%")
+        
+        # Add total row
+        rating_table.add_row("**TOTAL**", f"**{total_llm_checks}**", "**100.0%**")
+        
+        self.console.print(rating_table)
     
     def _display_failed_cases(self, detailed_results: List[Dict[str, Any]], verbose: bool = False) -> None:
         """Display details of failed test cases."""

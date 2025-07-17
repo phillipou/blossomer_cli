@@ -1,0 +1,346 @@
+{
+  "prompt_name": "Product Overview Evaluation",
+  "timestamp": "2025-07-17T12:19:50.716769",
+  "evaluation_time": 39.258798122406006,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://www.mammothcpg.com/",
+        "context_type": "noise",
+        "account_profile_name": "idk",
+        "persona_profile_name": "next",
+        "persona_hypothesis": "not sure",
+        "account_hypothesis": "You tell me",
+        "expected_company_name": "Mammoth"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"company_name\":\"Mammoth\",\"company_url\":\"https://www.mammothcpg.com/\",\"description\":\"Mammoth is a supply chain productivity platform that leverages AI to unify and standardize data from multiple sourc..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "company_name": "Mammoth",
+              "company_url": "https://www.mammothcpg.com/",
+              "description": "Mammoth is a supply chain productivity platform that leverages AI to unify and standardize data from multiple sources, providing real-time insights, dashboards, and automation capabilities. It aims to streamline supply chain management by integrating existing systems and enabling faster decision-making.",
+              "business_profile_insights": [
+                "Category: Supply Chain Data Integration and Optimization Platform",
+                "Business Model: SaaS platform offering data unification, dashboards, and workflow automation; likely subscription-based targeting supply chain teams in mid to large enterprises",
+                "Existing Customers: Evidence of use in procurement and supply chain management, with testimonials emphasizing time savings and improved data accuracy"
+              ],
+              "capabilities": [
+                "Data Unification: Uses AI to ingest and standardize data from multiple sources into a single view",
+                "Real-Time Querying: Enables instant data analysis and dashboard creation within familiar tools like spreadsheets",
+                "Workflow Automation: Connects to existing systems to automate supply chain processes and scenario planning",
+                "Collaboration Tools: Facilitates sharing reports and scenarios with internal and external stakeholders",
+                "Data Integrity & Security: Ensures high data accuracy and security standards"
+              ],
+              "use_case_analysis_insights": [
+                "Process Impact: Transforms supply chain data management by consolidating disparate sources into a unified, accessible platform",
+                "Problems Addressed: Solves issues related to fragmented data, manual data cleaning, slow reporting, and inefficient decision-making",
+                "Current State: Users typically rely on multiple spreadsheets, manual data entry, and fragmented systems, leading to delays and errors"
+              ],
+              "positioning_insights": [
+                "Key Market Belief: Current supply chain tools are fragile, outdated, and rely heavily on manual processes that hinder strategic agility",
+                "Unique Approach: Combines AI-driven data standardization with seamless integration and real-time insights within familiar tools like spreadsheets",
+                "Language Used: Emphasizes transformation, control, and speed, using metaphors like 'supercharge spreadsheets' and 'zero friction' to convey ease and efficiency"
+              ],
+              "objections": [
+                "Implementation Complexity: Concerns about integrating with existing legacy systems and data sources",
+                "Cost: Potential hesitation regarding subscription pricing and ROI justification",
+                "Change Management: Resistance from teams accustomed to traditional manual processes",
+                "Data Security: Worries about data privacy and compliance with industry standards"
+              ],
+              "target_customer_insights": [
+                "Target Accounts: Mid to large enterprises across industries such as manufacturing, procurement, and logistics that manage complex supply chains and data silos",
+                "Key Personas: Supply chain managers, procurement officers, operations leaders focused on improving data accuracy, reducing manual effort, and gaining real-time insights"
+              ],
+              "metadata": {
+                "sources_used": [
+                  "website"
+                ],
+                "context_quality": "medium",
+                "assessment_summary": "Analysis based on available website content",
+                "assumptions_made": [],
+                "discovery_gaps": [
+                  "Details on pricing and subscription tiers",
+                  "Specific technical architecture and integration requirements",
+                  "Security and compliance standards"
+                ]
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 10/10 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: Supply Chain Data Integration and Optimization Platform",
+                  "Business Model: SaaS platform offering data unification, dashboards, and workflow automation; likely subscription-based targeting supply chain teams in mid to large enterprises",
+                  "Existing Customers: Evidence of use in procurement and supply chain management, with testimonials emphasizing time savings and improved data accuracy"
+                ]
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": [
+                  "Process Impact: Transforms supply chain data management by consolidating disparate sources into a unified, accessible platform",
+                  "Problems Addressed: Solves issues related to fragmented data, manual data cleaning, slow reporting, and inefficient decision-making",
+                  "Current State: Users typically rely on multiple spreadsheets, manual data entry, and fragmented systems, leading to delays and errors"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Current supply chain tools are fragile, outdated, and rely heavily on manual processes that hinder strategic agility",
+                  "Unique Approach: Combines AI-driven data standardization with seamless integration and real-time insights within familiar tools like spreadsheets",
+                  "Language Used: Emphasizes transformation, control, and speed, using metaphors like 'supercharge spreadsheets' and 'zero friction' to convey ease and efficiency"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Mid to large enterprises across industries such as manufacturing, procurement, and logistics that manage complex supply chains and data silos",
+                  "Key Personas: Supply chain managers, procurement officers, operations leaders focused on improving data accuracy, reducing manual effort, and gaining real-time insights"
+                ]
+              },
+              {
+                "field": "capabilities",
+                "value": [
+                  "Data Unification: Uses AI to ingest and standardize data from multiple sources into a single view",
+                  "Real-Time Querying: Enables instant data analysis and dashboard creation within familiar tools like spreadsheets",
+                  "Workflow Automation: Connects to existing systems to automate supply chain processes and scenario planning",
+                  "Collaboration Tools: Facilitates sharing reports and scenarios with internal and external stakeholders",
+                  "Data Integrity & Security: Ensures high data accuracy and security standards"
+                ]
+              },
+              {
+                "field": "objections",
+                "value": [
+                  "Implementation Complexity: Concerns about integrating with existing legacy systems and data sources",
+                  "Cost: Potential hesitation regarding subscription pricing and ROI justification",
+                  "Change Management: Resistance from teams accustomed to traditional manual processes",
+                  "Data Security: Worries about data privacy and compliance with industry standards"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "capabilities",
+                "value": "5 items (expected 3-5)"
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "objections",
+                "value": "4 items (expected 3-5)"
+              },
+              {
+                "field": "target_customer_insights",
+                "value": "2 items (expected 2-3)"
+              }
+            ],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://www.mammothcpg.com/"
+              },
+              {
+                "field": "company_url",
+                "value": "https://www.mammothcpg.com/"
+              }
+            ],
+            "pass": true,
+            "rationale": "Input URL is correctly preserved in the output company_url field."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "traceability": {
+            "check_name": "traceability",
+            "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+            "inputs_evaluated": [
+              {
+                "field": "[positioning_insights]",
+                "value": "Unique Approach: Combines AI-driven data standardization with seamless integration and real-time insights within familiar tools like spreadsheets"
+              },
+              {
+                "field": "[business_profile_insights]",
+                "value": "Category: Supply Chain Data Integration and Optimization Platform"
+              },
+              {
+                "field": "[business_profile_insights]",
+                "value": "Business Model: SaaS platform offering data unification, dashboards, and workflow automation; likely subscription-based targeting supply chain teams in mid to large enterprises"
+              },
+              {
+                "field": "[positioning_insights]",
+                "value": "Language Used: Emphasizes transformation, control, and speed, using metaphors like 'supercharge spreadsheets' and 'zero friction' to convey ease and efficiency"
+              },
+              {
+                "field": "[use_case_analysis_insights]",
+                "value": "Current State: Users typically rely on multiple spreadsheets, manual data entry, and fragmented systems, leading to delays and errors"
+              }
+            ],
+            "pass": true,
+            "rationale": "All five claims are directly supported by specific website content, with clear descriptions or metaphors that match the claims. Since at least three claims are supported, the check passes."
+          },
+          "actionability": {
+            "check_name": "actionability",
+            "description": "Evaluates if insights are specific and lead to actionable discovery questions",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "Supply chain data integration and optimization platform, targeting mid to large enterprises with existing procurement and supply chain management use cases, emphasizing time savings and data accuracy"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "Highlights fragility of current tools, reliance on manual processes, and the unique AI-driven standardization approach that integrates with familiar tools like spreadsheets"
+              },
+              {
+                "field": "target_customer_insights",
+                "value": "Focus on supply chain managers, procurement officers, and operations leaders in complex, siloed environments seeking real-time insights and automation"
+              }
+            ],
+            "pass": true,
+            "rationale": "The insights are specific to Mammoth's platform, emphasizing its AI-driven data unification and integration with familiar tools, which provides a clear basis for tailored discovery questions. They also highlight pain points like outdated tools and manual processes, leading to valuable follow-up inquiries. All insights are grounded in observable details from the company's profile and positioning, fulfilling all criteria for actionability."
+          },
+          "redundancy": {
+            "check_name": "redundancy",
+            "description": "Checks for excessive content duplication between different sections",
+            "inputs_evaluated": [
+              {
+                "field": "description",
+                "value": "Mammoth is a supply chain productivity platform that leverages AI to unify and standardize data from multiple sources, providing real-time insights, dashboards, and automation capabilities. It aims to streamline supply chain management by integrating existing systems and enabling faster decision-making."
+              },
+              {
+                "field": "business_insights",
+                "value": [
+                  "Category: Supply Chain Data Integration and Optimization Platform",
+                  "Business Model: SaaS platform offering data unification, dashboards, and workflow automation; likely subscription-based targeting supply chain teams in mid to large enterprises",
+                  "Existing Customers: Evidence of use in procurement and supply chain management, with testimonials emphasizing time savings and improved data accuracy"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "The description provides a high-level overview of Mammoth's platform features and purpose, while the business insights focus on categorization, business model, and customer evidence. The overlap in core concepts like data unification, dashboards, and supply chain focus results in a similarity score below 30%, indicating the sections offer distinct value without excessive duplication."
+          },
+          "context_steering": {
+            "check_name": "context_steering",
+            "description": "Validates appropriate handling of user-provided context in the analysis",
+            "inputs_evaluated": [
+              {
+                "field": "user_context",
+                "value": ""
+              },
+              {
+                "field": "context_type",
+                "value": "noise"
+              },
+              {
+                "field": "generated_analysis",
+                "value": "{\n  \"business_profile_insights\": [\n    \"Category: Supply Chain Data Integration and Optimization Platform\",\n    \"Business Model: SaaS platform offering data unification, dashboards, and workflow automation; likely subscription-based targeting supply chain teams in mid to large enterprises\",\n    \"Existing Customers: Evidence of use in procurement and supply chain management, with testimonials emphasizing time savings and improved data accuracy\"\n  ],\n  \"capabilities\": [\n    \"Data Unification: Uses AI to ingest and standardize data from multiple sources into a single view\",\n    \"Real-Time Querying: Enables instant data analysis and dashboard creation within familiar tools like spreadsheets\",\n    \"Workflow Automation: Connects to existing systems to automate supply chain processes and scenario planning\",\n    \"Collaboration Tools: Facilitates sharing reports and scenarios with internal and external stakeholders\",\n    \"Data Integrity \u001and Security: Ensures high data accuracy and security standards\"\n  ],\n  \"company_name\": \"Mammoth\",\n  \"company_url\": \"https://www.mammothcpg.com/\",\n  \"description\": \"Mammoth is a supply chain productivity platform that leverages AI to unify and standardize data from multiple sources, providing real-time insights, dashboards, and automation capabilities. It aims to streamline supply chain management by integrating existing systems and enabling faster decision-making.\",\n  \"metadata\": {\n    \"assessment_summary\": \"Analysis based on available website content\",\n    \"assumptions_made\": [],\n    \"context_quality\": \"medium\",\n    \"discovery_gaps\": [\n      \"Details on pricing and subscription tiers\",\n      \"Specific technical architecture and integration requirements\",\n      \"Security and compliance standards\"\n    ],\n    \"sources_used\": [\n      \"website\"\n    ]\n  },\n  \"objections\": [\n    \"Implementation Complexity: Concerns about integrating with existing legacy systems and data sources\",\n    \"Cost: Potential hesitation regarding subscription pricing and ROI justification\",\n    \"Change Management: Resistance from teams accustomed to traditional manual processes\",\n    \"Data Security: Worries about data privacy and compliance with industry standards\"\n  ],\n  \"positioning_insights\": [\n    \"Key Market Belief: Current supply chain tools are fragile, outdated, and rely heavily on manual processes that hinder strategic agility\",\n    \"Unique Approach: Combines AI-driven data standardization with seamless integration and real-time insights within familiar tools like spreadsheets\",\n    \"Language Used: Emphasizes transformation, control, and speed, using metaphors like \u001esupercharge spreadsheets\u0000 and \u001ezero friction\u0000 to convey ease and efficiency\"\n  ],\n  \"target_customer_insights\": [\n    \"Target Accounts: Mid to large enterprises across industries such as manufacturing, procurement, and logistics that manage complex supply chains and data silos\",\n    \"Key Personas: Supply chain managers, procurement officers, operations leaders focused on improving data accuracy, reducing manual effort, and gaining real-time insights\"\n  ],\n  \"use_case_analysis_insights\": [\n    \"Process Impact: Transforms supply chain data management by consolidating disparate sources into a unified, accessible platform\",\n    \"Problems Addressed: Solves issues related to fragmented data, manual data cleaning, slow reporting, and inefficient decision-making\",\n    \"Current State: Users typically rely on multiple spreadsheets, manual data entry, and fragmented systems, leading to delays and errors\"\n  ]\n}"
+              }
+            ],
+            "pass": true,
+            "rationale": "The analysis appropriately treats the user context as noise, ignoring irrelevant details and focusing solely on website content. It remains coherent and website-focused without attempting to incorporate or be distracted by the empty or nonsensical user input, demonstrating proper handling of noise context."
+          }
+        },
+        "total_calls": 4
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"company_name\":\"Mammoth\",\"company_url\":\"https://www.mammothcpg.com/\",\"description\":\"Mammoth is a supply chain productivity platform that leverages AI to unify and standardize data from multiple sources, providing real-time insights, dashboards, and automation capabilities. It aims to streamline supply chain management by integrating existing systems and enabling faster decision-making.\",\"business_profile_insights\":[\"Category: Supply Chain Data Integration and Optimization Platform\",\"Business Model: SaaS platform offering data unification, dashboards, and workflow automation; likely subscription-based targeting supply chain teams in mid to large enterprises\",\"Existing Customers: Evidence of use in procurement and supply chain management, with testimonials emphasizing time savings and improved data accuracy\"],\"capabilities\":[\"Data Unification: Uses AI to ingest and standardize data from multiple sources into a single view\",\"Real-Time Querying: Enables instant data analysis and dashboard creation within familiar tools like spreadsheets\",\"Workflow Automation: Connects to existing systems to automate supply chain processes and scenario planning\",\"Collaboration Tools: Facilitates sharing reports and scenarios with internal and external stakeholders\",\"Data Integrity & Security: Ensures high data accuracy and security standards\"],\"use_case_analysis_insights\":[\"Process Impact: Transforms supply chain data management by consolidating disparate sources into a unified, accessible platform\",\"Problems Addressed: Solves issues related to fragmented data, manual data cleaning, slow reporting, and inefficient decision-making\",\"Current State: Users typically rely on multiple spreadsheets, manual data entry, and fragmented systems, leading to delays and errors\"],\"positioning_insights\":[\"Key Market Belief: Current supply chain tools are fragile, outdated, and rely heavily on manual processes that hinder strategic agility\",\"Unique Approach: Combines AI-driven data standardization with seamless integration and real-time insights within familiar tools like spreadsheets\",\"Language Used: Emphasizes transformation, control, and speed, using metaphors like 'supercharge spreadsheets' and 'zero friction' to convey ease and efficiency\"],\"objections\":[\"Implementation Complexity: Concerns about integrating with existing legacy systems and data sources\",\"Cost: Potential hesitation regarding subscription pricing and ROI justification\",\"Change Management: Resistance from teams accustomed to traditional manual processes\",\"Data Security: Worries about data privacy and compliance with industry standards\"],\"target_customer_insights\":[\"Target Accounts: Mid to large enterprises across industries such as manufacturing, procurement, and logistics that manage complex supply chains and data silos\",\"Key Personas: Supply chain managers, procurement officers, operations leaders focused on improving data accuracy, reducing manual effort, and gaining real-time insights\"],\"metadata\":{\"sources_used\":[\"website\"],\"context_quality\":\"medium\",\"assessment_summary\":\"Analysis based on available website content\",\"assumptions_made\":[],\"discovery_gaps\":[\"Details on pricing and subscription tiers\",\"Specific technical architecture and integration requirements\",\"Security and compliance standards\"]}}",
+      "test_case_id": 1
+    }
+  ]
+}

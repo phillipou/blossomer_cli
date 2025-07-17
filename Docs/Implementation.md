@@ -136,10 +136,16 @@ Automated evaluation system to ensure prompt templates maintain consistent quali
 ```python
 # Judge prompts are stored as .j2 files for easy editing
 evals/core/judges/templates/
-├── traceability.j2      # Evidence-based claim verification
-├── actionability.j2     # Specificity and discovery value
-├── redundancy.j2        # Content overlap detection
-└── context_steering.j2  # Context handling appropriateness
+├── system/              # System prompt templates (instructions)
+│   ├── traceability.j2      # Evidence-based claim verification
+│   ├── actionability.j2     # Specificity and discovery value
+│   ├── redundancy.j2        # Content overlap detection
+│   └── context_steering.j2  # Context handling appropriateness
+└── user/                # User prompt templates (data only)
+    ├── traceability.j2      # Website content and claims
+    ├── actionability.j2     # Analysis data to evaluate
+    ├── redundancy.j2        # Description and insights sections
+    └── context_steering.j2  # Context and analysis data
 ```
 
 #### Evaluation Types
@@ -151,26 +157,24 @@ evals/core/judges/templates/
 - **D-4 Field Cardinality**: Array length validation (3-5 items)
 - **D-5 URL Preservation**: Input/output URL matching
 
-**LLM Judge Checks (Ultra-Low Cost):**
-- **L-1 Traceability**: Sample factual claims for website evidence or [ASSUMPTION] tags
-- **L-2 Actionability**: Evaluate specificity, discovery value, evidence-based claims
-- **L-3 Content Redundancy**: Check Jaccard similarity between sections
-- **L-4 Context Steering**: Validate appropriate handling of valid/noise/none context
+**LLM Judge Categories (Ultra-Low Cost):**
+- **content_integrity**: Returns 3 individual checks - evidence_support, context_handling, content_distinctness
+- **business_insight**: Returns 4 individual checks - industry_sophistication, strategic_depth, authentic_voice_capture, actionable_specificity
 
-#### Simplified Output Structure
+#### Individual Check Output Structure
 
-Each evaluation check now follows a standardized format for clarity:
+Each evaluation check (both deterministic and LLM) follows a standardized format:
 
 ```json
 {
-  "check_name": "traceability",
-  "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+  "check_name": "evidence_support",
+  "description": "Claims properly supported by evidence or marked as assumptions",
   "inputs_evaluated": [
-    {"field": "business_profile_insights", "value": ["Category: Financial Technology", "Market: Enterprise payments"]},
-    {"field": "website_content", "value": "Stripe powers online payments for millions..."}
+    {"field": "analysis_claims", "value": "Sampled claims from analysis"}
   ],
-  "pass": false,
-  "rationale": "Only 2 out of 5 sampled claims could be verified against website content. Claims about Series B funding and enterprise focus lack supporting evidence from the scraped content."
+  "pass": true,
+  "rating": "impressive",
+  "rationale": "Most claims are directly supported by the provided website content with clear references to capabilities and market positioning."
 }
 ```
 
@@ -179,7 +183,12 @@ Each evaluation check now follows a standardized format for clarity:
 - **description**: Brief explanation of what the check evaluates (1-2 sentences)
 - **inputs_evaluated**: Array of {field: field_name, value: field_value} pairs showing what data was examined
 - **pass**: Boolean indicating if the check passed or failed
+- **rating**: Optional qualitative assessment (poor|sufficient|impressive) for LLM checks
 - **rationale**: Clear 2-3 sentence explanation of why it passed or failed
+
+**LLM Judge Categories Return Multiple Individual Checks:**
+- **content_integrity** → 3 checks: evidence_support, context_handling, content_distinctness
+- **business_insight** → 4 checks: industry_sophistication, strategic_depth, authentic_voice_capture, actionable_specificity
 
 **Example Deterministic Check:**
 ```json
@@ -197,16 +206,22 @@ Each evaluation check now follows a standardized format for clarity:
 **Example LLM Judge Check:**
 ```json
 {
-  "check_name": "actionability",
-  "description": "Evaluates if insights are specific and lead to actionable discovery questions",
+  "check_name": "industry_sophistication",
+  "description": "Nuanced understanding of industry dynamics and competitive landscape",
   "inputs_evaluated": [
-    {"field": "business_profile_insights", "value": ["Category: Financial Technology", "Target: Enterprise payments"]},
-    {"field": "positioning_insights", "value": ["Differentiator: Developer-first API", "Market: Growing fintech space"]}
+    {"field": "full_analysis", "value": "Complete analysis structure"}
   ],
   "pass": true,
-  "rationale": "All insights provide specific, actionable information that leads to concrete discovery questions. The analysis avoids generic statements and focuses on distinctive business characteristics."
+  "rating": "impressive",
+  "rationale": "The analysis demonstrates deep understanding of the customer support QA industry, including specific pain points like manual sampling limitations and AI integration challenges."
 }
 ```
+
+**Display Features:**
+- **Rating Display**: Each LLM check shows color-coded rating (IMPRESSIVE/SUFFICIENT/POOR)
+- **Rating Distribution Table**: Summary showing count and percentage of each rating level
+- **Cost Efficiency**: 2 LLM calls return 7 individual actionable checks
+- **Granular Feedback**: Each criterion can be individually analyzed and improved
 
 ### Usage Examples
 
@@ -297,8 +312,8 @@ name: "Product Overview Evaluation"
 service: "app.services.product_overview_service"
 schema: "schema.json"
 judges:
-  deterministic: ["json", "schema", "format", "cardinality"]
-  llm: ["traceability", "actionability", "redundancy", "context_steering"]
+  deterministic: ["D-1", "D-2", "D-3", "D-4", "D-5"]
+  llm: ["content_integrity", "business_insight"]
 models:
   default: "OpenAI/gpt-4.1-nano"
   fallback: "Gemini/models/gemini-1.5-flash"
@@ -309,9 +324,10 @@ This evaluation system ensures prompt quality while remaining practical, efficie
 ### ✅ Implementation Complete (July 17, 2025)
 1. **✅ Refactored existing evaluation code** - Clean up current spaghetti code
 2. **✅ Created unified evaluation runner** - Single command interface
-3. **✅ Jinja2 judge templates** - Easy prompt editing (already implemented)
+3. **✅ Jinja2 judge templates** - Easy prompt editing with system/user separation
 4. **✅ Added support for multiple prompts** - Extensible architecture
 5. **✅ Integrated with main CLI workflow** - Continuous quality assurance
+6. **✅ Template refactoring** - Separated system instructions from user data for cleaner organization
 
 ### 🎯 Current Evaluation Commands
 ```bash
@@ -362,6 +378,15 @@ evals/
 │   ├── results.py          # Rich terminal output
 │   ├── runner.py           # Single command interface
 │   └── judges/             # Evaluation logic
+│       ├── deterministic.py    # Zero-cost validation checks
+│       ├── llm_judge.py        # LLM-based evaluation with dual templates
+│       └── templates/          # Jinja2 templates for LLM judge categories
+│           ├── system/         # System prompt templates (instructions)
+│           │   ├── content_integrity.j2
+│           │   └── business_insight.j2
+│           └── user/           # User prompt templates (data only)
+│               ├── content_integrity.j2
+│               └── business_insight.j2
 └── prompts/                # ✅ Per-prompt configurations
     └── product_overview/   # Product overview evaluation
 ```

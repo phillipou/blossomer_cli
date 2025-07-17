@@ -1,0 +1,41 @@
+**Company Analysis to Evaluate:**
+
+Company: {{ analysis.company_name }}
+URL: {{ analysis.company_url }}
+
+**Description:**
+{{ analysis.description }}
+
+**Business Profile Insights:**
+{% for insight in analysis.business_profile_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Capabilities:**
+{% for capability in analysis.capabilities %}
+- {{ capability }}
+{% endfor %}
+
+**Use Case Analysis:**
+{% for insight in analysis.use_case_analysis_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Positioning Insights:**
+{% for insight in analysis.positioning_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Target Customer Insights:**
+{% for insight in analysis.target_customer_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Objections:**
+{% for objection in analysis.objections %}
+- {{ objection }}
+{% endfor %}
+
+---
+
+Evaluate this analysis for founder-level sophistication across the three criteria: industry sophistication, strategic depth, and authentic voice capture. Would a founder read this and think "wow, they really know our company/business really really well"?
