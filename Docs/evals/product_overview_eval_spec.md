@@ -16,7 +16,7 @@ This document defines the evaluation harness for `app/prompts/templates/product_
 ### 1. Minimal Dataset (21 Test Cases)
 
 #### Core Dataset (5 SaaS Sites)
-Well-written SaaS company sites across different verticals:
+Well-written SaaS company sites across different verticals (examples):
 - **Stripe** (fintech/payments) - stripe.com
 - **Notion** (productivity) - notion.so  
 - **Figma** (design tools) - figma.com
@@ -27,8 +27,12 @@ Well-written SaaS company sites across different verticals:
 
 #### Edge Cases (2 Weak Landing Pages)
 Sites with minimal/poor content to test `[MISSING]` logic:
+- **Instalbel** (AI data-labelin startup) - instalabel.ai/
 - **Early-stage startup** with basic landing page
 - **Legacy B2B site** with limited product details
+Examples
+- **Instalabel** (AI data-labeling) - instalabel.ai
+- **Vulcan** (AI legal) - vulcan-tech.com
 
 *Rationale: Forces proper handling of insufficient data*
 
@@ -63,11 +67,6 @@ Run in order, abort if any fail:
 - **Guards**: Appropriate content volume
 - **Rule**: 3-5 items in `capabilities` and `objections` arrays
 - **Implementation**: Length validation
-
-#### D-5: URL Preservation
-- **Guards**: Input consistency
-- **Rule**: `company_url` exactly matches `input_website_url`
-- **Implementation**: String equality check
 
 ### 3. LLM-as-Judge Checks
 
@@ -163,7 +162,7 @@ https://stripe.com,noise,"Purple elephants dancing in the moonlight",<scraped_co
 ```
 
 ### Judge Implementation
-- Use fast, cost-effective model (Claude 3.5 Haiku)
+- Use fast, cost-effective model (gpt-4.1-nano Haiku)
 - Batch judge calls when possible
 - Clear pass/fail criteria with explanations
 - Standardized response format

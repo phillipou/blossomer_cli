@@ -21,7 +21,9 @@
 ### Prerequisites
 
 - Python 3.8 or higher
-- OpenAI API key (set as `OPENAI_API_KEY` environment variable)
+- **TensorBlock Forge API key** (recommended) or OpenAI API key
+  - Forge provides access to 19+ models across OpenAI, Anthropic, Gemini, xAI, and Deepseek
+  - Cost-optimized with GPT-4.1-nano (~10x cheaper than GPT-4o-mini)
 
 ### Install from Source
 
@@ -254,12 +256,32 @@ These commands show "Command not yet implemented":
 ### Environment Variables
 
 ```bash
-# Required
+# Recommended: TensorBlock Forge (unified access to all providers)
+export FORGE_API_KEY="forge-your-api-key-here"
+
+# Alternative: OpenAI only (legacy support)
 export OPENAI_API_KEY="your-openai-api-key"
 
 # Optional
 export BLOSSOMER_DEBUG=true        # Enable debug output
 ```
+
+#### Setting up TensorBlock Forge (Recommended)
+
+1. **Sign up** at [TensorBlock Forge](https://tensorblock.co/)
+2. **Get your API key** from the dashboard
+3. **Add to your environment**:
+   ```bash
+   # Add to your ~/.bashrc, ~/.zshrc, or .env file
+   export FORGE_API_KEY="forge-your-api-key-here"
+   ```
+
+**Available providers through Forge:**
+- OpenAI (GPT-4, GPT-4.1-nano, GPT-4o-mini, etc.)
+- Anthropic (Claude 3.5 Sonnet, Claude 3.5 Haiku)
+- Google (Gemini 1.5 Pro, Gemini 1.5 Flash)
+- xAI (Grok models)
+- Deepseek (Deepseek V3)
 
 ### Project Structure
 
@@ -337,7 +359,8 @@ Built with modern Python CLI tools:
 - **rich** - Beautiful terminal formatting
 - **questionary** - Interactive prompts
 - **pydantic** - Data validation
-- **openai** - LLM integration
+- **TensorBlock Forge** - Unified LLM provider access (19+ models)
+- **openai** - API compatibility layer
 - **firecrawl-py** - Website scraping
 
 ## Contributing

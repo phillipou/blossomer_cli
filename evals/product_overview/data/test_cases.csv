@@ -1,0 +1,20 @@
+input_website_url,context_type,account_profile_name,persona_profile_name,persona_hypothesis,account_hypothesis,expected_company_name
+https://mandrel.tech,none,,,,,Mandrel
+https://mandrel.tech,valid,Consumer goods companies,Supply Chain Leads,"Heads of supply chain, procurement, or operations","Targeting brands with $5M–$50M in revenue that manage 30–50+ SKUs, buy a mix of raw and finished goods, and rely on outsourced manufacturing and fulfillment.",Mandrel
+https://mandrel.tech,noise,Flying Elephant Enterprises,Rainbow Unicorn Manager,Purple elephants dancing in the moonlight with glittering infrastructure that speaks in ancient DevOps languages,Companies made of crystallized cloud formations that employ sentient automation scripts as their primary workforce,Mandrel
+https://intryc.com,none,,,,,Intryc
+https://intryc.com,valid,Fast growing startups,Heads of CX,"Head of CX, Head of QA
+",Series B to Pre-IPO startups,Intryc
+https://intryc.com,noise,Quantum Application Realms,Mystical Integration Wizard,Interdimensional beings who weave integration spells through cosmic API portals using telekinetic data transformation abilities,Organizations existing in parallel digital universes where applications communicate through telepathic data streams and holographic interface protocols,Intryc
+https://flextract.com,none,,,,,Flextract
+https://flextract.com,valid,Financial advisory firms,Financial advisors,Financial advisors,"Independent firms growing aggressively (younger advisors targeting millennials, growing organically)",Flextract
+https://flextract.com,noise,Paperwork Dimension Entities,Document Whisperer Supreme,Mystical beings who communicate with documents through ancient extraction rituals and transform data using magical OCR incantations,Ethereal organizations composed entirely of living documents that reproduce through automated data extraction ceremonies in digital realms,Flextract
+https://hounddog.ai,none,,,,,HoundDog
+https://hounddog.ai,valid,Enterprise tech,Heads of secuity,CISOs or Heads of Engineering,"Large enterprises with PII data concerns, where security and compliance are top priorities",HoundDog
+https://hounddog.ai,noise,Artificial Canine Intelligence Labs,Neural Network Pet Trainer,Digital dog handlers who train AI models to fetch data insights and perform algorithmic tricks using virtual tennis balls and electronic treats,Research facilities where genetically modified AI algorithms bark at data anomalies and chase machine learning rabbits through virtual dog parks,HoundDog
+https://drdroid.io,none,,,,,DrDroid
+https://drdroid.io,valid,Ealy stage tech,Head of engineering,CTOs or Heads of Engineering,Companies Without Dedicated SRE Teams: Eng teams focused on building and maintaining features (own what you build). This can leave them with limited bandwidth to address real-time issues.,DrDroid
+https://drdroid.io,noise,Cybernetic Hospital Networks,Robotic Healer of Systems,Android physicians who diagnose digital diseases in server patients using futuristic medical scanners and perform virtual surgery on cloud infrastructures,Healthcare networks for synthetic beings where robotic doctors treat algorithmic ailments and perform data surgery on quantum computing patients,DrDroid
+https://www.mammothcpg.com/,none,,,,,Mammoth
+https://www.mammothcpg.com/,valid,Growing CPG Brands,Heads of procurement,Heads of procurement,Recognizable CPG brands (omnichannel),Mammoth
+https://www.mammothcpg.com/,noise,idk,next,not sure,You tell me,Mammoth

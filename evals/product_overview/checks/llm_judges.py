@@ -7,12 +7,29 @@ import json
 import random
 import os
 from typing import Dict, List, Any, Optional, Tuple
+from pathlib import Path
+
+# Setup environment using shared utility
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from common.env_setup import full_setup, get_project_root
+full_setup()
+
+# Add project root to path for app imports
+sys.path.insert(0, str(get_project_root()))
 
 try:
-    from openai import OpenAI
+    from app.core.forge_llm_service import get_forge_llm_service, LLMRequest
 except ImportError:
-    print("⚠️  openai not installed. Run: pip install openai")
+    print("⚠️  Failed to import Forge services. Make sure you're running from project root.")
     raise
+
+import sys
+from pathlib import Path
+checks_dir = Path(__file__).parent
+sys.path.insert(0, str(checks_dir))
 
 from judge_prompts import JudgePrompts, PromptValidator
 
@@ -20,63 +37,62 @@ from judge_prompts import JudgePrompts, PromptValidator
 class ForgeJudge:
     """LLM Judge using TensorBlock Forge for unified provider access."""
     
-    def __init__(self, api_key: Optional[str] = None, base_url: str = "https://api.tensorblock.co/v1"):
-        """Initialize Forge judge with API key."""
+    def __init__(self, default_model: str = "OpenAI/gpt-4.1-nano"):
+        """Initialize Forge judge with default model."""
         
-        api_key = api_key or os.getenv("FORGE_API_KEY")
-        if not api_key:
+        if not os.getenv("FORGE_API_KEY"):
             raise ValueError("FORGE_API_KEY environment variable not set")
         
-        # Initialize OpenAI client pointed at Forge
-        self.client = OpenAI(
-            api_key=api_key,
-            base_url=base_url
-        )
+        # Use existing Forge service instead of manual client
+        self.forge_service = get_forge_llm_service()
+        self.default_model = default_model
         
         self.system_prompt = JudgePrompts.get_system_prompt()
-        
         self.prompts = JudgePrompts()
         self.validator = PromptValidator()
         
         # Cost tracking (approximate - varies by provider)
         self.cost_estimates = {
-            "gemini-1.5-flash": 0.0001,
-            "claude-3-5-haiku": 0.001,
-            "gpt-4o-mini": 0.0002,
+            "OpenAI/gpt-4.1-nano": 0.000015,  # Ultra-cheap model
+            "Gemini/models/gemini-1.5-flash": 0.0001,
+            "Anthropic/claude-3-5-haiku": 0.001,
+            "OpenAI/gpt-4o-mini": 0.0002,
         }
         self.total_calls = 0
     
-    def _call_judge(self, prompt: str, expected_check_id: str, model: str = "gemini-1.5-flash", max_retries: int = 2) -> Dict[str, Any]:
-        """Make a judge call with error handling and retries."""
+    async def _call_judge(self, prompt: str, expected_check_id: str, model: str = None, max_retries: int = 2) -> Dict[str, Any]:
+        """Make a judge call with error handling and retries using Forge service."""
+        
+        model = model or self.default_model
         
         for attempt in range(max_retries + 1):
             try:
-                response = self.client.chat.completions.create(
+                # Create LLM request using Forge service
+                request = LLMRequest(
+                    system_prompt=self.system_prompt,
+                    user_prompt=prompt,
                     model=model,
-                    messages=[
-                        {"role": "system", "content": self.system_prompt},
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=0.1,  # Low temperature for consistent evaluation
-                    max_tokens=1000,
-                    response_format={"type": "json_object"}  # Force JSON output
+                    parameters={
+                        "temperature": 0.1,  # Low temperature for consistent evaluation
+                        "max_tokens": 1000,
+                        "response_format": {"type": "json_object"}  # Force JSON output
+                    }
                 )
                 
+                response = await self.forge_service.generate(request)
                 self.total_calls += 1
                 
-                if not response.choices[0].message.content:
+                if not response.text:
                     raise ValueError("Empty response from model")
                 
-                response_text = response.choices[0].message.content
-                
                 # Validate response format
-                if not self.validator.validate_response_format(response_text, expected_check_id):
+                if not self.validator.validate_response_format(response.text, expected_check_id):
                     if attempt < max_retries:
                         continue  # Retry with same prompt
                     else:
                         raise ValueError("Invalid response format after retries")
                 
-                result = json.loads(response_text)
+                result = json.loads(response.text)
                 return result
                 
             except Exception as e:
@@ -95,7 +111,7 @@ class ForgeJudge:
         
         return {"pass": False, "error": "Unexpected fallthrough"}
     
-    def judge_traceability(self, data: Dict[str, Any], website_content: str, model: str = "gemini-1.5-flash") -> Dict[str, Any]:
+    async def judge_traceability(self, data: Dict[str, Any], website_content: str, model: str = None) -> Dict[str, Any]:
         """L-1: Traceability check - verify claims are evidence-based."""
         
         # Sample factual claims from insight fields
@@ -123,15 +139,15 @@ class ForgeJudge:
         sampled_claims = random.sample(all_claims, min(5, len(all_claims)))
         
         prompt = self.prompts.traceability_prompt(website_content, sampled_claims)
-        return self._call_judge(prompt, "L-1", model)
+        return await self._call_judge(prompt, "L-1", model)
     
-    def judge_actionability(self, data: Dict[str, Any], model: str = "gemini-1.5-flash") -> Dict[str, Any]:
+    async def judge_actionability(self, data: Dict[str, Any], model: str = None) -> Dict[str, Any]:
         """L-2: Actionability check - evaluate specificity and discovery value."""
         
         prompt = self.prompts.actionability_prompt(data)
-        return self._call_judge(prompt, "L-2", model)
+        return await self._call_judge(prompt, "L-2", model)
     
-    def judge_redundancy(self, data: Dict[str, Any], model: str = "gemini-1.5-flash") -> Dict[str, Any]:
+    async def judge_redundancy(self, data: Dict[str, Any], model: str = None) -> Dict[str, Any]:
         """L-3: Content redundancy check - ensure sections don't duplicate content."""
         
         description = data.get("description", "")
@@ -147,9 +163,9 @@ class ForgeJudge:
             }
         
         prompt = self.prompts.redundancy_prompt(description, insights)
-        return self._call_judge(prompt, "L-3", model)
+        return await self._call_judge(prompt, "L-3", model)
     
-    def judge_context_steering(self, data: Dict[str, Any], user_context: str, context_type: str, model: str = "gemini-1.5-flash") -> Dict[str, Any]:
+    async def judge_context_steering(self, data: Dict[str, Any], user_context: str, context_type: str, model: str = None) -> Dict[str, Any]:
         """L-4: Context steering check - validate appropriate context usage."""
         
         if context_type == "none":
@@ -164,14 +180,19 @@ class ForgeJudge:
             }
         
         prompt = self.prompts.context_steering_prompt(data, user_context, context_type)
-        return self._call_judge(prompt, "L-4", model)
+        return await self._call_judge(prompt, "L-4", model)
     
-    def run_all_judges(self, data: Dict[str, Any], website_content: str, 
+    async def run_all_judges(self, data: Dict[str, Any], website_content: str, 
                        user_context: str = "", context_type: str = "none", 
-                       model: str = "gemini-1.5-flash") -> Dict[str, Any]:
+                       model: str = None) -> Dict[str, Any]:
         """Run all LLM judges and aggregate results."""
         
+        model = model or self.default_model
+        
         results = {
+            "pass": False,
+            "score": 0.0,
+            "reason": "",
             "overall_pass": False,
             "judges": {},
             "total_cost_estimate": 0.0,
@@ -190,20 +211,32 @@ class ForgeJudge:
             ("L-4_context_steering", lambda: self.judge_context_steering(data, user_context, context_type, model))
         ]
         
-        all_passed = True
+        passed_judges = 0
+        total_judges = len(judges)
+        
         for judge_name, judge_func in judges:
-            result = judge_func()
+            result = await judge_func()
             results["judges"][judge_name] = result
             
-            if not result.get("pass", False):
-                all_passed = False
+            if result.get("pass", False):
+                passed_judges += 1
+        
+        # Calculate score based on passed judges
+        score = passed_judges / total_judges
+        all_passed = passed_judges == total_judges
         
         # Calculate actual cost based on calls made and model used
         calls_made = self.total_calls - initial_calls
         cost_per_call = self.cost_estimates.get(model, 0.001)
         results["judge_calls_made"] = calls_made
         results["total_cost_estimate"] = calls_made * cost_per_call
-        results["overall_pass"] = all_passed
+        
+        results.update({
+            "pass": all_passed,
+            "score": score,
+            "reason": f"LLM judges: {passed_judges}/{total_judges} passed",
+            "overall_pass": all_passed
+        })
         
         return results
     
@@ -213,20 +246,32 @@ class ForgeJudge:
 
 
 # Main entry point for Promptfoo integration
-def evaluate_with_llm_judges(output: str, input_vars: Dict[str, Any]) -> Dict[str, Any]:
+async def evaluate_with_llm_judges(output: str, input_vars: Dict[str, Any]) -> Dict[str, Any]:
     """Main entry point for Promptfoo integration."""
+    
+    # Check for required environment variables
+    if not os.getenv("FORGE_API_KEY"):
+        return {
+            "pass": False,
+            "score": 0.0,
+            "reason": "FORGE_API_KEY environment variable is not set. Please add it to your .env file or environment."
+        }
     
     try:
         data = json.loads(output)
     except json.JSONDecodeError as e:
-        return {"pass": False, "error": f"Invalid JSON output: {e}"}
+        return {
+            "pass": False, 
+            "score": 0.0,
+            "reason": f"Invalid JSON output: {e}"
+        }
     
     try:
-        # Allow model specification via input vars or default to Gemini
-        model = input_vars.get("eval_model", "gemini-1.5-flash")
-        judge = ForgeJudge()
+        # Allow model specification via input vars or default to OpenAI/gpt-4.1-nano
+        model = input_vars.get("eval_model", "OpenAI/gpt-4.1-nano")
+        judge = ForgeJudge(default_model=model)
         
-        return judge.run_all_judges(
+        return await judge.run_all_judges(
             data=data,
             website_content=input_vars.get("website_content", ""),
             user_context=input_vars.get("user_inputted_context", ""),
@@ -235,7 +280,11 @@ def evaluate_with_llm_judges(output: str, input_vars: Dict[str, Any]) -> Dict[st
         )
         
     except Exception as e:
-        return {"pass": False, "error": f"Judge setup failed: {e}"}
+        return {
+            "pass": False, 
+            "score": 0.0,
+            "reason": f"Judge setup failed: {e}"
+        }
 
 
 if __name__ == "__main__":

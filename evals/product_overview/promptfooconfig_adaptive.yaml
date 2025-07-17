@@ -1,0 +1,35 @@
+description: "Product Overview Template Evaluation - Adaptive Sampling"
+
+prompts:
+  - file://product_overview.j2
+
+providers:
+  - id: 'file://providers/product_overview_provider.py'
+
+# Use environment variable to control sample size
+# EVAL_SAMPLE_SIZE=3 (default for quick iteration)
+# EVAL_SAMPLE_SIZE=19 (full dataset)
+# EVAL_SAMPLE_SIZE=5 (medium testing)
+
+tests:
+  # Quick tests - always use these 3 for smoke testing
+  - vars:
+      input_website_url: https://mandrel.tech
+      context_type: none
+      expected_company_name: Mandrel
+  - vars:
+      input_website_url: https://intryc.com
+      context_type: none
+      expected_company_name: Intryc
+
+  # Full dataset when EVAL_SAMPLE_SIZE > 3
+  - file://data/test_cases.csv
+
+defaultTest:
+  assert:
+    - type: python
+      value: file://checks/deterministic_checks.py:run_all_checks
+    - type: python
+      value: file://checks/llm_judges.py:evaluate_with_llm_judges
+
+outputPath: ./results/adaptive_results.json

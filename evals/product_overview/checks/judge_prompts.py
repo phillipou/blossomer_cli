@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
 Structured prompt templates for LLM judges.
-These prompts are designed for Gemini models with clear JSON output requirements.
+Uses Pydantic models for consistent JSON schema generation.
 """
 
 from typing import Dict, List, Any, Tuple
+import json
+from judge_models import TraceabilityResponse, ActionabilityResponse, RedundancyResponse, ContextSteeringResponse
 
 
 class JudgePrompts:
@@ -12,12 +14,16 @@ class JudgePrompts:
     
     @staticmethod
     def traceability_prompt(website_content: str, sampled_claims: List[Tuple[str, str]]) -> str:
-        """L-1: Traceability check prompt."""
+        """L-1: Traceability check prompt using Pydantic schema."""
         
         claims_text = "\n".join([
             f"{i+1}. [{field}] {claim}" 
             for i, (field, claim) in enumerate(sampled_claims)
         ])
+        
+        # Generate JSON schema from Pydantic model
+        schema = TraceabilityResponse.model_json_schema()
+        schema_str = json.dumps(schema, indent=2)
         
         return f"""You are evaluating if factual claims in a company analysis are properly supported by evidence.
 
@@ -34,7 +40,10 @@ TASK: For each claim, determine if it either:
 
 PASS CRITERIA: At least 3 out of 5 claims must be properly supported.
 
-IMPORTANT: Respond with ONLY valid JSON in this exact format:
+IMPORTANT: Respond with ONLY valid JSON following this exact schema:
+{schema_str}
+
+Example response:
 {{
   "pass": true,
   "details": [
@@ -50,9 +59,7 @@ IMPORTANT: Respond with ONLY valid JSON in this exact format:
 
     @staticmethod
     def actionability_prompt(analysis_data: Dict[str, Any]) -> str:
-        """L-2: Actionability check prompt."""
-        
-        import json
+        """L-2: Actionability check prompt using Pydantic schema."""
         
         analysis_json = json.dumps({
             "description": analysis_data.get("description", ""),
@@ -60,6 +67,10 @@ IMPORTANT: Respond with ONLY valid JSON in this exact format:
             "positioning_insights": analysis_data.get("positioning_insights", []),
             "target_customer_insights": analysis_data.get("target_customer_insights", [])
         }, indent=2)
+        
+        # Generate JSON schema from Pydantic model
+        schema = ActionabilityResponse.model_json_schema()
+        schema_str = json.dumps(schema, indent=2)
         
         return f"""You are evaluating if a company analysis provides actionable insights for sales discovery calls.
 
@@ -73,7 +84,10 @@ EVALUATION CRITERIA:
 
 PASS CRITERIA: All three criteria must be met.
 
-IMPORTANT: Respond with ONLY valid JSON in this exact format:
+IMPORTANT: Respond with ONLY valid JSON following this exact schema:
+{schema_str}
+
+Example response:
 {{
   "pass": true,
   "details": [
@@ -100,9 +114,13 @@ IMPORTANT: Respond with ONLY valid JSON in this exact format:
 
     @staticmethod
     def redundancy_prompt(description: str, insights: List[str]) -> str:
-        """L-3: Content redundancy check prompt."""
+        """L-3: Content redundancy check prompt using Pydantic schema."""
         
         insights_text = "\n".join([f"- {insight}" for insight in insights])
+        
+        # Generate JSON schema from Pydantic model
+        schema = RedundancyResponse.model_json_schema()
+        schema_str = json.dumps(schema, indent=2)
         
         return f"""You are evaluating content redundancy between sections of a company analysis.
 
@@ -121,7 +139,10 @@ Instructions:
 2. Determine if there's excessive duplication
 3. Consider both exact matches and semantic similarity
 
-IMPORTANT: Respond with ONLY valid JSON in this exact format:
+IMPORTANT: Respond with ONLY valid JSON following this exact schema:
+{schema_str}
+
+Example response:
 {{
   "pass": true,
   "details": [
@@ -135,11 +156,13 @@ IMPORTANT: Respond with ONLY valid JSON in this exact format:
 
     @staticmethod
     def context_steering_prompt(analysis_data: Dict[str, Any], user_context: str, context_type: str) -> str:
-        """L-4: Context steering check prompt."""
-        
-        import json
+        """L-4: Context steering check prompt using Pydantic schema."""
         
         analysis_json = json.dumps(analysis_data, indent=2)
+        
+        # Generate JSON schema from Pydantic model
+        schema = ContextSteeringResponse.model_json_schema()
+        schema_str = json.dumps(schema, indent=2)
         
         if context_type == "valid":
             evaluation_rule = "Analysis should incorporate relevant details from user context"
@@ -164,7 +187,10 @@ EVALUATION RULE: {evaluation_rule}
 
 PASS CRITERIA: {pass_criteria}
 
-IMPORTANT: Respond with ONLY valid JSON in this exact format:
+IMPORTANT: Respond with ONLY valid JSON following this exact schema:
+{schema_str}
+
+Example response:
 {{
   "pass": true,
   "details": [
@@ -195,42 +221,33 @@ Focus on practical utility for sales and marketing teams who will use this analy
 
 
 class PromptValidator:
-    """Validates prompt templates and responses."""
+    """Validates prompt templates and responses using Pydantic models."""
     
     @staticmethod
     def validate_response_format(response: str, expected_check_id: str) -> bool:
-        """Validate that judge response follows expected format."""
+        """Validate that judge response follows Pydantic model format."""
         try:
             import json
             data = json.loads(response)
             
-            # Check required fields
-            if not isinstance(data, dict):
+            # Map check_id to appropriate Pydantic model
+            model_map = {
+                "L-1": TraceabilityResponse,
+                "L-2": ActionabilityResponse, 
+                "L-3": RedundancyResponse,
+                "L-4": ContextSteeringResponse
+            }
+            
+            if expected_check_id not in model_map:
                 return False
             
-            if "pass" not in data or "details" not in data:
-                return False
-            
-            if not isinstance(data["pass"], bool):
-                return False
-            
-            if not isinstance(data["details"], list):
-                return False
-            
-            # Check details format
-            for detail in data["details"]:
-                if not isinstance(detail, dict):
-                    return False
-                
-                if "check_id" not in detail:
-                    return False
-                
-                if detail["check_id"] != expected_check_id:
-                    return False
+            # Validate using Pydantic model
+            model_class = model_map[expected_check_id]
+            model_class.model_validate(data)
             
             return True
             
-        except (json.JSONDecodeError, KeyError, TypeError):
+        except (json.JSONDecodeError, ValueError, Exception):
             return False
     
     @staticmethod

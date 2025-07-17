@@ -1,0 +1,18 @@
+description: "Product Overview Template Evaluation"
+
+prompts:
+  - file://product_overview.j2
+
+providers:
+  - id: 'file://providers/product_overview_provider.py'
+
+tests: file://generate_tests.py:create_tests
+
+defaultTest:
+  assert:
+    - type: python
+      value: file://checks/deterministic_checks.py:run_all_checks
+    - type: python
+      value: file://checks/llm_judges.py:evaluate_with_llm_judges
+
+outputPath: ./results/evaluation_results.json

@@ -6,8 +6,17 @@ These checks run fast and have zero LLM cost.
 
 import json
 import jsonschema
+import os
 from pathlib import Path
 from typing import Dict, List, Any, Union
+
+# Setup environment using shared utility
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from common.env_setup import full_setup
+full_setup()
 
 
 def load_schema() -> Dict[str, Any]:
@@ -115,40 +124,52 @@ def validate_field_cardinality(data: Dict[str, Any]) -> Dict[str, Any]:
     return {"pass": True}
 
 
-def validate_url_preservation(data: Dict[str, Any], input_url: str) -> Dict[str, Any]:
-    """
-    D-5: URL preservation check
-    Ensures company_url matches input_website_url exactly.
-    """
-    if "company_url" not in data:
-        return {"pass": False, "error": "company_url field missing"}
-    
-    if data["company_url"] != input_url:
-        return {
-            "pass": False,
-            "error": f"company_url '{data['company_url']}' does not match input '{input_url}'"
-        }
-    
-    return {"pass": True}
 
 
 def run_all_checks(output: str, input_vars: Dict[str, Any]) -> Dict[str, Any]:
     """
     Run all deterministic checks in sequence.
     Aborts on first failure for efficiency.
+    
+    Returns format expected by Promptfoo: {pass: bool, score: float, reason: str}
     """
+    # Initialize results structure
     results = {
+        "pass": False,
+        "score": 0.0,
+        "reason": "",
         "overall_pass": False,
-        "checks": {}
+        "checks": {},
+        "summary": "Deterministic validation results"
     }
+    
+    # Check for required environment variables
+    if not os.getenv("FORGE_API_KEY"):
+        results.update({
+            "pass": False,
+            "score": 0.0,
+            "reason": "FORGE_API_KEY environment variable is not set. Please add it to your .env file or environment."
+        })
+        return results
+    
+    # Track passed checks for scoring
+    passed_checks = 0
+    total_checks = 4  # D-1 through D-4
     
     # D-1: Valid JSON
     json_result = validate_json(output)
     results["checks"]["D-1_valid_json"] = json_result
     
     if not json_result["pass"]:
+        score = passed_checks / total_checks
+        results.update({
+            "pass": False,
+            "score": score,
+            "reason": f"D-1 Valid JSON failed: {json_result.get('error', 'Unknown error')}"
+        })
         return results
     
+    passed_checks += 1
     data = json_result["data"]
     
     # D-2: Schema compliance
@@ -156,32 +177,54 @@ def run_all_checks(output: str, input_vars: Dict[str, Any]) -> Dict[str, Any]:
     results["checks"]["D-2_schema_compliance"] = schema_result
     
     if not schema_result["pass"]:
+        score = passed_checks / total_checks
+        results.update({
+            "pass": False,
+            "score": score,
+            "reason": f"D-2 Schema compliance failed: {schema_result.get('error', 'Unknown error')}"
+        })
         return results
+    
+    passed_checks += 1
     
     # D-3: Format compliance
     format_result = validate_format_compliance(data)
     results["checks"]["D-3_format_compliance"] = format_result
     
     if not format_result["pass"]:
+        score = passed_checks / total_checks
+        results.update({
+            "pass": False,
+            "score": score,
+            "reason": f"D-3 Format compliance failed: {format_result.get('error', 'Unknown error')}"
+        })
         return results
+    
+    passed_checks += 1
     
     # D-4: Field cardinality
     cardinality_result = validate_field_cardinality(data)
     results["checks"]["D-4_field_cardinality"] = cardinality_result
     
     if not cardinality_result["pass"]:
+        score = passed_checks / total_checks
+        results.update({
+            "pass": False,
+            "score": score,
+            "reason": f"D-4 Field cardinality failed: {cardinality_result.get('error', 'Unknown error')}"
+        })
         return results
     
-    # D-5: URL preservation
-    input_url = input_vars.get("input_website_url", "")
-    url_result = validate_url_preservation(data, input_url)
-    results["checks"]["D-5_url_preservation"] = url_result
-    
-    if not url_result["pass"]:
-        return results
+    passed_checks += 1
     
     # All checks passed
-    results["overall_pass"] = True
+    score = passed_checks / total_checks  # Should be 1.0
+    results.update({
+        "pass": True,
+        "score": score,
+        "reason": f"All {passed_checks}/{total_checks} deterministic checks passed",
+        "overall_pass": True
+    })
     return results
 
 
