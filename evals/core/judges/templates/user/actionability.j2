@@ -1,0 +1,18 @@
+## Analysis to Evaluate
+
+**Description:** {{ analysis.description }}
+
+**Business Profile Insights:**
+{% for insight in analysis.business_profile_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Positioning Insights:**
+{% for insight in analysis.positioning_insights %}
+- {{ insight }}
+{% endfor %}
+
+**Target Customer Insights:**
+{% for insight in analysis.target_customer_insights %}
+- {{ insight }}
+{% endfor %}

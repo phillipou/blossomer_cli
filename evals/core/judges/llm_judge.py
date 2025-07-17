@@ -27,10 +27,15 @@ class LLMJudge:
         self.console = console or Console()
         self.forge_service = get_forge_llm_service(use_evals_key=True)
         
-        # Initialize Jinja2 environment
-        template_dir = Path(__file__).parent / "templates"
-        self.jinja_env = Environment(
-            loader=FileSystemLoader(str(template_dir)),
+        # Initialize Jinja2 environments for system and user templates
+        template_base_dir = Path(__file__).parent / "templates"
+        self.system_jinja_env = Environment(
+            loader=FileSystemLoader(str(template_base_dir / "system")),
+            trim_blocks=True,
+            lstrip_blocks=True
+        )
+        self.user_jinja_env = Environment(
+            loader=FileSystemLoader(str(template_base_dir / "user")),
             trim_blocks=True,
             lstrip_blocks=True
         )
@@ -117,18 +122,22 @@ class LLMJudge:
             # if self.console:
             #     self.console.print(f"🔍 Judge - Loading template: {template_name}.j2")
             
-            # Load and render template
-            template = self.jinja_env.get_template(f"{template_name}.j2")
-            prompt = template.render(**context)
+            # Load system prompt template
+            system_template = self.system_jinja_env.get_template(f"{template_name}.j2")
+            system_prompt = system_template.render()
+            
+            # Load and render user prompt template
+            user_template = self.user_jinja_env.get_template(f"{template_name}.j2")
+            user_prompt = user_template.render(**context)
             
             # Only show debug info in verbose mode
             # if self.console:
-            #     self.console.print(f"🔍 Judge - Rendered prompt length: {len(prompt)}")
+            #     self.console.print(f"🔍 Judge - Rendered prompt length: {len(user_prompt)}")
             
             # Create LLM request
             request = LLMRequest(
-                system_prompt="You are an expert evaluator. Respond only with valid JSON.",
-                user_prompt=prompt,
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
                 model=self.config.default_model,
                 parameters={
                     "temperature": 0.1,
@@ -329,7 +338,7 @@ if __name__ == "__main__":
                 print(f"  Error: {judge_result['error']}")
     
     # Only run test if templates exist
-    template_dir = Path(__file__).parent / "templates"
+    template_dir = Path(__file__).parent / "templates" / "system"
     if template_dir.exists():
         asyncio.run(test_llm_judge())
     else:

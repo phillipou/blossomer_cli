@@ -1,0 +1,10 @@
+## Website Content
+{{ website_content }}
+
+## Claims to Evaluate
+{% for claim in claims %}
+{{ claim.number }}. [{{ claim.field }}] {{ claim.claim }}
+{% endfor %}
+
+## Pass Criteria
+At least {{ (claims|length * 0.6)|round|int }} out of {{ claims|length }} claims must be properly supported by evidence.
