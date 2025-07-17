@@ -30,25 +30,14 @@ All three criteria must be met for a passing grade.
 Respond with valid JSON in this exact format:
 ```json
 {
+  "check_name": "actionability",
+  "description": "Evaluates if insights are specific and lead to actionable discovery questions",
+  "inputs_evaluated": [
+    {"field": "business_profile_insights", "value": {{ analysis.business_profile_insights|tojson }}},
+    {"field": "positioning_insights", "value": {{ analysis.positioning_insights|tojson }}},
+    {"field": "target_customer_insights", "value": {{ analysis.target_customer_insights|tojson }}}
+  ],
   "pass": true/false,
-  "criteria_met": number,
-  "total_criteria": 3,
-  "details": [
-    {
-      "criterion": "specificity",
-      "pass": true/false,
-      "reason": "brief explanation"
-    },
-    {
-      "criterion": "discovery_value", 
-      "pass": true/false,
-      "reason": "brief explanation"
-    },
-    {
-      "criterion": "evidence_based",
-      "pass": true/false,
-      "reason": "brief explanation"
-    }
-  ]
+  "rationale": "2-3 sentence explanation of why the check passed or failed, including which criteria were met and what specific evidence was found for specificity, discovery value, and evidence-based claims."
 }
 ```

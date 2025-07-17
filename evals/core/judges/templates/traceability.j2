@@ -21,16 +21,14 @@ At least {{ (claims|length * 0.6)|round|int }} out of {{ claims|length }} claims
 Respond with valid JSON in this exact format:
 ```json
 {
+  "check_name": "traceability",
+  "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+  "inputs_evaluated": [
+    {% for claim in claims %}
+    {"field": "{{ claim.field }}", "value": "{{ claim.claim }}"}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
   "pass": true/false,
-  "supported_claims": number,
-  "total_claims": {{ claims|length }},
-  "details": [
-    {
-      "claim_number": 1,
-      "claim": "the actual claim text",
-      "supported": true/false,
-      "reason": "brief explanation of why it's supported or not"
-    }
-  ]
+  "rationale": "2-3 sentence explanation of why the check passed or failed, including how many claims were supported and what specific evidence was found or missing."
 }
 ```

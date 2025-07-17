@@ -50,12 +50,14 @@ class LLMJudge:
         # Parse output for judge evaluation
         try:
             parsed_output = json.loads(output)
-            if self.console:
-                self.console.print(f"🔍 LLM Judge - Parsed output keys: {list(parsed_output.keys())}")
+            # Only show debug info in verbose mode
+            # if self.console:
+            #     self.console.print(f"🔍 LLM Judge - Parsed output keys: {list(parsed_output.keys())}")
         except json.JSONDecodeError as e:
-            if self.console:
-                self.console.print(f"❌ LLM Judge - JSON decode error: {e}")
-                self.console.print(f"🔍 Output sample: {output[:200]}...")
+            # Only show debug info in verbose mode  
+            # if self.console:
+            #     self.console.print(f"❌ LLM Judge - JSON decode error: {e}")
+            #     self.console.print(f"🔍 Output sample: {output[:200]}...")
             return {
                 "overall_pass": False,
                 "error": f"Cannot parse output as JSON for LLM evaluation: {e}",
@@ -89,8 +91,9 @@ class LLMJudge:
                         all_passed = False
                         
                 except Exception as e:
-                    if self.console:
-                        self.console.print(f"❌ LLM Judge {judge_name} failed: {e}", style="red")
+                    # Only show debug info in verbose mode
+                    # if self.console:
+                    #     self.console.print(f"❌ LLM Judge {judge_name} failed: {e}", style="red")
                     results["judges"][judge_name] = {
                         "pass": False,
                         "error": f"Judge evaluation failed: {str(e)}"
@@ -110,15 +113,17 @@ class LLMJudge:
         """Make a standardized judge call using Jinja2 template."""
         
         try:
-            if self.console:
-                self.console.print(f"🔍 Judge - Loading template: {template_name}.j2")
+            # Only show debug info in verbose mode
+            # if self.console:
+            #     self.console.print(f"🔍 Judge - Loading template: {template_name}.j2")
             
             # Load and render template
             template = self.jinja_env.get_template(f"{template_name}.j2")
             prompt = template.render(**context)
             
-            if self.console:
-                self.console.print(f"🔍 Judge - Rendered prompt length: {len(prompt)}")
+            # Only show debug info in verbose mode
+            # if self.console:
+            #     self.console.print(f"🔍 Judge - Rendered prompt length: {len(prompt)}")
             
             # Create LLM request
             request = LLMRequest(
@@ -132,19 +137,30 @@ class LLMJudge:
                 }
             )
             
-            if self.console:
-                self.console.print(f"🔍 Judge - Making request to model: {self.config.default_model}")
+            # Only show debug info in verbose mode
+            # if self.console:
+            #     self.console.print(f"🔍 Judge - Making request to model: {self.config.default_model}")
             
             # Make request to Forge
             response = await self.forge_service.generate(request)
             self.total_calls += 1
             
-            if self.console:
-                self.console.print(f"🔍 Judge - Got response: {response.text[:100]}...")
+            # Only show debug info in verbose mode
+            # if self.console:
+            #     self.console.print(f"🔍 Judge - Got response: {response.text[:100]}...")
             
             # Parse response
             if expected_format == "json":
                 result = json.loads(response.text)
+                # Ensure the result has the required standardized structure
+                if "check_name" not in result:
+                    result["check_name"] = template_name
+                if "description" not in result:
+                    result["description"] = f"LLM evaluation using {template_name} template"
+                if "inputs_evaluated" not in result:
+                    result["inputs_evaluated"] = [{"field": "context", "value": "Template context"}]
+                if "rationale" not in result:
+                    result["rationale"] = "LLM evaluation result"
             else:
                 result = {"response": response.text}
             
@@ -156,8 +172,11 @@ class LLMJudge:
             if hasattr(self, 'console') and self.console:
                 self.console.print(f"❌ LLM Judge Error: {error_details}", style="red")
             return {
+                "check_name": template_name,
+                "description": f"LLM evaluation using {template_name} template",
+                "inputs_evaluated": [{"field": "error", "value": str(e)}],
                 "pass": False,
-                "error": error_details
+                "rationale": f"This check failed due to an error: {str(e)}"
             }
     
     
@@ -175,11 +194,13 @@ class LLMJudge:
         for field in insight_fields:
             if field in data and isinstance(data[field], list):
                 all_claims.extend([(field, claim) for claim in data[field]])
-                if self.console:
-                    self.console.print(f"🔍 Traceability - Found {len(data[field])} claims in {field}")
+                # Only show debug info in verbose mode
+                # if self.console:
+                #     self.console.print(f"🔍 Traceability - Found {len(data[field])} claims in {field}")
         
-        if self.console:
-            self.console.print(f"🔍 Traceability - Total claims found: {len(all_claims)}")
+        # Only show debug info in verbose mode
+        # if self.console:
+        #     self.console.print(f"🔍 Traceability - Total claims found: {len(all_claims)}")
         
         if not all_claims:
             return {
@@ -202,8 +223,9 @@ class LLMJudge:
             ]
         }
         
-        if self.console:
-            self.console.print(f"🔍 Traceability - Calling judge with {len(context['claims'])} claims")
+        # Only show debug info in verbose mode
+        # if self.console:
+        #     self.console.print(f"🔍 Traceability - Calling judge with {len(context['claims'])} claims")
         
         return await self._call_judge("traceability", context)
     

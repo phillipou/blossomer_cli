@@ -1,0 +1,358 @@
+{
+  "prompt_name": "Product Overview Evaluation",
+  "timestamp": "2025-07-17T10:56:36.424250",
+  "evaluation_time": 34.98698592185974,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://flextract.com",
+        "context_type": "valid",
+        "account_profile_name": "Financial advisory firms",
+        "persona_profile_name": "Financial advisors",
+        "persona_hypothesis": "Financial advisors",
+        "account_hypothesis": "Independent firms growing aggressively (younger advisors targeting millennials, growing organically)",
+        "expected_company_name": "Flextract"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"company_name\":\"Flextract\",\"company_url\":\"https://flextract.com\",\"description\":\"Flextract is a SaaS platform designed for financial advisors to streamline client onboarding and data collection by ena..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "company_name": "Flextract",
+              "company_url": "https://flextract.com",
+              "description": "Flextract is a SaaS platform designed for financial advisors to streamline client onboarding and data collection by enabling prospects to upload documents directly. Its AI-powered system automatically extracts, organizes, and analyzes financial data to generate personalized insights, helping advisors demonstrate value early and accelerate the sales process.",
+              "business_profile_insights": [
+                "Category: Financial Advisor Data Automation Platform",
+                "Business Model: Subscription-based SaaS targeting independent financial advisory firms, offering automated document processing and insights to improve client onboarding and engagement",
+                "Existing Customers: Primarily independent financial advisors and firms seeking to enhance onboarding efficiency and client trust through streamlined data collection and personalized insights"
+              ],
+              "capabilities": [
+                "Document Upload: Securely allows prospects to upload various financial documents without questionnaires or portals",
+                "AI Data Extraction: Automatically identifies and extracts key data points from uploaded documents",
+                "Data Organization: Structures extracted data into an accessible format for analysis and reporting",
+                "Insight Generation: Produces personalized reports highlighting financial planning opportunities",
+                "Security & Compliance: Built on SOC 2 Type 2 standards to ensure data security and privacy"
+              ],
+              "use_case_analysis_insights": [
+                "Process Impact: Transforms the client onboarding workflow by replacing manual data entry with automated document collection and extraction",
+                "Problems Addressed: Eliminates lengthy questionnaires, reduces delays, and minimizes incomplete data issues; helps advisors quickly demonstrate value to prospects",
+                "Current State: Advisors typically rely on manual review of scattered documents and questionnaires, which is time-consuming and prone to errors"
+              ],
+              "positioning_insights": [
+                "Key Market Belief: Traditional onboarding methods are slow, friction-filled, and fail to provide immediate value demonstration, hindering sales cycles",
+                "Unique Approach: Combines effortless document upload with AI-driven data extraction and personalized insights to accelerate trust-building and decision-making",
+                "Language Used: Emphasizes ease, security, and intelligence, framing their solution as 'painless,' 'automated,' and 'insightful' for advisors and clients"
+              ],
+              "objections": [
+                "Cost Concerns: Potential clients may worry about subscription fees or implementation costs",
+                "Integration Complexity: Uncertainty about how Flextract integrates with existing CRM or financial planning tools",
+                "Data Security: Concerns regarding the handling and storage of sensitive financial documents",
+                "Change Management: Resistance to adopting new workflows or replacing manual processes"
+              ],
+              "target_customer_insights": [
+                "Target Accounts: Independent financial advisory firms, especially those experiencing growth, targeting millennials and younger advisors, seeking to improve onboarding efficiency and client engagement",
+                "Key Personas: Financial advisors and firm owners focused on scaling their client base, who prioritize quick onboarding, personalized insights, and operational efficiency"
+              ],
+              "metadata": {
+                "sources_used": [
+                  "website"
+                ],
+                "context_quality": "medium",
+                "assessment_summary": "Analysis based on available website content",
+                "assumptions_made": [],
+                "discovery_gaps": [
+                  "Details on technical integration capabilities with existing CRM or financial planning software",
+                  "Specific security and compliance measures beyond SOC 2 Type 2 certification",
+                  "Pricing tiers and scalability options for growing firms",
+                  "User adoption challenges and change management strategies"
+                ]
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 10/10 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: Financial Advisor Data Automation Platform",
+                  "Business Model: Subscription-based SaaS targeting independent financial advisory firms, offering automated document processing and insights to improve client onboarding and engagement",
+                  "Existing Customers: Primarily independent financial advisors and firms seeking to enhance onboarding efficiency and client trust through streamlined data collection and personalized insights"
+                ]
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": [
+                  "Process Impact: Transforms the client onboarding workflow by replacing manual data entry with automated document collection and extraction",
+                  "Problems Addressed: Eliminates lengthy questionnaires, reduces delays, and minimizes incomplete data issues; helps advisors quickly demonstrate value to prospects",
+                  "Current State: Advisors typically rely on manual review of scattered documents and questionnaires, which is time-consuming and prone to errors"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Traditional onboarding methods are slow, friction-filled, and fail to provide immediate value demonstration, hindering sales cycles",
+                  "Unique Approach: Combines effortless document upload with AI-driven data extraction and personalized insights to accelerate trust-building and decision-making",
+                  "Language Used: Emphasizes ease, security, and intelligence, framing their solution as 'painless,' 'automated,' and 'insightful' for advisors and clients"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Independent financial advisory firms, especially those experiencing growth, targeting millennials and younger advisors, seeking to improve onboarding efficiency and client engagement",
+                  "Key Personas: Financial advisors and firm owners focused on scaling their client base, who prioritize quick onboarding, personalized insights, and operational efficiency"
+                ]
+              },
+              {
+                "field": "capabilities",
+                "value": [
+                  "Document Upload: Securely allows prospects to upload various financial documents without questionnaires or portals",
+                  "AI Data Extraction: Automatically identifies and extracts key data points from uploaded documents",
+                  "Data Organization: Structures extracted data into an accessible format for analysis and reporting",
+                  "Insight Generation: Produces personalized reports highlighting financial planning opportunities",
+                  "Security & Compliance: Built on SOC 2 Type 2 standards to ensure data security and privacy"
+                ]
+              },
+              {
+                "field": "objections",
+                "value": [
+                  "Cost Concerns: Potential clients may worry about subscription fees or implementation costs",
+                  "Integration Complexity: Uncertainty about how Flextract integrates with existing CRM or financial planning tools",
+                  "Data Security: Concerns regarding the handling and storage of sensitive financial documents",
+                  "Change Management: Resistance to adopting new workflows or replacing manual processes"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "capabilities",
+                "value": "5 items (expected 3-5)"
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "objections",
+                "value": "4 items (expected 3-5)"
+              },
+              {
+                "field": "target_customer_insights",
+                "value": "2 items (expected 2-3)"
+              }
+            ],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://flextract.com"
+              },
+              {
+                "field": "company_url",
+                "value": "https://flextract.com"
+              }
+            ],
+            "pass": true,
+            "rationale": "Input URL is correctly preserved in the output company_url field."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": false,
+        "judges": {
+          "traceability": {
+            "check_name": "traceability",
+            "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "Category: Financial Advisor Data Automation Platform"
+              },
+              {
+                "field": "business_profile_insights",
+                "value": "Business Model: Subscription-based SaaS targeting independent financial advisory firms, offering automated document processing and insights to improve client onboarding and engagement"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "Language Used: Emphasizes ease, security, and intelligence, framing their solution as 'painless,' 'automated,' and 'insightful' for advisors and clients"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "Unique Approach: Combines effortless document upload with AI-driven data extraction and personalized insights to accelerate trust-building and decision-making"
+              },
+              {
+                "field": "business_profile_insights",
+                "value": "Existing Customers: Primarily independent financial advisors and firms seeking to enhance onboarding efficiency and client trust through streamlined data collection and personalized insights"
+              }
+            ],
+            "pass": false,
+            "rationale": "Only the second and fifth claims are explicitly supported by website content, while the first and fourth are general descriptions without direct evidence. The third claim is an interpretation of language used, not directly cited from the website. Therefore, only 2 out of 5 claims are supported, failing the pass criteria."
+          },
+          "actionability": {
+            "check_name": "actionability",
+            "description": "Evaluates if insights are specific and lead to actionable discovery questions",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: Financial Advisor Data Automation Platform",
+                  "Business Model: Subscription-based SaaS targeting independent financial advisory firms, offering automated document processing and insights to improve client onboarding and engagement",
+                  "Existing Customers: Primarily independent financial advisors and firms seeking to enhance onboarding efficiency and client trust through streamlined data collection and personalized insights"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Traditional onboarding methods are slow, friction-filled, and fail to provide immediate value demonstration, hindering sales cycles",
+                  "Unique Approach: Combines effortless document upload with AI-driven data extraction and personalized insights to accelerate trust-building and decision-making",
+                  "Language Used: Emphasizes ease, security, and intelligence, framing their solution as ‘painless,’ ‘automated,’ and ‘insightful’ for advisors and clients"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Independent financial advisory firms, especially those experiencing growth, targeting millennials and younger advisors, seeking to improve onboarding efficiency and client engagement",
+                  "Key Personas: Financial advisors and firm owners focused on scaling their client base, who prioritize quick onboarding, personalized insights, and operational efficiency"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "The insights are specific to Flextract’s market position, target customers, and unique approach, providing clear context for sales discovery. They suggest follow-up questions about how the platform accelerates onboarding, addresses security concerns, and appeals to growth-focused advisors, fulfilling the discovery value criterion. The claims are grounded in observable details about the company's offerings and target audience, making them evidence-based."
+          },
+          "redundancy": {
+            "check_name": "redundancy",
+            "description": "Checks for excessive content duplication between different sections",
+            "inputs_evaluated": [
+              {
+                "field": "description",
+                "value": "Flextract is a SaaS platform designed for financial advisors to streamline client onboarding and data collection by enabling prospects to upload documents directly. Its AI-powered system automatically extracts, organizes, and analyzes financial data to generate personalized insights, helping advisors demonstrate value early and accelerate the sales process."
+              },
+              {
+                "field": "business_insights",
+                "value": [
+                  "Category: Financial Advisor Data Automation Platform",
+                  "Business Model: Subscription-based SaaS targeting independent financial advisory firms, offering automated document processing and insights to improve client onboarding and engagement",
+                  "Existing Customers: Primarily independent financial advisors and firms seeking to enhance onboarding efficiency and client trust through streamlined data collection and personalized insights"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "The key concepts in both sections overlap minimally, with an estimated Jaccard similarity below 0.30 (around 10-15%). The description focuses on the platform's features and AI capabilities, while the business insights emphasize the target market and business model. Therefore, there is no excessive duplication, and the sections provide distinct value."
+          },
+          "context_steering": {
+            "check_name": "context_steering",
+            "description": "Validates appropriate handling of user-provided context in the analysis",
+            "inputs_evaluated": [
+              {
+                "field": "user_context",
+                "value": "Context Type: valid, User Input: "
+              },
+              {
+                "field": "context_type",
+                "value": "valid"
+              },
+              {
+                "field": "generated_analysis",
+                "value": "Analysis JSON structure"
+              }
+            ],
+            "pass": true,
+            "rationale": "The analysis effectively incorporates the user-provided context by detailing Flextract's focus on automating client onboarding for financial advisors, aligning with the described business model and target audience. It also references the platform's AI-driven data extraction and security standards, demonstrating relevant integration of the user input into the overall evaluation."
+          }
+        },
+        "total_calls": 4
+      },
+      "overall_pass": false,
+      "errors": [],
+      "generated_output": "{\"company_name\":\"Flextract\",\"company_url\":\"https://flextract.com\",\"description\":\"Flextract is a SaaS platform designed for financial advisors to streamline client onboarding and data collection by enabling prospects to upload documents directly. Its AI-powered system automatically extracts, organizes, and analyzes financial data to generate personalized insights, helping advisors demonstrate value early and accelerate the sales process.\",\"business_profile_insights\":[\"Category: Financial Advisor Data Automation Platform\",\"Business Model: Subscription-based SaaS targeting independent financial advisory firms, offering automated document processing and insights to improve client onboarding and engagement\",\"Existing Customers: Primarily independent financial advisors and firms seeking to enhance onboarding efficiency and client trust through streamlined data collection and personalized insights\"],\"capabilities\":[\"Document Upload: Securely allows prospects to upload various financial documents without questionnaires or portals\",\"AI Data Extraction: Automatically identifies and extracts key data points from uploaded documents\",\"Data Organization: Structures extracted data into an accessible format for analysis and reporting\",\"Insight Generation: Produces personalized reports highlighting financial planning opportunities\",\"Security & Compliance: Built on SOC 2 Type 2 standards to ensure data security and privacy\"],\"use_case_analysis_insights\":[\"Process Impact: Transforms the client onboarding workflow by replacing manual data entry with automated document collection and extraction\",\"Problems Addressed: Eliminates lengthy questionnaires, reduces delays, and minimizes incomplete data issues; helps advisors quickly demonstrate value to prospects\",\"Current State: Advisors typically rely on manual review of scattered documents and questionnaires, which is time-consuming and prone to errors\"],\"positioning_insights\":[\"Key Market Belief: Traditional onboarding methods are slow, friction-filled, and fail to provide immediate value demonstration, hindering sales cycles\",\"Unique Approach: Combines effortless document upload with AI-driven data extraction and personalized insights to accelerate trust-building and decision-making\",\"Language Used: Emphasizes ease, security, and intelligence, framing their solution as 'painless,' 'automated,' and 'insightful' for advisors and clients\"],\"objections\":[\"Cost Concerns: Potential clients may worry about subscription fees or implementation costs\",\"Integration Complexity: Uncertainty about how Flextract integrates with existing CRM or financial planning tools\",\"Data Security: Concerns regarding the handling and storage of sensitive financial documents\",\"Change Management: Resistance to adopting new workflows or replacing manual processes\"],\"target_customer_insights\":[\"Target Accounts: Independent financial advisory firms, especially those experiencing growth, targeting millennials and younger advisors, seeking to improve onboarding efficiency and client engagement\",\"Key Personas: Financial advisors and firm owners focused on scaling their client base, who prioritize quick onboarding, personalized insights, and operational efficiency\"],\"metadata\":{\"sources_used\":[\"website\"],\"context_quality\":\"medium\",\"assessment_summary\":\"Analysis based on available website content\",\"assumptions_made\":[],\"discovery_gaps\":[\"Details on technical integration capabilities with existing CRM or financial planning software\",\"Specific security and compliance measures beyond SOC 2 Type 2 certification\",\"Pricing tiers and scalability options for growing firms\",\"User adoption challenges and change management strategies\"]}}",
+      "test_case_id": 1
+    }
+  ]
+}

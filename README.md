@@ -282,6 +282,30 @@ blossomer eval run product_overview --output results.json
 - **Cost-effective**: Uses GPT-4.1-nano for ultra-low cost evaluation
 - **Rich output**: Progress bars, detailed failure analysis, pass/fail rates
 - **Quality assurance**: Ensures consistent prompt template performance
+- **Simplified structure**: Each check shows description, inputs evaluated, pass/fail, and clear rationale
+
+**Evaluation Output Structure:**
+Each evaluation check follows a standardized format:
+
+```json
+{
+  "check_name": "traceability",
+  "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+  "inputs_evaluated": [
+    {"field": "business_profile_insights", "value": ["Category: Financial Technology", "Market: Enterprise payments"]},
+    {"field": "website_content", "value": "Stripe powers online payments for millions..."}
+  ],
+  "pass": false,
+  "rationale": "Only 2 out of 5 sampled claims could be verified against website content. Claims about Series B funding and enterprise focus lack supporting evidence from the scraped content."
+}
+```
+
+**Structure Fields:**
+- **check_name**: Unique identifier for the evaluation check
+- **description**: Brief explanation of what the check evaluates (1-2 sentences)
+- **inputs_evaluated**: Array of {field: field_name, value: field_value} pairs showing what data was examined
+- **pass**: Boolean indicating if the check passed or failed
+- **rationale**: Clear 2-3 sentence explanation of why it passed or failed
 
 ### Not Yet Implemented
 
@@ -297,9 +321,6 @@ These commands show "Command not yet implemented":
 ```bash
 # Recommended: TensorBlock Forge (unified access to all providers)
 export FORGE_API_KEY="forge-your-api-key-here"
-
-# Alternative: OpenAI only (legacy support)
-export OPENAI_API_KEY="your-openai-api-key"
 
 # Optional
 export BLOSSOMER_DEBUG=true        # Enable debug output

@@ -150,3 +150,6 @@ def save_project_data(domain: str, step: str, data: dict):
 
 ## Security and Ethical Considerations
 - Always ask for my permission to run code that will make an API request to an LLM since it'll cost me $$$
+
+## Commit Message Guidelines
+- Do not mention Claude, Claude Code, or Anthropic when writing commit messages

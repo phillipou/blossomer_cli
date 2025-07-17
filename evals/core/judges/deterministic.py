@@ -73,8 +73,11 @@ class DeterministicJudge:
                 else:
                     # Skip remaining checks if JSON parsing failed
                     check_result = {
+                        "check_name": check_name.replace("D-", "").replace("_", ""),
+                        "description": "Skipped due to JSON parsing failure",
+                        "inputs_evaluated": [{"field": "parsed_data", "value": "Not available"}],
                         "pass": False,
-                        "error": "Skipped due to JSON parsing failure"
+                        "rationale": "This check was skipped because the previous JSON validation failed."
                     }
                 
                 results["checks"][check_name] = check_result
@@ -87,8 +90,11 @@ class DeterministicJudge:
                     
             except Exception as e:
                 results["checks"][check_name] = {
+                    "check_name": check_name.replace("D-", "").replace("_", ""),
+                    "description": "Internal error during check execution",
+                    "inputs_evaluated": [{"field": "error", "value": str(e)}],
                     "pass": False,
-                    "error": f"Check failed with exception: {str(e)}"
+                    "rationale": f"This check failed due to an internal error: {str(e)}"
                 }
                 break
         
@@ -109,14 +115,40 @@ class DeterministicJudge:
         """D-1: Valid JSON check."""
         try:
             data = json.loads(output)
-            return {"pass": True, "data": data}
+            return {
+                "check_name": "json_validation",
+                "description": "Validates that the output is properly formatted JSON",
+                "inputs_evaluated": [
+                    {"field": "raw_output", "value": output[:200] + "..." if len(output) > 200 else output}
+                ],
+                "pass": True,
+                "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+                "data": data
+            }
         except json.JSONDecodeError as e:
-            return {"pass": False, "error": f"Invalid JSON: {str(e)}"}
+            return {
+                "check_name": "json_validation",
+                "description": "Validates that the output is properly formatted JSON",
+                "inputs_evaluated": [
+                    {"field": "raw_output", "value": output[:200] + "..." if len(output) > 200 else output}
+                ],
+                "pass": False,
+                "rationale": f"The output contains invalid JSON syntax. Parse error: {str(e)}"
+            }
     
     def _check_schema_compliance(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-2: Schema compliance check."""
         if not self.schema:
-            return {"pass": True, "warning": "No schema file found, skipping validation"}
+            return {
+                "check_name": "schema_compliance",
+                "description": "Validates that the output matches the expected JSON schema",
+                "inputs_evaluated": [
+                    {"field": "parsed_output", "value": "<parsed JSON data>"},
+                    {"field": "schema", "value": "No schema file found"}
+                ],
+                "pass": True,
+                "rationale": "No schema file found, skipping validation. All outputs are considered valid."
+            }
         
         try:
             jsonschema.validate(data, self.schema)
@@ -130,17 +162,49 @@ class DeterministicJudge:
                 )
                 
                 if non_empty_count / total_fields >= 0.9:
-                    return {"pass": True}
+                    return {
+                        "check_name": "schema_compliance",
+                        "description": "Validates that the output matches the expected JSON schema",
+                        "inputs_evaluated": [
+                            {"field": "parsed_output", "value": list(data.keys())},
+                            {"field": "schema_fields", "value": list(self.schema.get("properties", {}).keys())}
+                        ],
+                        "pass": True,
+                        "rationale": f"Output matches expected schema and has {non_empty_count}/{total_fields} fields populated (≥90% required)."
+                    }
                 else:
                     return {
+                        "check_name": "schema_compliance",
+                        "description": "Validates that the output matches the expected JSON schema",
+                        "inputs_evaluated": [
+                            {"field": "parsed_output", "value": list(data.keys())},
+                            {"field": "populated_fields", "value": f"{non_empty_count}/{total_fields}"}
+                        ],
                         "pass": False,
-                        "error": f"Only {non_empty_count}/{total_fields} fields populated (need ≥90%)"
+                        "rationale": f"Only {non_empty_count}/{total_fields} fields are populated. At least 90% of fields must contain non-empty values."
                     }
             else:
-                return {"pass": True}
+                return {
+                    "check_name": "schema_compliance",
+                    "description": "Validates that the output matches the expected JSON schema",
+                    "inputs_evaluated": [
+                        {"field": "parsed_output", "value": str(type(data))}
+                    ],
+                    "pass": True,
+                    "rationale": "Output matches expected schema format."
+                }
                 
         except jsonschema.ValidationError as e:
-            return {"pass": False, "error": f"Schema validation failed: {str(e)}"}
+            return {
+                "check_name": "schema_compliance",
+                "description": "Validates that the output matches the expected JSON schema",
+                "inputs_evaluated": [
+                    {"field": "parsed_output", "value": list(data.keys()) if isinstance(data, dict) else str(type(data))},
+                    {"field": "validation_error", "value": str(e)}
+                ],
+                "pass": False,
+                "rationale": f"Output does not match expected schema. Validation error: {str(e)}"
+            }
     
     def _check_format_compliance(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-3: Format compliance check."""
@@ -154,13 +218,21 @@ class DeterministicJudge:
             "objections"
         ]
         
+        inputs_evaluated = []
+        for field in insight_fields:
+            if field in data and isinstance(data[field], list):
+                inputs_evaluated.append({"field": field, "value": data[field]})
+        
         for field in insight_fields:
             if field in data and isinstance(data[field], list):
                 for i, insight in enumerate(data[field]):
                     if isinstance(insight, str) and ":" not in insight:
                         return {
+                            "check_name": "format_compliance",
+                            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+                            "inputs_evaluated": inputs_evaluated,
                             "pass": False,
-                            "error": f"Field '{field}' item {i} missing colon separator: '{insight}'"
+                            "rationale": f"Field '{field}' item {i} is missing colon separator. Expected format: 'Key: Value'. Found: '{insight}'"
                         }
                     
                     # Check that key part is not empty
@@ -168,11 +240,20 @@ class DeterministicJudge:
                         key_part = insight.split(":", 1)[0].strip()
                         if not key_part:
                             return {
+                                "check_name": "format_compliance",
+                                "description": "Validates that insight fields follow 'Key: Value' format pattern",
+                                "inputs_evaluated": inputs_evaluated,
                                 "pass": False,
-                                "error": f"Field '{field}' item {i} has empty key part: '{insight}'"
+                                "rationale": f"Field '{field}' item {i} has empty key part before colon. Expected format: 'Key: Value'. Found: '{insight}'"
                             }
         
-        return {"pass": True}
+        return {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": inputs_evaluated,
+            "pass": True,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+        }
     
     def _check_field_cardinality(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-4: Field cardinality check."""
@@ -185,29 +266,60 @@ class DeterministicJudge:
             "target_customer_insights": (2, 3)
         }
         
+        inputs_evaluated = []
+        for field, (min_items, max_items) in cardinality_rules.items():
+            if field in data and isinstance(data[field], list):
+                inputs_evaluated.append({
+                    "field": field, 
+                    "value": f"{len(data[field])} items (expected {min_items}-{max_items})"
+                })
+        
         for field, (min_items, max_items) in cardinality_rules.items():
             if field in data and isinstance(data[field], list):
                 item_count = len(data[field])
                 if item_count < min_items or item_count > max_items:
                     return {
+                        "check_name": "field_cardinality",
+                        "description": "Validates that array fields contain the expected number of items",
+                        "inputs_evaluated": inputs_evaluated,
                         "pass": False,
-                        "error": f"Field '{field}' has {item_count} items, expected {min_items}-{max_items}"
+                        "rationale": f"Field '{field}' has {item_count} items but expected {min_items}-{max_items}. Each insight field should contain an appropriate number of items for comprehensive analysis."
                     }
         
-        return {"pass": True}
+        return {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": inputs_evaluated,
+            "pass": True,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+        }
     
     def _check_url_preservation(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-5: URL preservation check."""
         input_url = test_case.get("input_website_url", "")
         output_url = data.get("company_url", "")
         
+        inputs_evaluated = [
+            {"field": "input_website_url", "value": input_url or "Not provided"},
+            {"field": "company_url", "value": output_url or "Not provided"}
+        ]
+        
         if not input_url:
-            return {"pass": True, "warning": "No input URL to check"}
+            return {
+                "check_name": "url_preservation",
+                "description": "Validates that the input website URL is preserved in the output",
+                "inputs_evaluated": inputs_evaluated,
+                "pass": True,
+                "rationale": "No input URL provided in test case, so URL preservation check is skipped."
+            }
         
         if not output_url:
             return {
+                "check_name": "url_preservation",
+                "description": "Validates that the input website URL is preserved in the output",
+                "inputs_evaluated": inputs_evaluated,
                 "pass": False,
-                "error": "Output missing company_url field"
+                "rationale": "Output is missing the company_url field. The input URL must be preserved in the output for consistency."
             }
         
         # Normalize URLs for comparison
@@ -221,11 +333,20 @@ class DeterministicJudge:
         
         if input_normalized != output_normalized:
             return {
+                "check_name": "url_preservation",
+                "description": "Validates that the input website URL is preserved in the output",
+                "inputs_evaluated": inputs_evaluated,
                 "pass": False,
-                "error": f"URL mismatch: input '{input_url}' vs output '{output_url}'"
+                "rationale": f"URL mismatch detected. Input URL '{input_url}' does not match output URL '{output_url}'. The original URL should be preserved exactly."
             }
         
-        return {"pass": True}
+        return {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": inputs_evaluated,
+            "pass": True,
+            "rationale": "Input URL is correctly preserved in the output company_url field."
+        }
 
 
 # For standalone testing

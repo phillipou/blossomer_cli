@@ -1,0 +1,339 @@
+{
+  "prompt_name": "Product Overview Evaluation",
+  "timestamp": "2025-07-17T10:48:21.982387",
+  "evaluation_time": 35.40316867828369,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://intryc.com",
+        "context_type": "none",
+        "account_profile_name": "",
+        "persona_profile_name": "",
+        "persona_hypothesis": "",
+        "account_hypothesis": "",
+        "expected_company_name": "Intryc"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"company_name\":\"Intryc\",\"company_url\":\"https://intryc.com\",\"description\":\"Intryc is a SaaS platform focused on enhancing customer support quality through smarter QA tools. It provides role-based solu..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "company_name": "Intryc",
+              "company_url": "https://intryc.com",
+              "description": "Intryc is a SaaS platform focused on enhancing customer support quality through smarter QA tools. It provides role-based solutions for support teams, enabling them to improve processes, deliver consistent service, and gain actionable insights into performance.",
+              "business_profile_insights": [
+                "Category: Customer Support Quality Assurance Platform",
+                "Business Model: Subscription-based SaaS targeting support teams and enterprises, offering customizable QA tools, AI evaluations, and real-time insights to improve customer service quality",
+                "Existing Customers: The website references support teams and quality assurance leads, with testimonials emphasizing improved efficiency and quality in customer interactions"
+              ],
+              "capabilities": [
+                "Sampling: Enables quick setup of statistically significant samples using custom rules, tags, and data sources",
+                "AI-powered Evaluations: Trains AI QA models to achieve up to 100% coverage across scorecards and tickets",
+                "Customisable Scorecards: Allows creation of unlimited scorecards and criteria tailored to specific quality standards",
+                "Proactive Insights: Provides real-time alerts on spikes and issues based on ticket metadata",
+                "Agent Coaching: Facilitates tailored coaching based on evaluation ratings and feedback"
+              ],
+              "use_case_analysis_insights": [
+                "Process Impact: Automates and streamlines quality assurance processes for support teams, reducing manual sampling and evaluation efforts",
+                "Problems Addressed: Solves inefficiencies in manual QA sampling, limited coverage of ticket evaluations, and lack of real-time performance insights",
+                "Current State: Support teams typically perform manual sampling and periodic reviews, often limited in scope and speed, leading to inconsistent quality management"
+              ],
+              "positioning_insights": [
+                "Key Market Belief: Current manual QA methods are time-consuming, inconsistent, and unable to scale with growing support volumes",
+                "Unique Approach: Combines AI-driven evaluations with customizable, role-based tools and real-time insights to deliver scalable, high-quality support management",
+                "Language Used: Emphasizes 'smarter QA', 'proactive insights', and 'customizable scorecards', framing their solution as innovative, efficient, and tailored for support excellence"
+              ],
+              "objections": [
+                "Cost Concerns: Potential buyers may worry about the subscription costs and ROI of implementing AI-powered QA tools",
+                "Implementation Complexity: Concerns about integrating with existing support systems and data sources",
+                "Change Management: Resistance from support teams accustomed to manual processes and traditional QA methods"
+              ],
+              "target_customer_insights": [
+                "Target Accounts: Support centers and customer service teams in mid to large enterprises across industries such as tech, e-commerce, and telecom, seeking to improve quality and scalability",
+                "Key Personas: Quality assurance leads, support managers, and operations directors focused on improving support consistency, efficiency, and customer satisfaction"
+              ],
+              "metadata": {
+                "sources_used": [
+                  "website"
+                ],
+                "context_quality": "medium",
+                "assessment_summary": "Analysis based on available website content",
+                "assumptions_made": [],
+                "discovery_gaps": [
+                  "Details on technical integrations with existing support platforms",
+                  "Pricing tiers and specific ROI metrics",
+                  "Security and compliance features"
+                ]
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 10/10 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: Customer Support Quality Assurance Platform",
+                  "Business Model: Subscription-based SaaS targeting support teams and enterprises, offering customizable QA tools, AI evaluations, and real-time insights to improve customer service quality",
+                  "Existing Customers: The website references support teams and quality assurance leads, with testimonials emphasizing improved efficiency and quality in customer interactions"
+                ]
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": [
+                  "Process Impact: Automates and streamlines quality assurance processes for support teams, reducing manual sampling and evaluation efforts",
+                  "Problems Addressed: Solves inefficiencies in manual QA sampling, limited coverage of ticket evaluations, and lack of real-time performance insights",
+                  "Current State: Support teams typically perform manual sampling and periodic reviews, often limited in scope and speed, leading to inconsistent quality management"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Current manual QA methods are time-consuming, inconsistent, and unable to scale with growing support volumes",
+                  "Unique Approach: Combines AI-driven evaluations with customizable, role-based tools and real-time insights to deliver scalable, high-quality support management",
+                  "Language Used: Emphasizes 'smarter QA', 'proactive insights', and 'customizable scorecards', framing their solution as innovative, efficient, and tailored for support excellence"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Support centers and customer service teams in mid to large enterprises across industries such as tech, e-commerce, and telecom, seeking to improve quality and scalability",
+                  "Key Personas: Quality assurance leads, support managers, and operations directors focused on improving support consistency, efficiency, and customer satisfaction"
+                ]
+              },
+              {
+                "field": "capabilities",
+                "value": [
+                  "Sampling: Enables quick setup of statistically significant samples using custom rules, tags, and data sources",
+                  "AI-powered Evaluations: Trains AI QA models to achieve up to 100% coverage across scorecards and tickets",
+                  "Customisable Scorecards: Allows creation of unlimited scorecards and criteria tailored to specific quality standards",
+                  "Proactive Insights: Provides real-time alerts on spikes and issues based on ticket metadata",
+                  "Agent Coaching: Facilitates tailored coaching based on evaluation ratings and feedback"
+                ]
+              },
+              {
+                "field": "objections",
+                "value": [
+                  "Cost Concerns: Potential buyers may worry about the subscription costs and ROI of implementing AI-powered QA tools",
+                  "Implementation Complexity: Concerns about integrating with existing support systems and data sources",
+                  "Change Management: Resistance from support teams accustomed to manual processes and traditional QA methods"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "capabilities",
+                "value": "5 items (expected 3-5)"
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "objections",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "target_customer_insights",
+                "value": "2 items (expected 2-3)"
+              }
+            ],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://intryc.com"
+              },
+              {
+                "field": "company_url",
+                "value": "https://intryc.com"
+              }
+            ],
+            "pass": true,
+            "rationale": "Input URL is correctly preserved in the output company_url field."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "traceability": {
+            "check_name": "traceability",
+            "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "Business Model: Subscription-based SaaS targeting support teams and enterprises, offering customizable QA tools, AI evaluations, and real-time insights to improve customer service quality"
+              },
+              {
+                "field": "business_profile_insights",
+                "value": "Category: Customer Support Quality Assurance Platform"
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": "Current State: Support teams typically perform manual sampling and periodic reviews, often limited in scope and speed, leading to inconsistent quality management"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "Unique Approach: Combines AI-driven evaluations with customizable, role-based tools and real-time insights to deliver scalable, high-quality support management"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "Language Used: Emphasizes 'smarter QA', 'proactive insights', and 'customizable scorecards', framing their solution as innovative, efficient, and tailored for support excellence"
+              }
+            ],
+            "pass": true,
+            "rationale": "Four out of five claims are supported by the provided website content, with clear descriptions matching the claims about the business model, category, and approach. The claim about language emphasizes specific terms used, which aligns with the content. The only claim not explicitly supported is the current state of manual reviews, which is an assumption. Overall, the majority of claims are substantiated, meeting the pass criteria."
+          },
+          "actionability": {
+            "check_name": "actionability",
+            "description": "Evaluates if insights are specific and lead to actionable discovery questions",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: Customer Support Quality Assurance Platform",
+                  "Business Model: Subscription-based SaaS targeting support teams and enterprises, offering customizable QA tools, AI evaluations, and real-time insights to improve customer service quality",
+                  "Existing Customers: The website references support teams and quality assurance leads, with testimonials emphasizing improved efficiency and quality in customer interactions"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Current manual QA methods are time-consuming, inconsistent, and unable to scale with growing support volumes",
+                  "Unique Approach: Combines AI-driven evaluations with customizable, role-based tools and real-time insights to deliver scalable, high-quality support management",
+                  "Language Used: Emphasizes 'smarter QA', 'proactive insights', and 'customizable scorecards', framing their solution as innovative, efficient, and tailored for support excellence"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Support centers and customer service teams in mid to large enterprises across industries such as tech, e-commerce, and telecom, seeking to improve quality and scalability",
+                  "Key Personas: Quality assurance leads, support managers, and operations directors focused on improving support consistency, efficiency, and customer satisfaction"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "The insights are specific to Intryc's SaaS platform, its target market, and positioning, providing clear follow-up questions about their AI evaluation features and role-based tools. The claims are grounded in observable information from their website and messaging, making them actionable for sales discovery calls."
+          },
+          "redundancy": {
+            "check_name": "redundancy",
+            "description": "Checks for excessive content duplication between different sections",
+            "inputs_evaluated": [
+              {
+                "field": "description",
+                "value": "Intryc is a SaaS platform focused on enhancing customer support quality through smarter QA tools. It provides role-based solutions for support teams, enabling them to improve processes, deliver consistent service, and gain actionable insights into performance."
+              },
+              {
+                "field": "business_insights",
+                "value": [
+                  "Category: Customer Support Quality Assurance Platform",
+                  "Business Model: Subscription-based SaaS targeting support teams and enterprises, offering customizable QA tools, AI evaluations, and real-time insights to improve customer service quality",
+                  "Existing Customers: The website references support teams and quality assurance leads, with testimonials emphasizing improved efficiency and quality in customer interactions"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "The overlap between the description and business insights is approximately 15%, primarily in the mention of SaaS platform, support teams, and quality assurance. This overlap is below the 30% threshold, indicating that the sections provide distinct value; the description focuses on platform features, while the insights detail business model and customer references."
+          },
+          "context_steering": {
+            "pass": true,
+            "reason": "No context provided - auto-pass"
+          }
+        },
+        "total_calls": 4
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"company_name\":\"Intryc\",\"company_url\":\"https://intryc.com\",\"description\":\"Intryc is a SaaS platform focused on enhancing customer support quality through smarter QA tools. It provides role-based solutions for support teams, enabling them to improve processes, deliver consistent service, and gain actionable insights into performance.\",\"business_profile_insights\":[\"Category: Customer Support Quality Assurance Platform\",\"Business Model: Subscription-based SaaS targeting support teams and enterprises, offering customizable QA tools, AI evaluations, and real-time insights to improve customer service quality\",\"Existing Customers: The website references support teams and quality assurance leads, with testimonials emphasizing improved efficiency and quality in customer interactions\"],\"capabilities\":[\"Sampling: Enables quick setup of statistically significant samples using custom rules, tags, and data sources\",\"AI-powered Evaluations: Trains AI QA models to achieve up to 100% coverage across scorecards and tickets\",\"Customisable Scorecards: Allows creation of unlimited scorecards and criteria tailored to specific quality standards\",\"Proactive Insights: Provides real-time alerts on spikes and issues based on ticket metadata\",\"Agent Coaching: Facilitates tailored coaching based on evaluation ratings and feedback\"],\"use_case_analysis_insights\":[\"Process Impact: Automates and streamlines quality assurance processes for support teams, reducing manual sampling and evaluation efforts\",\"Problems Addressed: Solves inefficiencies in manual QA sampling, limited coverage of ticket evaluations, and lack of real-time performance insights\",\"Current State: Support teams typically perform manual sampling and periodic reviews, often limited in scope and speed, leading to inconsistent quality management\"],\"positioning_insights\":[\"Key Market Belief: Current manual QA methods are time-consuming, inconsistent, and unable to scale with growing support volumes\",\"Unique Approach: Combines AI-driven evaluations with customizable, role-based tools and real-time insights to deliver scalable, high-quality support management\",\"Language Used: Emphasizes 'smarter QA', 'proactive insights', and 'customizable scorecards', framing their solution as innovative, efficient, and tailored for support excellence\"],\"objections\":[\"Cost Concerns: Potential buyers may worry about the subscription costs and ROI of implementing AI-powered QA tools\",\"Implementation Complexity: Concerns about integrating with existing support systems and data sources\",\"Change Management: Resistance from support teams accustomed to manual processes and traditional QA methods\"],\"target_customer_insights\":[\"Target Accounts: Support centers and customer service teams in mid to large enterprises across industries such as tech, e-commerce, and telecom, seeking to improve quality and scalability\",\"Key Personas: Quality assurance leads, support managers, and operations directors focused on improving support consistency, efficiency, and customer satisfaction\"],\"metadata\":{\"sources_used\":[\"website\"],\"context_quality\":\"medium\",\"assessment_summary\":\"Analysis based on available website content\",\"assumptions_made\":[],\"discovery_gaps\":[\"Details on technical integrations with existing support platforms\",\"Pricing tiers and specific ROI metrics\",\"Security and compliance features\"]}}",
+      "test_case_id": 1
+    }
+  ]
+}

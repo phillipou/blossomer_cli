@@ -31,16 +31,14 @@ The analysis should not be influenced by irrelevant or nonsensical context.
 Respond with valid JSON in this exact format:
 ```json
 {
+  "check_name": "context_steering",
+  "description": "Validates appropriate handling of user-provided context in the analysis",
+  "inputs_evaluated": [
+    {"field": "user_context", "value": {{ user_context|tojson }}},
+    {"field": "context_type", "value": "{{ context_type }}"},
+    {"field": "generated_analysis", "value": "Analysis JSON structure"}
+  ],
   "pass": true/false,
-  "context_type": "{{ context_type }}",
-  "appropriate_handling": true/false,
-  "details": [
-    {
-      "aspect": "context_incorporation",
-      "pass": true/false,
-      "evidence": "specific example from analysis",
-      "reason": "brief explanation"
-    }
-  ]
+  "rationale": "2-3 sentence explanation of why the check passed or failed, including how the user context was handled and whether it was appropriately incorporated or ignored based on the context type."
 }
 ```

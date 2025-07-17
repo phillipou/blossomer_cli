@@ -157,6 +157,57 @@ evals/core/judges/templates/
 - **L-3 Content Redundancy**: Check Jaccard similarity between sections
 - **L-4 Context Steering**: Validate appropriate handling of valid/noise/none context
 
+#### Simplified Output Structure
+
+Each evaluation check now follows a standardized format for clarity:
+
+```json
+{
+  "check_name": "traceability",
+  "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+  "inputs_evaluated": [
+    {"field": "business_profile_insights", "value": ["Category: Financial Technology", "Market: Enterprise payments"]},
+    {"field": "website_content", "value": "Stripe powers online payments for millions..."}
+  ],
+  "pass": false,
+  "rationale": "Only 2 out of 5 sampled claims could be verified against website content. Claims about Series B funding and enterprise focus lack supporting evidence from the scraped content."
+}
+```
+
+**Structure Requirements:**
+- **check_name**: Unique identifier for the evaluation check
+- **description**: Brief explanation of what the check evaluates (1-2 sentences)
+- **inputs_evaluated**: Array of {field: field_name, value: field_value} pairs showing what data was examined
+- **pass**: Boolean indicating if the check passed or failed
+- **rationale**: Clear 2-3 sentence explanation of why it passed or failed
+
+**Example Deterministic Check:**
+```json
+{
+  "check_name": "json_validation",
+  "description": "Validates that the output is properly formatted JSON",
+  "inputs_evaluated": [
+    {"field": "raw_output", "value": "{ \"company_name\": \"Example Corp\", ... }"}
+  ],
+  "pass": true,
+  "rationale": "The output is valid JSON with proper syntax. All required fields are present and correctly formatted."
+}
+```
+
+**Example LLM Judge Check:**
+```json
+{
+  "check_name": "actionability",
+  "description": "Evaluates if insights are specific and lead to actionable discovery questions",
+  "inputs_evaluated": [
+    {"field": "business_profile_insights", "value": ["Category: Financial Technology", "Target: Enterprise payments"]},
+    {"field": "positioning_insights", "value": ["Differentiator: Developer-first API", "Market: Growing fintech space"]}
+  ],
+  "pass": true,
+  "rationale": "All insights provide specific, actionable information that leads to concrete discovery questions. The analysis avoids generic statements and focuses on distinctive business characteristics."
+}
+```
+
 ### Usage Examples
 
 #### Basic Evaluation

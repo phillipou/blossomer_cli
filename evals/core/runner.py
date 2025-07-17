@@ -14,6 +14,8 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import time
+import json
+from datetime import datetime
 
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -100,11 +102,22 @@ class EvaluationRunner:
         # Aggregate results
         evaluation_results = self._aggregate_results(results, config, start_time)
         
-        # Save and display results
+        # Always save results to timestamped JSON file
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        results_dir = Path(__file__).parent.parent / "results"
+        results_dir.mkdir(exist_ok=True)
+        
+        auto_output_file = results_dir / f"{prompt_name}_{timestamp}.json"
+        self._save_results_json(evaluation_results, auto_output_file)
+        
+        # Save to user-specified file if provided
         if output_file:
             self.results_manager.save_results(evaluation_results, output_file)
         
-        self.results_manager.display_results(evaluation_results)
+        self.results_manager.display_results(evaluation_results, verbose)
+        
+        # Show saved file location
+        self.console.print(f"📁 Results saved to: {auto_output_file}", style="dim")
         
         return evaluation_results
     
@@ -232,6 +245,14 @@ class EvaluationRunner:
             self.console.print(f"❌ Error generating output: {e}", style="red")
             return None
     
+    def _save_results_json(self, results: Dict[str, Any], output_file: Path):
+        """Save results to JSON file with proper formatting."""
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent=2, ensure_ascii=False, default=str)
+        except Exception as e:
+            self.console.print(f"❌ Error saving results to {output_file}: {e}", style="red")
+    
     def _aggregate_results(
         self, 
         results: List[Dict[str, Any]], 
@@ -256,6 +277,7 @@ class EvaluationRunner:
         
         return {
             "prompt_name": config.name,
+            "timestamp": datetime.now().isoformat(),
             "evaluation_time": time.time() - start_time,
             "test_cases": {
                 "total": total_cases,
@@ -358,22 +380,33 @@ Examples:
                 overall_success = False
                 all_results[prompt_name] = {"error": str(e)}
         
-        # Save combined results if output file specified
-        if args.output:
-            combined_results = {
-                "evaluation_type": "all_prompts",
-                "prompt_results": all_results,
-                "overall_success": overall_success,
-                "summary": {
-                    "total_prompts": len(available_prompts),
-                    "passed_prompts": sum(1 for r in all_results.values() 
-                                        if "error" not in r and r.get("test_cases", {}).get("pass_rate", 0) >= 0.9),
-                    "failed_prompts": sum(1 for r in all_results.values() 
-                                        if "error" in r or r.get("test_cases", {}).get("pass_rate", 0) < 0.9)
-                }
+        # Always save combined results to timestamped JSON file
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        results_dir = Path(__file__).parent.parent / "results"
+        results_dir.mkdir(exist_ok=True)
+        
+        combined_results = {
+            "evaluation_type": "all_prompts",
+            "prompt_results": all_results,
+            "overall_success": overall_success,
+            "timestamp": timestamp,
+            "summary": {
+                "total_prompts": len(available_prompts),
+                "passed_prompts": sum(1 for r in all_results.values() 
+                                    if "error" not in r and r.get("test_cases", {}).get("pass_rate", 0) >= 0.9),
+                "failed_prompts": sum(1 for r in all_results.values() 
+                                    if "error" in r or r.get("test_cases", {}).get("pass_rate", 0) < 0.9)
             }
-            
+        }
+        
+        auto_output_file = results_dir / f"all_prompts_{timestamp}.json"
+        runner._save_results_json(combined_results, auto_output_file)
+        
+        # Save to user-specified file if provided
+        if args.output:
             runner.results_manager.save_results(combined_results, args.output)
+        
+        console.print(f"📁 Combined results saved to: {auto_output_file}", style="dim")
         
         # Print overall summary
         console.print(f"\n{'='*60}")

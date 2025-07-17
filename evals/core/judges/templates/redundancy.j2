@@ -25,17 +25,13 @@ Jaccard similarity should be < 0.30 (less than 30% overlap).
 Respond with valid JSON in this exact format:
 ```json
 {
+  "check_name": "redundancy",
+  "description": "Checks for excessive content duplication between different sections",
+  "inputs_evaluated": [
+    {"field": "description", "value": {{ description|tojson }}},
+    {"field": "business_insights", "value": {{ business_insights|tojson }}}
+  ],
   "pass": true/false,
-  "similarity_score": 0.XX,
-  "overlap_percentage": XX.X,
-  "details": [
-    {
-      "section": "description_vs_insights",
-      "overlap_words": ["word1", "word2"],
-      "unique_description": ["unique1", "unique2"],
-      "unique_insights": ["unique1", "unique2"],
-      "reason": "brief explanation of overlap assessment"
-    }
-  ]
+  "rationale": "2-3 sentence explanation of why the check passed or failed, including the overlap percentage and whether the sections provide distinct value or contain excessive duplication."
 }
 ```

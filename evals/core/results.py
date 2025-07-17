@@ -20,7 +20,7 @@ class ResultsManager:
     def __init__(self, console: Console = None):
         self.console = console or Console()
     
-    def display_results(self, results: Dict[str, Any]) -> None:
+    def display_results(self, results: Dict[str, Any], verbose: bool = False) -> None:
         """Display evaluation results in a formatted way."""
         
         self.console.print(f"\n🎯 Evaluation Results: {results['prompt_name']}")
@@ -47,13 +47,11 @@ class ResultsManager:
         
         self.console.print(summary_table)
         
-        # Detailed results for each check type
-        self._display_deterministic_results(results.get('deterministic_checks', {}))
-        self._display_llm_judge_results(results.get('llm_judges', {}))
+        # Display individual check results
+        self._display_individual_checks(results.get('detailed_results', []))
         
-        # Show failed cases if any
-        if test_cases['failed'] > 0:
-            self._display_failed_cases(results.get('detailed_results', []))
+        # Display final summary table
+        self._display_check_summary(results.get('detailed_results', []))
     
     def _display_deterministic_results(self, det_results: Dict[str, Any]) -> None:
         """Display deterministic check results."""
@@ -99,8 +97,125 @@ class ResultsManager:
         
         self.console.print(llm_table)
     
+    def _display_individual_checks(self, detailed_results: List[Dict[str, Any]]) -> None:
+        """Display individual check results with proper formatting."""
+        if not detailed_results:
+            return
+            
+        self.console.print(f"\n📋 Individual Check Results")
+        
+        for i, case in enumerate(detailed_results):
+            test_case = case.get('test_case', {})
+            url = test_case.get('input_website_url', 'Unknown')
+            
+            self.console.print(f"\n🌐 Test Case {i+1}: {url}")
+            
+            # Display deterministic checks
+            det_results = case.get('deterministic_results', {})
+            if det_results and 'checks' in det_results:
+                self.console.print(f"\n  🔍 Deterministic Checks:")
+                for check_name, check_result in det_results['checks'].items():
+                    self._display_single_check(check_result, "  ")
+            
+            # Display LLM judge checks
+            llm_results = case.get('llm_results', {})
+            if llm_results and 'judges' in llm_results:
+                self.console.print(f"\n  🧠 LLM Judge Checks:")
+                for judge_name, judge_result in llm_results['judges'].items():
+                    self._display_single_check(judge_result, "  ")
     
-    def _display_failed_cases(self, detailed_results: List[Dict[str, Any]]) -> None:
+    def _display_single_check(self, check_result: Dict[str, Any], indent: str = "") -> None:
+        """Display a single check result with proper formatting."""
+        check_name = check_result.get('check_name', 'unknown')
+        description = check_result.get('description', 'No description')
+        passed = check_result.get('pass', False)
+        rationale = check_result.get('rationale', check_result.get('error', 'No rationale provided'))
+        
+        # Status icon
+        status_icon = "✅" if passed else "❌"
+        status_color = "green" if passed else "red"
+        
+        # Display check name and status
+        self.console.print(f"{indent}    {status_icon} {check_name}", style=status_color)
+        
+        # Display description
+        self.console.print(f"{indent}       {description}", style="dim")
+        
+        # Display rationale
+        self.console.print(f"{indent}       → {rationale}", style="yellow" if not passed else "dim")
+        
+        # Add spacing between checks
+        self.console.print()
+    
+    def _display_check_summary(self, detailed_results: List[Dict[str, Any]]) -> None:
+        """Display final summary table with breakdown by check type."""
+        if not detailed_results:
+            return
+            
+        # Count check results by type
+        det_total = det_passed = llm_total = llm_passed = 0
+        
+        for case in detailed_results:
+            # Count deterministic checks
+            det_results = case.get('deterministic_results', {})
+            if det_results and 'checks' in det_results:
+                for check_name, check_result in det_results['checks'].items():
+                    det_total += 1
+                    if check_result.get('pass', False):
+                        det_passed += 1
+            
+            # Count LLM judge checks
+            llm_results = case.get('llm_results', {})
+            if llm_results and 'judges' in llm_results:
+                for judge_name, judge_result in llm_results['judges'].items():
+                    llm_total += 1
+                    if judge_result.get('pass', False):
+                        llm_passed += 1
+        
+        # Create summary table
+        self.console.print(f"\n📊 Check Summary")
+        
+        summary_table = Table()
+        summary_table.add_column("Check Type", style="cyan")
+        summary_table.add_column("Passed", style="green")
+        summary_table.add_column("Total", style="blue")
+        summary_table.add_column("Pass Rate", style="magenta")
+        
+        # Add deterministic checks row
+        if det_total > 0:
+            det_rate = det_passed / det_total
+            summary_table.add_row(
+                "Deterministic",
+                str(det_passed),
+                str(det_total),
+                f"{det_rate:.1%}"
+            )
+        
+        # Add LLM judge checks row
+        if llm_total > 0:
+            llm_rate = llm_passed / llm_total
+            summary_table.add_row(
+                "LLM Judges",
+                str(llm_passed),
+                str(llm_total),
+                f"{llm_rate:.1%}"
+            )
+        
+        # Add total row
+        total_checks = det_total + llm_total
+        total_passed = det_passed + llm_passed
+        if total_checks > 0:
+            total_rate = total_passed / total_checks
+            summary_table.add_row(
+                "**Total**",
+                f"**{total_passed}**",
+                f"**{total_checks}**",
+                f"**{total_rate:.1%}**"
+            )
+        
+        self.console.print(summary_table)
+    
+    def _display_failed_cases(self, detailed_results: List[Dict[str, Any]], verbose: bool = False) -> None:
         """Display details of failed test cases."""
         failed_cases = [r for r in detailed_results if not r.get('overall_pass', False)]
         
@@ -142,31 +257,44 @@ class ResultsManager:
             if not det_results.get('overall_pass', False):
                 for check_name, check_result in det_results.get('checks', {}).items():
                     if not check_result.get('pass', False):
-                        error = check_result.get('error', 'Unknown error')
-                        self.console.print(f"  🔍 {check_name}: {error}", style="red")
+                        # Use the new standardized structure
+                        check_display_name = check_result.get('check_name', check_name)
+                        rationale = check_result.get('rationale', check_result.get('error', 'Unknown error'))
+                        description = check_result.get('description', 'Deterministic check')
+                        
+                        self.console.print(f"  🔍 {check_display_name}: {description}", style="cyan")
+                        self.console.print(f"    → {rationale}", style="red")
+                        
+                        # Show inputs evaluated if verbose
+                        if verbose:
+                            inputs_evaluated = check_result.get('inputs_evaluated', [])
+                            for input_item in inputs_evaluated:
+                                field = input_item.get('field', 'unknown')
+                                value = input_item.get('value', 'unknown')
+                                value_str = str(value)[:100] + '...' if len(str(value)) > 100 else str(value)
+                                self.console.print(f"      📋 {field}: {value_str}", style="dim")
             
             # Show LLM judge failures with more detail
             llm_results = case.get('llm_results', {})
             if llm_results and not llm_results.get('overall_pass', False):
                 for judge_name, judge_result in llm_results.get('judges', {}).items():
                     if not judge_result.get('pass', False):
-                        # Check if it's an error or a legitimate failure
-                        if 'error' in judge_result:
-                            error = judge_result.get('error', 'Unknown error')
-                            error_summary = error.split('\n')[0]
-                            self.console.print(f"  🧠 {judge_name}: {error_summary}", style="red")
-                        else:
-                            # It's a legitimate quality failure, show the reason
-                            reason = judge_result.get('reason', 'Quality criteria not met')
-                            self.console.print(f"  🧠 {judge_name}: {reason}", style="yellow")
-                            
-                            # Show specific details if available
-                            if 'details' in judge_result:
-                                details = judge_result['details']
-                                if isinstance(details, list) and len(details) > 0:
-                                    first_detail = details[0]
-                                    if 'reason' in first_detail:
-                                        self.console.print(f"    → {first_detail['reason']}", style="dim yellow")
+                        # Use the new standardized structure
+                        check_display_name = judge_result.get('check_name', judge_name)
+                        rationale = judge_result.get('rationale', judge_result.get('error', 'Quality criteria not met'))
+                        description = judge_result.get('description', 'LLM judge evaluation')
+                        
+                        self.console.print(f"  🧠 {check_display_name}: {description}", style="cyan")
+                        self.console.print(f"    → {rationale}", style="yellow")
+                        
+                        # Show inputs evaluated if verbose
+                        if verbose:
+                            inputs_evaluated = judge_result.get('inputs_evaluated', [])
+                            for input_item in inputs_evaluated:
+                                field = input_item.get('field', 'unknown')
+                                value = input_item.get('value', 'unknown')
+                                value_str = str(value)[:100] + '...' if len(str(value)) > 100 else str(value)
+                                self.console.print(f"      📋 {field}: {value_str}", style="dim")
             
             # Show any general errors
             errors = case.get('errors', [])
