@@ -21,8 +21,9 @@ class GuidedEmailBuilder:
         # Extract structured data from persona
         self.use_cases = persona_data.get('use_cases', [])
         self.buying_signals = persona_data.get('buying_signals', [])
-        # Track completed steps for display
+        # Track completed steps for display with full Q&A context
         self.completed_steps = []
+        self.qa_history = []  # Store question-answer pairs for full context
     
     def run_guided_flow(self) -> Dict[str, Any]:
         """Run the complete 5-step guided email building flow"""
@@ -62,7 +63,8 @@ class GuidedEmailBuilder:
             "selected_content": selected_content,
             "social_proof": social_proof,
             "personalization": personalization,
-            "call_to_action": cta
+            "call_to_action": cta,
+            "qa_history": self.qa_history  # Include Q&A history for display
         }
     
     def _step_1_emphasis(self) -> Dict[str, Any]:
@@ -99,8 +101,12 @@ class GuidedEmailBuilder:
         console.print(f"✓ Focusing on {emphasis_value.replace('_', ' ')}")
         console.print()
         
-        # Track completed step
+        # Track completed step with Q&A
         self.completed_steps.append(f"Step 1: Focusing on {emphasis_value.replace('_', ' ')}")
+        self.qa_history.append({
+            "question": "Step 1/5: What should your email emphasize?",
+            "answer": choice
+        })
         
         return {"type": emphasis_value}
     
@@ -161,8 +167,12 @@ class GuidedEmailBuilder:
         console.print(f"✓ Selected: {selected_content['value']}")
         console.print()
         
-        # Track completed step
+        # Track completed step with Q&A
         self.completed_steps.append(f"Step 2: Selected {selected_content['value']}")
+        self.qa_history.append({
+            "question": f"Step 2/5: Which {emphasis_type.replace('_', ' ')} should we focus on?",
+            "answer": choice
+        })
         
         return selected_content
     
@@ -189,16 +199,24 @@ class GuidedEmailBuilder:
             console.print("✓ Social proof added")
             console.print()
             
-            # Track completed step
+            # Track completed step with Q&A
             self.completed_steps.append("Step 3: Social proof added")
+            self.qa_history.append({
+                "question": "Step 3/5: Add Social Proof (Optional)",
+                "answer": f"Added: {social_proof.strip()}"
+            })
             
             return social_proof.strip()
         else:
             console.print("✓ Skipping social proof")
             console.print()
             
-            # Track completed step
+            # Track completed step with Q&A
             self.completed_steps.append("Step 3: Skipping social proof")
+            self.qa_history.append({
+                "question": "Step 3/5: Add Social Proof (Optional)",
+                "answer": "Skipped - no social proof added"
+            })
             
             return None
     
@@ -224,8 +242,10 @@ class GuidedEmailBuilder:
                 display_text = display_text.split(':', 1)[0].strip()
             choices.append(f"{i}. {display_text}")
         
-        # Add "Other" option with dynamic numbering
-        other_num = len(personalization_options) + 1
+        # Add "No Personalization" and "Other" options
+        no_personalization_num = len(personalization_options) + 1
+        other_num = len(personalization_options) + 2
+        choices.append(f"{no_personalization_num}. No Personalization (generic outreach)")
         choices.append(f"{other_num}. Other (specify custom instructions to the LLM)")
         
         choice = questionary.select(
@@ -237,12 +257,21 @@ class GuidedEmailBuilder:
         
         choice_num = int(choice.split(".")[0])
         
-        if choice_num == other_num:  # "Other" option selected
+        if choice_num == no_personalization_num:  # "No Personalization" option selected
+            selected_personalization = {
+                "type": "not-personalized",
+                "value": "No Personalization",
+                "title": "No Personalization",
+                "custom": False
+            }
+        elif choice_num == other_num:  # "Other" option selected
             custom_instructions = questionary.text(
                 "Enter custom personalization instructions for the LLM:",
                 placeholder="e.g., Reference their recent product launch..."
             ).ask()
             ensure_breathing_room(console)
+            
+            # Pass custom instructions to the LLM - it will handle uncertainty detection
             selected_personalization = {
                 "type": "custom",
                 "value": "Custom personalization",
@@ -256,8 +285,12 @@ class GuidedEmailBuilder:
         console.print(f"✓ Will reference: {selected_personalization.get('title', 'custom approach')}")
         console.print()
         
-        # Track completed step
+        # Track completed step with Q&A
         self.completed_steps.append(f"Step 4: Will reference {selected_personalization.get('title', 'custom approach')}")
+        self.qa_history.append({
+            "question": "Step 4/5: How should we personalize this email?",
+            "answer": choice
+        })
         
         return selected_personalization
     
@@ -339,17 +372,23 @@ class GuidedEmailBuilder:
         console.print(f"✓ Will {selected_cta['intent'].replace('_', ' ')}")
         console.print()
         
-        # Track completed step
+        # Track completed step with Q&A
         self.completed_steps.append(f"Step 5: Will {selected_cta['intent'].replace('_', ' ')}")
+        self.qa_history.append({
+            "question": "Step 5/5: What should the call-to-action be?",
+            "answer": choice
+        })
         
         return selected_cta
     
     def _show_previous_steps(self) -> None:
-        """Show all completed steps at the top of the screen"""
-        if self.completed_steps:
+        """Show all completed steps with full Q&A context at the top of the screen"""
+        if self.qa_history:
             console.print("✓ Previous steps:")
-            for step in self.completed_steps:
-                console.print(f"  {step}")
+            for qa in self.qa_history:
+                console.print(f"  [bold]{qa['question']}[/bold]")
+                console.print(f"  → {qa['answer']}")
+                console.print()
             console.print()
     
     def _extract_pain_points(self) -> List[Dict[str, Any]]:
