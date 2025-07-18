@@ -4,7 +4,7 @@
 - The message should be about them; be earnest and try to genuinely be helpful. Our goal is to show that we've done our homework understanding their problems deeply and offering to help without be presumptuous that they need us.
 - NEver use jargon or overly formal language.
 - Avoid words that can be marked as spam by email providers
-- **Under 75 words total** - conciseness is critical                                                                                                                                0- **Write like a human** - clear, casual, conversational                                                                                                                           
+- **Under 75 words total** - conciseness is critical                                                                                        - **Write like a human** - clear, casual conversational                                                                                                                           
 - **Relevance over hyper-personalization** - avoid awkward AI-driven personal details
 -Sound like a human: remove clutter and jargon. Your prospects can smell sales fluff from miles away, and filler words or empty phrases only make it worse. Also, avoid jargon or buzzwords; they’re exhausting to read and feel fake. Instead, write how a normal person would talk: casual, clear, and real. ❌ “Just circling back quickly regarding our industry-leading AI solution…” ✅ "We think we can save you hours writing manual reports with what we've built"
 - Never hard sell. 
@@ -18,6 +18,8 @@
 - **IMPORTANT**: It needs to be gramatically correct with proper capitalization and punctuation.
 - **IMPORTANT**: Make sure tehre's good formatting and assume they'll read it from mobile.
 - **IMPORTANT**: ALWAYS ALWAYS ALWAYS re-read your email to make sure (1) It's grammatically correct, (2) it doesn't sound too templated.
+- **AVOID RHETORICAL QUESTIONS**: Never use hollow rhetorical questions that feel like fake friendliness. ❌ "With that growth, incident response can get pretty chaotic, right?" ❌ "That must be tough, right?" ❌ "I bet that's frustrating, don't you think?" These sound disingenuous because no one expects a real answer - they're just sales fluff.
+- **BE GENUINELY HELPFUL**: The email should read like you actually want to help them, not like you're trying to sell them something. Avoid anything that sounds like typical sales speak or manipulation tactics.
 - **MOST IMPORTANT**: When re-reading, imagin you're a skeptical founder that gets a million cold emails a day. You don't catch tehir attention by being outlandish or making bold claims, you stand out by making this feel like someone who's taken an interest in them and genuinely wants to help
 # Subject Line
 - Exactly 3 words (max 4 if necessary)

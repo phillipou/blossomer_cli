@@ -1,0 +1,123 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-18T13:19:21.748602",
+  "evaluation_time": 8.512049198150635,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0,
+    "passed": 0,
+    "eligible": 0
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://mandrel.tech",
+        "context_type": "valid",
+        "expected_company_name": "Mandrel",
+        "company_context": "{\"company_name\": \"Mandrel\", \"description\": \"Mandrel is a supply chain optimization platform that helps consumer goods companies manage procurement, inventory, and vendor relationships more efficiently. It provides real-time visibility into supply chain operations and automated workflows for sourcing decisions.\", \"capabilities\": [\"Procurement Automation: Streamlines vendor selection and purchase order management\", \"Inventory Optimization: Provides real-time visibility into stock levels and demand forecasting\", \"Vendor Management: Centralizes supplier relationships and performance tracking\"]}",
+        "target_account_context": "{\"account_profile_name\": \"Consumer goods companies\", \"firmographics\": {\"industry\": [\"Consumer Goods\", \"Retail\"], \"employees\": \"100-1000\", \"revenue\": \"$10M-$100M\"}, \"use_cases\": [\"Optimize procurement costs and supplier relationships\", \"Reduce inventory carrying costs while avoiding stockouts\"]}",
+        "target_persona_context": "{\"target_persona_name\": \"Supply Chain Leads\", \"responsibilities\": [\"Manage vendor relationships and procurement processes\", \"Optimize inventory levels and supply chain costs\", \"Ensure supply chain resilience and risk mitigation\"], \"pain_points\": [\"Manual procurement processes slow down operations\", \"Poor visibility into supplier performance and inventory levels\", \"Difficulty balancing inventory costs with stockout risks\"], \"goals\": [\"Reduce procurement costs by 10-15%\", \"Improve supply chain visibility and automation\"]}",
+        "preferences": "{\"use_case\": \"reduce_costs\", \"emphasis\": \"desired-outcome\", \"opening_line\": \"buying-signal\", \"cta_setting\": \"demo\", \"template\": \"blossomer\"}",
+        "account_profile_name": "Consumer goods companies",
+        "persona_profile_name": "Supply Chain Leads"
+      },
+      "deterministic_results": {
+        "overall_pass": false,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"subjects\":{\"primary\":\"Reduce supply costs\",\"alternatives\":[\"Cut procurement expenses\",\"Optimize inventory costs\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed you're exploring ways to cut costs in your ..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "subjects": {
+                "primary": "Reduce supply costs",
+                "alternatives": [
+                  "Cut procurement expenses",
+                  "Optimize inventory costs"
+                ]
+              },
+              "full_email_body": "Hi there,\n\nNoticed you're exploring ways to cut costs in your supply chain. Many companies struggle with balancing procurement efficiency and inventory levels, especially with fluctuating demand.\n\nAt Mandrel, we've helped brands automate sourcing and optimize stock levels, leading to significant savings. One client reduced procurement costs by 15% within the first few months.\n\nIf you're open, I’d love to show how our platform can help you streamline vendor management and lower expenses. Would you be available for a quick demo?\n\nBest,\n[Your Name]",
+              "email_body_breakdown": [
+                {
+                  "text": "Hi there,",
+                  "type": "greeting"
+                },
+                {
+                  "text": "Noticed you're exploring ways to cut costs in your supply chain. Many companies struggle with balancing procurement efficiency and inventory levels, especially with fluctuating demand.",
+                  "type": "opening"
+                },
+                {
+                  "text": "At Mandrel, we've helped brands automate sourcing and optimize stock levels, leading to significant savings. One client reduced procurement costs by 15% within the first few months.",
+                  "type": "company-intro"
+                },
+                {
+                  "text": "If you're open, I’d love to show how our platform can help you streamline vendor management and lower expenses. Would you be available for a quick demo?",
+                  "type": "cta"
+                }
+              ],
+              "writing_process": {
+                "trigger": "Noticed you're exploring ways to cut costs in your supply chain",
+                "problem": "Many companies struggle with balancing procurement efficiency and inventory levels, especially with fluctuating demand",
+                "help": "At Mandrel, we've helped brands automate sourcing and optimize stock levels, leading to significant savings",
+                "cta": "Would you be available for a quick demo?"
+              },
+              "metadata": {
+                "generation_id": "8170d55c-95ae-48b7-aa2a-7a1c8564a6f4",
+                "confidence": "high",
+                "personalization_level": "not-personalized",
+                "processing_time_ms": 8349
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "validation_error",
+                "value": "'not-personalized' is not one of ['high', 'medium', 'low']\n\nFailed validating 'enum' in schema['properties']['metadata']['properties']['personalization_level']:\n    {'description': 'Level of personalization achieved',\n     'enum': ['high', 'medium', 'low'],\n     'type': 'string'}\n\nOn instance['metadata']['personalization_level']:\n    'not-personalized'"
+              }
+            ],
+            "pass": false,
+            "rationale": "Output does not match expected schema. Validation error: 'not-personalized' is not one of ['high', 'medium', 'low']\n\nFailed validating 'enum' in schema['properties']['metadata']['properties']['personalization_level']:\n    {'description': 'Level of personalization achieved',\n     'enum': ['high', 'medium', 'low'],\n     'type': 'string'}\n\nOn instance['metadata']['personalization_level']:\n    'not-personalized'"
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 1,
+        "total_checks": 5
+      },
+      "llm_results": {},
+      "overall_pass": false,
+      "errors": [],
+      "generated_output": "{\"subjects\":{\"primary\":\"Reduce supply costs\",\"alternatives\":[\"Cut procurement expenses\",\"Optimize inventory costs\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed you're exploring ways to cut costs in your supply chain. Many companies struggle with balancing procurement efficiency and inventory levels, especially with fluctuating demand.\\n\\nAt Mandrel, we've helped brands automate sourcing and optimize stock levels, leading to significant savings. One client reduced procurement costs by 15% within the first few months.\\n\\nIf you're open, I’d love to show how our platform can help you streamline vendor management and lower expenses. Would you be available for a quick demo?\\n\\nBest,\\n[Your Name]\",\"email_body_breakdown\":[{\"text\":\"Hi there,\",\"type\":\"greeting\"},{\"text\":\"Noticed you're exploring ways to cut costs in your supply chain. Many companies struggle with balancing procurement efficiency and inventory levels, especially with fluctuating demand.\",\"type\":\"opening\"},{\"text\":\"At Mandrel, we've helped brands automate sourcing and optimize stock levels, leading to significant savings. One client reduced procurement costs by 15% within the first few months.\",\"type\":\"company-intro\"},{\"text\":\"If you're open, I’d love to show how our platform can help you streamline vendor management and lower expenses. Would you be available for a quick demo?\",\"type\":\"cta\"}],\"writing_process\":{\"trigger\":\"Noticed you're exploring ways to cut costs in your supply chain\",\"problem\":\"Many companies struggle with balancing procurement efficiency and inventory levels, especially with fluctuating demand\",\"help\":\"At Mandrel, we've helped brands automate sourcing and optimize stock levels, leading to significant savings\",\"cta\":\"Would you be available for a quick demo?\"},\"metadata\":{\"generation_id\":\"8170d55c-95ae-48b7-aa2a-7a1c8564a6f4\",\"confidence\":\"high\",\"personalization_level\":\"not-personalized\",\"processing_time_ms\":8349}}",
+      "test_case_id": 1
+    }
+  ]
+}

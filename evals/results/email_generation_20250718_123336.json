@@ -1,0 +1,173 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-18T12:33:36.690881",
+  "evaluation_time": 8.039749145507812,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://www.mammothcpg.com/",
+        "context_type": "valid",
+        "account_profile_name": "Growing CPG Brands",
+        "persona_profile_name": "Heads of procurement",
+        "persona_hypothesis": "Heads of procurement",
+        "account_hypothesis": "Recognizable CPG brands (omnichannel)",
+        "expected_company_name": "Mammoth"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"subjects\":{\"primary\":\"Procurement pain points\",\"alternatives\":[\"Streamline sourcing now\",\"Procurement delays\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed your procurement team might be feeling the squ..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "subjects": {
+                "primary": "Procurement pain points",
+                "alternatives": [
+                  "Streamline sourcing now",
+                  "Procurement delays"
+                ]
+              },
+              "full_email_body": "Hi there,\n\nNoticed your procurement team might be feeling the squeeze lately, especially with supply chain delays and sourcing headaches. Many companies I’ve worked with are struggling to keep things moving smoothly.\n\nAt Mammoth, we’ve helped teams automate parts of their procurement process, reducing manual work and speeding up approvals. It’s made a real difference for others facing similar bottlenecks.\n\nWould you be open to a quick chat about how we might help streamline your sourcing? Happy to set up a time that works for you.\n\nBest,\n[Your Name]",
+              "email_body_breakdown": [
+                {
+                  "text": "Hi there,",
+                  "type": "greeting"
+                },
+                {
+                  "text": "Noticed your procurement team might be feeling the squeeze lately, especially with supply chain delays and sourcing headaches. Many companies I’ve worked with are struggling to keep things moving smoothly.",
+                  "type": "opening"
+                },
+                {
+                  "text": "At Mammoth, we’ve helped teams automate parts of their procurement process, reducing manual work and speeding up approvals. It’s made a real difference for others facing similar bottlenecks.",
+                  "type": "pain-point"
+                },
+                {
+                  "text": "Would you be open to a quick chat about how we might help streamline your sourcing? Happy to set up a time that works for you.",
+                  "type": "cta"
+                }
+              ],
+              "writing_process": {
+                "trigger": "Noticed procurement challenges due to supply chain delays",
+                "problem": "Procurement teams are feeling the squeeze and facing delays",
+                "help": "Helped other teams automate procurement workflows to reduce manual work",
+                "cta": "Schedule a quick chat to explore solutions"
+              },
+              "metadata": {
+                "generation_id": "866e793c-00bf-44f5-a555-7ed313c0b8af",
+                "confidence": "high",
+                "personalization_level": "low",
+                "processing_time_ms": 7868
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 5/5 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "subject_format",
+            "description": "Validates subject line has 3-4 words with proper capitalization",
+            "inputs_evaluated": [
+              {
+                "field": "primary_subject",
+                "value": "Procurement pain points"
+              }
+            ],
+            "pass": true,
+            "rationale": "Subject line has correct format: 3-4 words with proper capitalization"
+          },
+          "D-4_field_cardinality": {
+            "check_name": "word_count",
+            "description": "Validates email body is between 50-100 words",
+            "inputs_evaluated": [
+              {
+                "field": "full_email_body",
+                "value": "89 words"
+              }
+            ],
+            "pass": true,
+            "rationale": "Email body has 89 words, within the 50-100 word range"
+          },
+          "D-5_url_preservation": {
+            "check_name": "identity_check",
+            "description": "Validates proper sender/recipient identity handling",
+            "inputs_evaluated": [
+              {
+                "field": "placeholder_present",
+                "value": "No"
+              },
+              {
+                "field": "sender_as_recipient",
+                "value": "No"
+              },
+              {
+                "field": "email_excerpt",
+                "value": "Hi there,\n\nNoticed your procurement team might be feeling the squeeze lately, especially with supply chain delays and sourcing headaches. Many companies I’ve worked with are struggling to keep things ..."
+              }
+            ],
+            "pass": true,
+            "rationale": "Email correctly handles company identity without confusing sender/recipient or hallucinating company names"
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {},
+      "overall_pass": false,
+      "errors": [
+        "Invalid LLM judge(s) in config: ['email_quality']. Available judges are: ['content_integrity', 'business_insight', 'account_targeting_quality', 'persona_targeting_quality', 'context_handling']. Please update your config.yaml to use the correct judge names."
+      ],
+      "generated_output": "{\"subjects\":{\"primary\":\"Procurement pain points\",\"alternatives\":[\"Streamline sourcing now\",\"Procurement delays\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed your procurement team might be feeling the squeeze lately, especially with supply chain delays and sourcing headaches. Many companies I’ve worked with are struggling to keep things moving smoothly.\\n\\nAt Mammoth, we’ve helped teams automate parts of their procurement process, reducing manual work and speeding up approvals. It’s made a real difference for others facing similar bottlenecks.\\n\\nWould you be open to a quick chat about how we might help streamline your sourcing? Happy to set up a time that works for you.\\n\\nBest,\\n[Your Name]\",\"email_body_breakdown\":[{\"text\":\"Hi there,\",\"type\":\"greeting\"},{\"text\":\"Noticed your procurement team might be feeling the squeeze lately, especially with supply chain delays and sourcing headaches. Many companies I’ve worked with are struggling to keep things moving smoothly.\",\"type\":\"opening\"},{\"text\":\"At Mammoth, we’ve helped teams automate parts of their procurement process, reducing manual work and speeding up approvals. It’s made a real difference for others facing similar bottlenecks.\",\"type\":\"pain-point\"},{\"text\":\"Would you be open to a quick chat about how we might help streamline your sourcing? Happy to set up a time that works for you.\",\"type\":\"cta\"}],\"writing_process\":{\"trigger\":\"Noticed procurement challenges due to supply chain delays\",\"problem\":\"Procurement teams are feeling the squeeze and facing delays\",\"help\":\"Helped other teams automate procurement workflows to reduce manual work\",\"cta\":\"Schedule a quick chat to explore solutions\"},\"metadata\":{\"generation_id\":\"866e793c-00bf-44f5-a555-7ed313c0b8af\",\"confidence\":\"high\",\"personalization_level\":\"low\",\"processing_time_ms\":7868}}",
+      "test_case_id": 1
+    }
+  ]
+}

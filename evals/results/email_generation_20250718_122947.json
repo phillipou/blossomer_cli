@@ -1,0 +1,41 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-18T12:29:47.238824",
+  "evaluation_time": 0.19858217239379883,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0,
+    "passed": 0,
+    "eligible": 0
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://intryc.com",
+        "context_type": "valid",
+        "account_profile_name": "Fast growing startups",
+        "persona_profile_name": "Heads of CX",
+        "persona_hypothesis": "Head of CX, Head of QA\n",
+        "account_hypothesis": "Series B to Pre-IPO startups",
+        "expected_company_name": "Intryc"
+      },
+      "deterministic_results": {},
+      "llm_results": {},
+      "overall_pass": false,
+      "errors": [
+        "Failed to generate output"
+      ],
+      "test_case_id": 1
+    }
+  ]
+}

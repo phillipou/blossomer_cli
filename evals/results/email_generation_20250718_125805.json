@@ -1,0 +1,248 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-18T12:58:05.680020",
+  "evaluation_time": 26.42991614341736,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://intryc.com",
+        "context_type": "valid",
+        "expected_company_name": "Intryc",
+        "company_context": "{\"company_name\": \"Intryc\", \"description\": \"Intryc is a SaaS platform focused on enhancing customer support quality through smarter QA tools. It provides customizable sampling, AI-powered evaluations, real-time insights, and role-based solutions to improve support team performance and customer experience.\", \"capabilities\": [\"Sampling: Automates the selection of statistically significant samples using custom rules and attributes\", \"AI Evaluations: Trains AI models on knowledge bases and SOPs to achieve up to 100% coverage of tickets and scorecards\", \"Customisable Scorecards: Allows unlimited creation of scorecards with tailored rules and criteria\"]}",
+        "target_account_context": "{\"account_profile_name\": \"Fast growing startups\", \"firmographics\": {\"industry\": [\"SaaS\", \"Technology\"], \"employees\": \"50-500\", \"revenue\": \"$5M-$50M\", \"funding_stage\": [\"Series B\", \"Series C\"]}, \"use_cases\": [\"Scale customer support quality as team grows\", \"Automate QA processes to reduce manual overhead\"]}",
+        "target_persona_context": "{\"target_persona_name\": \"Heads of CX\", \"responsibilities\": [\"Oversee customer support team performance\", \"Ensure quality standards across support interactions\", \"Report on customer satisfaction metrics\"], \"pain_points\": [\"Manual QA processes don't scale with team growth\", \"Inconsistent evaluation standards across support agents\", \"Limited visibility into support quality trends\"], \"goals\": [\"Maintain high CSAT while scaling support team\", \"Automate quality assurance processes\"]}",
+        "preferences": "{\"use_case\": \"streamline_workflows\", \"emphasis\": \"pain-point\", \"opening_line\": \"not-personalized\", \"cta_setting\": \"meeting\", \"template\": \"blossomer\"}",
+        "account_profile_name": "Fast growing startups",
+        "persona_profile_name": "Heads of CX"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"subjects\":{\"primary\":\"Streamline Support Work\",\"alternatives\":[\"Support QA made easy\",\"Improve support quality\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed how support teams are swamped with manual QA..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "subjects": {
+                "primary": "Streamline Support Work",
+                "alternatives": [
+                  "Support QA made easy",
+                  "Improve support quality"
+                ]
+              },
+              "full_email_body": "Hi there,\n\nNoticed how support teams are swamped with manual QA checks and inconsistent evaluations. That pain slows down resolution times and impacts customer satisfaction.\n\nAt Intryc, we've helped support leaders automate sampling and AI-driven assessments, cutting down review time and boosting accuracy. Our clients see faster feedback loops and happier customers.\n\nWould you be open to a quick chat about how this could fit into your workflows? Happy to set up a quick meeting.\n\nBest,\n[Your Name]",
+              "email_body_breakdown": [
+                {
+                  "text": "Support QA made easy",
+                  "type": "subject"
+                },
+                {
+                  "text": "Noticed how support teams are swamped with manual QA checks and inconsistent evaluations. That pain slows down resolution times and impacts customer satisfaction.",
+                  "type": "intro"
+                },
+                {
+                  "text": "At Intryc, we've helped support leaders automate sampling and AI-driven assessments, cutting down review time and boosting accuracy. Our clients see faster feedback loops and happier customers.",
+                  "type": "pain-point"
+                },
+                {
+                  "text": "Would you be open to a quick chat about how this could fit into your workflows? Happy to set up a quick meeting.",
+                  "type": "cta"
+                }
+              ],
+              "writing_process": {
+                "trigger": "Noticed how support teams are overwhelmed with manual QA checks",
+                "problem": "That pain slows down resolution times and impacts customer satisfaction",
+                "help": "Helped support leaders automate sampling and AI evaluations, reducing review time and improving accuracy",
+                "cta": "Suggest a quick chat about fitting this into their workflows"
+              },
+              "metadata": {
+                "generation_id": "6043ffa6-0115-4416-9e7c-0f990c188c41",
+                "confidence": "high",
+                "personalization_level": "low",
+                "processing_time_ms": 11014
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 5/5 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "subject_format",
+            "description": "Validates subject line has 3-4 words with proper capitalization",
+            "inputs_evaluated": [
+              {
+                "field": "primary_subject",
+                "value": "Streamline Support Work"
+              }
+            ],
+            "pass": true,
+            "rationale": "Subject line has correct format: 3-4 words with proper capitalization"
+          },
+          "D-4_field_cardinality": {
+            "check_name": "word_count",
+            "description": "Validates email body is between 50-100 words",
+            "inputs_evaluated": [
+              {
+                "field": "full_email_body",
+                "value": "78 words"
+              }
+            ],
+            "pass": true,
+            "rationale": "Email body has 78 words, within the 50-100 word range"
+          },
+          "D-5_url_preservation": {
+            "check_name": "identity_check",
+            "description": "Validates proper sender/recipient identity handling",
+            "inputs_evaluated": [
+              {
+                "field": "placeholder_present",
+                "value": "No"
+              },
+              {
+                "field": "sender_as_recipient",
+                "value": "No"
+              },
+              {
+                "field": "email_excerpt",
+                "value": "Hi there,\n\nNoticed how support teams are swamped with manual QA checks and inconsistent evaluations. That pain slows down resolution times and impacts customer satisfaction.\n\nAt Intryc, we've helped s..."
+              }
+            ],
+            "pass": true,
+            "rationale": "Email correctly handles company identity without confusing sender/recipient or hallucinating company names"
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": false,
+        "judges": {
+          "email_quality": {
+            "email_naturalness": {
+              "check_name": "email_naturalness",
+              "description": "Email sounds like a real founder wrote it",
+              "inputs_evaluated": [
+                {
+                  "field": "email_body",
+                  "value": "Hi there,\n\nNoticed how support teams are swamped with manual QA checks and inconsistent evaluations. That pain slows down resolution times and impacts customer satisfaction.\n\nAt Intryc, we've helped s..."
+                },
+                {
+                  "field": "subject_line",
+                  "value": "Streamline Support Work"
+                }
+              ],
+              "pass": true,
+              "rating": "sufficient",
+              "rationale": "The email uses conversational language and addresses a common pain point, which makes it sound somewhat natural. However, it lacks a more personal touch that would make it feel more authentic and less generic."
+            },
+            "personalization_appropriateness": {
+              "check_name": "personalization_appropriateness",
+              "description": "Personalization is relevant without being creepy",
+              "inputs_evaluated": [
+                {
+                  "field": "personalization_level",
+                  "value": "low"
+                },
+                {
+                  "field": "email_content",
+                  "value": "Hi there,\n\nNoticed how support teams are swamped with manual QA checks and inconsistent evaluations. That pain slows down resolution times and impacts customer satisfaction.\n\nAt Intryc, we've helped s..."
+                }
+              ],
+              "pass": false,
+              "rating": "poor",
+              "rationale": "The email lacks any specific personalization, making it feel generic. While it addresses a relevant issue, it does not connect with the recipient in a meaningful way, which could come off as impersonal."
+            },
+            "uncertainty_handling": {
+              "check_name": "uncertainty_handling",
+              "description": "Uncertain inputs handled properly with graceful fallbacks",
+              "inputs_evaluated": [
+                {
+                  "field": "uncertainty_present",
+                  "value": "No"
+                },
+                {
+                  "field": "user_preferences",
+                  "value": "{\"use_case\": \"streamline_workflows\", \"emphasis\": \"pain-point\", \"opening_line\": \"not-personalized\", \"cta_setting\": \"meeting\", \"template\": \"blossomer\"}"
+                }
+              ],
+              "pass": true,
+              "rating": "impressive",
+              "rationale": "The email effectively handles the absence of uncertainty by sticking to a clear and relevant message based on the user preferences provided. There are no forced or irrelevant elements."
+            },
+            "structure_compliance": {
+              "check_name": "structure_compliance",
+              "description": "Email follows founder outreach best practices",
+              "inputs_evaluated": [
+                {
+                  "field": "word_count",
+                  "value": ""
+                },
+                {
+                  "field": "email_flow",
+                  "value": "Noticed how support teams are overwhelmed with manual QA checks -> That pain slows down resolution times and impacts customer satisfaction -> Suggest a quick chat about fitting this into their workflows"
+                }
+              ],
+              "pass": true,
+              "rating": "sufficient",
+              "rationale": "The email has a clear structure and flow, presenting a problem and offering a solution. However, it could benefit from a stronger value proposition and a more compelling call-to-action to enhance engagement."
+            }
+          }
+        },
+        "total_calls": 1
+      },
+      "overall_pass": false,
+      "errors": [],
+      "generated_output": "{\"subjects\":{\"primary\":\"Streamline Support Work\",\"alternatives\":[\"Support QA made easy\",\"Improve support quality\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed how support teams are swamped with manual QA checks and inconsistent evaluations. That pain slows down resolution times and impacts customer satisfaction.\\n\\nAt Intryc, we've helped support leaders automate sampling and AI-driven assessments, cutting down review time and boosting accuracy. Our clients see faster feedback loops and happier customers.\\n\\nWould you be open to a quick chat about how this could fit into your workflows? Happy to set up a quick meeting.\\n\\nBest,\\n[Your Name]\",\"email_body_breakdown\":[{\"text\":\"Support QA made easy\",\"type\":\"subject\"},{\"text\":\"Noticed how support teams are swamped with manual QA checks and inconsistent evaluations. That pain slows down resolution times and impacts customer satisfaction.\",\"type\":\"intro\"},{\"text\":\"At Intryc, we've helped support leaders automate sampling and AI-driven assessments, cutting down review time and boosting accuracy. Our clients see faster feedback loops and happier customers.\",\"type\":\"pain-point\"},{\"text\":\"Would you be open to a quick chat about how this could fit into your workflows? Happy to set up a quick meeting.\",\"type\":\"cta\"}],\"writing_process\":{\"trigger\":\"Noticed how support teams are overwhelmed with manual QA checks\",\"problem\":\"That pain slows down resolution times and impacts customer satisfaction\",\"help\":\"Helped support leaders automate sampling and AI evaluations, reducing review time and improving accuracy\",\"cta\":\"Suggest a quick chat about fitting this into their workflows\"},\"metadata\":{\"generation_id\":\"6043ffa6-0115-4416-9e7c-0f990c188c41\",\"confidence\":\"high\",\"personalization_level\":\"low\",\"processing_time_ms\":11014}}",
+      "test_case_id": 1
+    }
+  ]
+}

@@ -76,7 +76,8 @@ class LLMJudge:
             "business_insight": self._judge_business_insight,
             "account_targeting_quality": self._judge_account_targeting_quality,
             "persona_targeting_quality": self._judge_persona_targeting_quality,
-            "context_handling": self._judge_context_handling
+            "context_handling": self._judge_context_handling,
+            "email_quality": self._judge_email_quality
         }
         
         # Get enabled judges from config
@@ -298,6 +299,30 @@ class LLMJudge:
         }
         
         return await self._call_judge("context_handling", context)
+
+    async def _judge_email_quality(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """Email quality check - evaluate naturalness, personalization, uncertainty handling, and structure."""
+        
+        # Extract email preferences if available (to detect uncertainty)
+        preferences = test_case.get("preferences", {})
+        
+        # Check for uncertainty indicators in preferences
+        uncertainty_indicators = ["idk", "not sure", "whatever", "anything", "nothing", "asdf", "test", "dunno"]
+        has_uncertainty = False
+        if preferences and isinstance(preferences, dict):
+            has_uncertainty = any(
+                any(indicator in str(value).lower() for indicator in uncertainty_indicators)
+                for value in preferences.values()
+            )
+        
+        context = {
+            "email": data,
+            "preferences": preferences,
+            "personalization": test_case.get("personalization", ""),
+            "has_uncertainty": has_uncertainty
+        }
+        
+        return await self._call_judge("email_quality", context)
 
 
 # For standalone testing

@@ -1,0 +1,363 @@
+{
+  "prompt_name": "Target Persona Profile Evaluation",
+  "timestamp": "2025-07-18T12:25:39.265982",
+  "evaluation_time": 41.543328046798706,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://hounddog.ai",
+        "context_type": "valid",
+        "account_profile_name": "Enterprise tech",
+        "persona_profile_name": "Heads of secuity",
+        "persona_hypothesis": "CISOs or Heads of Engineering",
+        "account_hypothesis": "Large enterprises with PII data concerns, where security and compliance are top priorities",
+        "expected_company_name": "HoundDog"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"target_persona_name\":\"Heads of secuity\",\"target_persona_description\":\"Senior security leaders, such as CISOs or Heads of Engineering, responsible for safeguarding enterprise data and ensuring compli..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "target_persona_name": "Heads of secuity",
+              "target_persona_description": "Senior security leaders, such as CISOs or Heads of Engineering, responsible for safeguarding enterprise data and ensuring compliance, actively seeking solutions to enhance security posture and manage risks related to PII data.",
+              "target_persona_rationale": [
+                "This persona has decision-making influence over security investments and policies, making them ideal for targeted outreach.",
+                "Their focus on compliance and risk mitigation aligns directly with solutions that protect PII and improve security controls.",
+                "They are often involved in evaluating new security technologies, making them receptive to product demonstrations and proof of value.",
+                "Their operational responsibilities require continuous improvement of security measures, creating urgency for innovative solutions.",
+                "Targeting this persona leverages their authority and active engagement in security initiatives to accelerate sales cycles."
+              ],
+              "demographics": {
+                "job_titles": [
+                  "Chief Information Security Officer",
+                  "Head of Security",
+                  "Security Director",
+                  "Security Manager"
+                ],
+                "departments": [
+                  "Information Security",
+                  "IT Security",
+                  "Cybersecurity"
+                ],
+                "seniority": [
+                  "C-Suite",
+                  "Senior Manager"
+                ],
+                "buying_roles": [
+                  "Decision Maker",
+                  "Economic Buyer",
+                  "Champion",
+                  "Legal and Compliance"
+                ],
+                "job_description_keywords": [
+                  "security strategy",
+                  "risk management",
+                  "compliance",
+                  "PII protection",
+                  "security policies"
+                ]
+              },
+              "use_cases": [
+                {
+                  "use_case": "Enhancing Data Security",
+                  "pain_points": "Difficulty in monitoring and controlling access to sensitive PII data across complex systems.",
+                  "capability": "The product provides real-time data access monitoring and automated risk alerts.",
+                  "desired_outcome": "Reduce data breach risks and ensure compliance with privacy regulations."
+                },
+                {
+                  "use_case": "Automating Security Compliance",
+                  "pain_points": "Manual compliance audits are time-consuming and error-prone.",
+                  "capability": "Automated compliance reporting and policy enforcement features.",
+                  "desired_outcome": "Streamline audits, reduce compliance costs, and maintain regulatory readiness."
+                },
+                {
+                  "use_case": "Incident Response Optimization",
+                  "pain_points": "Slow detection and response to security incidents involving sensitive data.",
+                  "capability": "Integrated incident detection and automated response workflows.",
+                  "desired_outcome": "Minimize breach impact and accelerate incident resolution times."
+                },
+                {
+                  "use_case": "Security Policy Enforcement",
+                  "pain_points": "Inconsistent application of security policies across teams and systems.",
+                  "capability": "Centralized policy management with automated enforcement.",
+                  "desired_outcome": "Ensure uniform security standards and reduce policy violations."
+                }
+              ],
+              "buying_signals": [
+                {
+                  "title": "Security Policy Updates",
+                  "description": "The prospect's organization is actively updating or revising security policies, indicating a focus on compliance and risk management.",
+                  "type": "News",
+                  "priority": "High",
+                  "detection_method": "News monitoring via Clay enrichment for policy change announcements"
+                },
+                {
+                  "title": "LinkedIn Profile Security Keywords",
+                  "description": "Profiles mentioning 'risk management', 'security compliance', or 'PII protection' suggest active security focus.",
+                  "type": "Social Media",
+                  "priority": "Medium",
+                  "detection_method": "LinkedIn profile keyword analysis via Clay"
+                },
+                {
+                  "title": "Recent Security Certifications",
+                  "description": "Acquisition of new security certifications or training indicates ongoing security initiatives and openness to new solutions.",
+                  "type": "Website",
+                  "priority": "Medium",
+                  "detection_method": "Website scraping for certification updates"
+                },
+                {
+                  "title": "Participation in Security Conferences",
+                  "description": "Attending or speaking at security conferences signals active engagement and interest in emerging security solutions.",
+                  "type": "News",
+                  "priority": "Medium",
+                  "detection_method": "Event participation data from Clay"
+                },
+                {
+                  "title": "Security Tool Adoption",
+                  "description": "Use of specific security tools or platforms (e.g., SIEM, DLP) indicates current security stack and potential openness to integrations.",
+                  "type": "Tech Stack",
+                  "priority": "Low",
+                  "detection_method": "Tech stack enrichment via Clay"
+                }
+              ],
+              "buying_signals_rationale": [
+                "These signals reflect active organizational security initiatives and individual engagement, indicating readiness for outreach.",
+                "High-priority signals like policy updates and conference participation directly correlate with active decision-making and budget considerations.",
+                "Profile keywords and certifications reveal ongoing professional development and focus areas, making outreach more relevant.",
+                "Detection methods leverage observable, real-time data sources to identify engaged prospects early."
+              ],
+              "objections": [
+                "Concerns about integration complexity with existing security infrastructure.",
+                "Perceived high costs and uncertain ROI of new security solutions.",
+                "Change management challenges and resistance from security teams accustomed to legacy systems."
+              ],
+              "goals": [
+                "Strengthen security posture to prevent data breaches involving PII.",
+                "Achieve and maintain compliance with privacy regulations like GDPR or CCPA.",
+                "Automate security processes to reduce manual workload and human error.",
+                "Improve incident detection and response times."
+              ],
+              "purchase_journey": [
+                "Prospect consumes industry reports, security webinars, and analyst briefings to understand emerging threats and solutions.",
+                "They evaluate vendor capabilities through demos, case studies, and peer references during the consideration phase.",
+                "Internal discussions focus on ROI, integration complexity, and compliance benefits before decision-making.",
+                "Final purchase is triggered by proven ROI, vendor credibility, and alignment with strategic security initiatives."
+              ],
+              "metadata": {
+                "primary_context_source": "user_input",
+                "sources_used": [
+                  "user_input",
+                  "company_context",
+                  "website_content"
+                ],
+                "confidence_assessment": {
+                  "overall_confidence": "high",
+                  "data_quality": "high",
+                  "inference_level": "significant",
+                  "recommended_improvements": [
+                    "Incorporate direct engagement data from sales interactions or LinkedIn activity feeds"
+                  ]
+                },
+                "processing_notes": "Analysis focused on identifying security leaders with active initiatives and observable signals indicating solution interest."
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "target_persona_name",
+                  "target_persona_description",
+                  "target_persona_rationale",
+                  "demographics",
+                  "use_cases",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "objections",
+                  "goals",
+                  "purchase_journey",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "target_persona_name",
+                  "target_persona_description",
+                  "target_persona_rationale",
+                  "demographics",
+                  "use_cases",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "objections",
+                  "goals",
+                  "purchase_journey",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 11/11 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [
+              {
+                "field": "objections",
+                "value": "3 items (expected 3-5)"
+              }
+            ],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://hounddog.ai"
+              },
+              {
+                "field": "company_url",
+                "value": "Not in schema"
+              }
+            ],
+            "pass": true,
+            "rationale": "Schema does not include company_url field, URL preservation check not applicable."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "context_handling": {
+            "check_name": "context_handling",
+            "description": "Evaluates appropriate handling of user context based on type",
+            "inputs_evaluated": [
+              {
+                "field": "context_type",
+                "value": "valid"
+              },
+              {
+                "field": "context_used",
+                "value": "The analysis incorporated the user-provided context of 'CISOs or Heads of Engineering' by defining a persona of senior security leaders responsible for security and compliance, aligning with the user's input."
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis appropriately used the valid user context to define a relevant persona, demonstrating good understanding and integration of the provided details."
+          },
+          "individual_proxy_strength": {
+            "check_name": "individual_proxy_strength",
+            "description": "Evaluates whether demographics, use cases, and buying signals are strong predictors of individual need and engagement",
+            "inputs_evaluated": [
+              {
+                "field": "use_cases",
+                "value": "4 use cases: Enhancing Data Security → Reduce data breach risks and ensure compliance with privacy regulations.; Automating Security Compliance → Streamline audits, reduce compliance costs, and maintain regulatory readiness."
+              },
+              {
+                "field": "buying_signals",
+                "value": "5 signals: Security Policy Updates (High), LinkedIn Profile Security Keywords (Medium), Recent Security Certifications (Medium)"
+              },
+              {
+                "field": "demographics",
+                "value": "Job Titles: Chief Information Security Officer, Head of Security, Security Director, Security Manager, Departments: Information Security, IT Security, Cybersecurity"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The use cases directly map to specific security workflows and pain points, indicating real need rather than generic outcomes. The signals chosen—policy updates, profile keywords, certifications—are strong indicators of active engagement and relevance at the individual level, making this a well-aligned proxy for individual need and motivation."
+          },
+          "individual_detection_feasibility": {
+            "check_name": "individual_detection_feasibility",
+            "description": "Assesses whether the specified detection methods can realistically identify and engage these specific individuals",
+            "inputs_evaluated": [
+              {
+                "field": "detection_methods",
+                "value": "News monitoring via Clay enrichment for policy change announcements; LinkedIn profile keyword analysis via Clay; Website scraping for certification updates"
+              },
+              {
+                "field": "demographics_targeting",
+                "value": "Job Titles: Chief Information Security Officer, Head of Security, Security Director, Security Manager, Seniority: C-Suite, Senior Manager"
+              },
+              {
+                "field": "buying_signals",
+                "value": "5 signals: Security Policy Updates (News), LinkedIn Profile Security Keywords (Social Media), Recent Security Certifications (Website)"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "All detection methods leverage well-established tools and data sources capable of identifying individuals with these titles and signals at scale. LinkedIn keyword analysis, news monitoring, and website scraping are proven techniques for tracking active security professionals, making this detection strategy feasible and realistic."
+          },
+          "persona_definition_crispness": {
+            "check_name": "persona_definition_crispness",
+            "description": "Evaluates how precisely defined and actionable the individual buyer profile is for targeting",
+            "inputs_evaluated": [
+              {
+                "field": "target_persona_name",
+                "value": "Heads of secuity"
+              },
+              {
+                "field": "demographics",
+                "value": "Job Titles: Chief Information Security Officer, Head of Security, Security Director, Security Manager, Keywords: security strategy, risk management, compliance, PII protection, security policies"
+              },
+              {
+                "field": "use_case_specificity",
+                "value": "Enhancing Data Security, Automating Security Compliance"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The profile specifies clear, actionable job titles and keywords that are directly linked to daily responsibilities and workflows. The use cases are detailed and feature-specific, enabling precise LinkedIn and CRM filtering. Overall, the profile is sharply defined for effective individual targeting."
+          }
+        },
+        "total_calls": 2
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"target_persona_name\":\"Heads of secuity\",\"target_persona_description\":\"Senior security leaders, such as CISOs or Heads of Engineering, responsible for safeguarding enterprise data and ensuring compliance, actively seeking solutions to enhance security posture and manage risks related to PII data.\",\"target_persona_rationale\":[\"This persona has decision-making influence over security investments and policies, making them ideal for targeted outreach.\",\"Their focus on compliance and risk mitigation aligns directly with solutions that protect PII and improve security controls.\",\"They are often involved in evaluating new security technologies, making them receptive to product demonstrations and proof of value.\",\"Their operational responsibilities require continuous improvement of security measures, creating urgency for innovative solutions.\",\"Targeting this persona leverages their authority and active engagement in security initiatives to accelerate sales cycles.\"],\"demographics\":{\"job_titles\":[\"Chief Information Security Officer\",\"Head of Security\",\"Security Director\",\"Security Manager\"],\"departments\":[\"Information Security\",\"IT Security\",\"Cybersecurity\"],\"seniority\":[\"C-Suite\",\"Senior Manager\"],\"buying_roles\":[\"Decision Maker\",\"Economic Buyer\",\"Champion\",\"Legal and Compliance\"],\"job_description_keywords\":[\"security strategy\",\"risk management\",\"compliance\",\"PII protection\",\"security policies\"]},\"use_cases\":[{\"use_case\":\"Enhancing Data Security\",\"pain_points\":\"Difficulty in monitoring and controlling access to sensitive PII data across complex systems.\",\"capability\":\"The product provides real-time data access monitoring and automated risk alerts.\",\"desired_outcome\":\"Reduce data breach risks and ensure compliance with privacy regulations.\"},{\"use_case\":\"Automating Security Compliance\",\"pain_points\":\"Manual compliance audits are time-consuming and error-prone.\",\"capability\":\"Automated compliance reporting and policy enforcement features.\",\"desired_outcome\":\"Streamline audits, reduce compliance costs, and maintain regulatory readiness.\"},{\"use_case\":\"Incident Response Optimization\",\"pain_points\":\"Slow detection and response to security incidents involving sensitive data.\",\"capability\":\"Integrated incident detection and automated response workflows.\",\"desired_outcome\":\"Minimize breach impact and accelerate incident resolution times.\"},{\"use_case\":\"Security Policy Enforcement\",\"pain_points\":\"Inconsistent application of security policies across teams and systems.\",\"capability\":\"Centralized policy management with automated enforcement.\",\"desired_outcome\":\"Ensure uniform security standards and reduce policy violations.\"}],\"buying_signals\":[{\"title\":\"Security Policy Updates\",\"description\":\"The prospect's organization is actively updating or revising security policies, indicating a focus on compliance and risk management.\",\"type\":\"News\",\"priority\":\"High\",\"detection_method\":\"News monitoring via Clay enrichment for policy change announcements\"},{\"title\":\"LinkedIn Profile Security Keywords\",\"description\":\"Profiles mentioning 'risk management', 'security compliance', or 'PII protection' suggest active security focus.\",\"type\":\"Social Media\",\"priority\":\"Medium\",\"detection_method\":\"LinkedIn profile keyword analysis via Clay\"},{\"title\":\"Recent Security Certifications\",\"description\":\"Acquisition of new security certifications or training indicates ongoing security initiatives and openness to new solutions.\",\"type\":\"Website\",\"priority\":\"Medium\",\"detection_method\":\"Website scraping for certification updates\"},{\"title\":\"Participation in Security Conferences\",\"description\":\"Attending or speaking at security conferences signals active engagement and interest in emerging security solutions.\",\"type\":\"News\",\"priority\":\"Medium\",\"detection_method\":\"Event participation data from Clay\"},{\"title\":\"Security Tool Adoption\",\"description\":\"Use of specific security tools or platforms (e.g., SIEM, DLP) indicates current security stack and potential openness to integrations.\",\"type\":\"Tech Stack\",\"priority\":\"Low\",\"detection_method\":\"Tech stack enrichment via Clay\"}],\"buying_signals_rationale\":[\"These signals reflect active organizational security initiatives and individual engagement, indicating readiness for outreach.\",\"High-priority signals like policy updates and conference participation directly correlate with active decision-making and budget considerations.\",\"Profile keywords and certifications reveal ongoing professional development and focus areas, making outreach more relevant.\",\"Detection methods leverage observable, real-time data sources to identify engaged prospects early.\"],\"objections\":[\"Concerns about integration complexity with existing security infrastructure.\",\"Perceived high costs and uncertain ROI of new security solutions.\",\"Change management challenges and resistance from security teams accustomed to legacy systems.\"],\"goals\":[\"Strengthen security posture to prevent data breaches involving PII.\",\"Achieve and maintain compliance with privacy regulations like GDPR or CCPA.\",\"Automate security processes to reduce manual workload and human error.\",\"Improve incident detection and response times.\"],\"purchase_journey\":[\"Prospect consumes industry reports, security webinars, and analyst briefings to understand emerging threats and solutions.\",\"They evaluate vendor capabilities through demos, case studies, and peer references during the consideration phase.\",\"Internal discussions focus on ROI, integration complexity, and compliance benefits before decision-making.\",\"Final purchase is triggered by proven ROI, vendor credibility, and alignment with strategic security initiatives.\"],\"metadata\":{\"primary_context_source\":\"user_input\",\"sources_used\":[\"user_input\",\"company_context\",\"website_content\"],\"confidence_assessment\":{\"overall_confidence\":\"high\",\"data_quality\":\"high\",\"inference_level\":\"significant\",\"recommended_improvements\":[\"Incorporate direct engagement data from sales interactions or LinkedIn activity feeds\"]},\"processing_notes\":\"Analysis focused on identifying security leaders with active initiatives and observable signals indicating solution interest.\"}}",
+      "test_case_id": 1
+    }
+  ]
+}

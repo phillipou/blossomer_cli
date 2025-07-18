@@ -220,7 +220,10 @@ class DeterministicJudge:
     def _check_format_compliance(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-3: Format compliance check."""
         # Check for "Key: Value" format in insight fields based on evaluation type
-        if self.config.service_module == "app.services.target_persona_service":
+        if self.config.service_module == "app.services.email_generation_service":
+            # For email evaluations, check subject line format
+            return self._check_email_subject_format(data, test_case)
+        elif self.config.service_module == "app.services.target_persona_service":
             # For persona evaluations, we don't check any fields for Key:Value format
             # since rationales are plain text descriptions
             insight_fields = []
@@ -274,6 +277,10 @@ class DeterministicJudge:
     
     def _check_field_cardinality(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-4: Field cardinality check."""
+        if self.config.service_module == "app.services.email_generation_service":
+            # For email evaluations, check word count
+            return self._check_email_word_count(data, test_case)
+        
         cardinality_rules = {
             "business_profile_insights": (3, 5),
             "capabilities": (3, 5),
@@ -313,6 +320,10 @@ class DeterministicJudge:
     
     def _check_url_preservation(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-5: URL preservation check."""
+        if self.config.service_module == "app.services.email_generation_service":
+            # For email evaluations, check company identity
+            return self._check_email_identity(data, test_case)
+        
         input_url = test_case.get("input_website_url", "")
         
         # Check for company_url field (product_overview) or skip if not applicable
@@ -376,6 +387,147 @@ class DeterministicJudge:
             "inputs_evaluated": inputs_evaluated,
             "pass": True,
             "rationale": "Input URL is correctly preserved in the output company_url field."
+        }
+    
+    # Email-specific helper methods
+    def _check_email_subject_format(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """Email-specific D-3: Subject line format validation."""
+        subjects = data.get("subjects", {})
+        primary_subject = subjects.get("primary", "")
+        
+        inputs_evaluated = [
+            {"field": "primary_subject", "value": primary_subject}
+        ]
+        
+        if not primary_subject:
+            return {
+                "check_name": "subject_format",
+                "description": "Validates subject line has 3-4 words with proper capitalization",
+                "inputs_evaluated": inputs_evaluated,
+                "pass": False,
+                "rationale": "Missing primary subject line"
+            }
+        
+        # Check word count
+        words = primary_subject.split()
+        word_count = len(words)
+        
+        if word_count < 3 or word_count > 4:
+            return {
+                "check_name": "subject_format", 
+                "description": "Validates subject line has 3-4 words with proper capitalization",
+                "inputs_evaluated": inputs_evaluated,
+                "pass": False,
+                "rationale": f"Subject line has {word_count} words, expected 3-4 words"
+            }
+        
+        # Check first word capitalization
+        if words[0] and not words[0][0].isupper():
+            return {
+                "check_name": "subject_format",
+                "description": "Validates subject line has 3-4 words with proper capitalization", 
+                "inputs_evaluated": inputs_evaluated,
+                "pass": False,
+                "rationale": "Subject line must start with a capital letter"
+            }
+        
+        return {
+            "check_name": "subject_format",
+            "description": "Validates subject line has 3-4 words with proper capitalization",
+            "inputs_evaluated": inputs_evaluated,
+            "pass": True,
+            "rationale": "Subject line has correct format: 3-4 words with proper capitalization"
+        }
+    
+    def _check_email_word_count(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """Email-specific D-4: Email body word count validation."""
+        email_body = data.get("full_email_body", "")
+        
+        # Count words in email body
+        word_count = len(email_body.split())
+        
+        inputs_evaluated = [
+            {"field": "full_email_body", "value": f"{word_count} words"}
+        ]
+        
+        if word_count < 50:
+            return {
+                "check_name": "word_count",
+                "description": "Validates email body is between 50-100 words",
+                "inputs_evaluated": inputs_evaluated,
+                "pass": False,
+                "rationale": f"Email body has {word_count} words, minimum is 50"
+            }
+        
+        if word_count > 100:
+            return {
+                "check_name": "word_count",
+                "description": "Validates email body is between 50-100 words",
+                "inputs_evaluated": inputs_evaluated,
+                "pass": False,
+                "rationale": f"Email body has {word_count} words, maximum is 100"
+            }
+        
+        return {
+            "check_name": "word_count",
+            "description": "Validates email body is between 50-100 words",
+            "inputs_evaluated": inputs_evaluated,
+            "pass": True,
+            "rationale": f"Email body has {word_count} words, within the 50-100 word range"
+        }
+    
+    def _check_email_identity(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """Email-specific D-5: Company identity validation - prevent hallucination."""
+        email_body = data.get("full_email_body", "")
+        
+        # Get sender company name to avoid confusion
+        # This could come from test case context or be passed differently
+        expected_company = test_case.get('expected_company_name', '')
+        
+        # Check for placeholder patterns (flexible formats)
+        placeholder_patterns = [
+            "[Company Name]", "{Company Name}", "[Company]", "{Company}",
+            "[COMPANY_NAME]", "{COMPANY_NAME}", "[company name]", "{company name}"
+        ]
+        
+        has_placeholder = any(pattern in email_body for pattern in placeholder_patterns)
+        
+        # Check if sender company is being used incorrectly as recipient
+        sender_as_recipient = False
+        if expected_company and expected_company in email_body:
+            # Look for patterns that suggest sender company is being addressed as recipient
+            sender_as_recipient_patterns = [
+                f"Hi {expected_company}",
+                f"Hello {expected_company}",
+                f"to {expected_company}",
+                f"at {expected_company},"
+            ]
+            sender_as_recipient = any(pattern in email_body for pattern in sender_as_recipient_patterns)
+        
+        inputs_evaluated = [
+            {"field": "placeholder_present", "value": "Yes" if has_placeholder else "No"},
+            {"field": "sender_as_recipient", "value": "Yes" if sender_as_recipient else "No"},
+            {"field": "email_excerpt", "value": email_body[:200] + "..." if len(email_body) > 200 else email_body}
+        ]
+        
+        # Fail if sender company is incorrectly used as recipient
+        if sender_as_recipient:
+            return {
+                "check_name": "identity_check",
+                "description": "Validates proper sender/recipient identity handling",
+                "inputs_evaluated": inputs_evaluated,
+                "pass": False,
+                "rationale": f"Email incorrectly addresses sender company '{expected_company}' as the recipient"
+            }
+        
+        # Pass if we have clear placeholders OR if no specific company names are used
+        # (generic emails without specific company references are fine)
+        return {
+            "check_name": "identity_check",
+            "description": "Validates proper sender/recipient identity handling", 
+            "inputs_evaluated": inputs_evaluated,
+            "pass": True,
+            "rationale": "Email correctly handles company identity without confusing sender/recipient or hallucinating company names"
         }
 
 

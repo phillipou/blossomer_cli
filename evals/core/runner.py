@@ -202,6 +202,11 @@ class EvaluationRunner:
                 from app.schemas import TargetPersonaRequest
                 request_class = TargetPersonaRequest
                 needs_orchestrator = False
+            elif config.service_module == "app.services.email_generation_service":
+                from app.services.context_orchestrator_agent import ContextOrchestrator
+                from app.schemas import EmailGenerationRequest
+                request_class = EmailGenerationRequest
+                needs_orchestrator = True
             else:
                 # Default fallback - assume it's like product_overview
                 from app.services.context_orchestrator_agent import ContextOrchestrator
@@ -253,6 +258,49 @@ class EvaluationRunner:
                     hypothesis=test_case.get('persona_hypothesis', ''),
                     additional_context=combined_context
                 )
+            elif request_class.__name__ == "EmailGenerationRequest":
+                # For email generation, use enriched data if available, otherwise fallback to basic data
+                import json
+                
+                # Try to use enriched context data if available
+                try:
+                    company_context = json.loads(test_case.get('company_context', '{}')) if test_case.get('company_context') else None
+                    target_account_context = json.loads(test_case.get('target_account_context', '{}')) if test_case.get('target_account_context') else None
+                    target_persona_context = json.loads(test_case.get('target_persona_context', '{}')) if test_case.get('target_persona_context') else None
+                    preferences = json.loads(test_case.get('preferences', '{}')) if test_case.get('preferences') else None
+                except (json.JSONDecodeError, TypeError):
+                    company_context = None
+                    target_account_context = None
+                    target_persona_context = None
+                    preferences = None
+                
+                # Use enriched data or fallback to basic data
+                if company_context and target_account_context and target_persona_context and preferences:
+                    # Use enriched realistic data
+                    request = request_class(
+                        company_context=company_context,
+                        target_account=target_account_context,
+                        target_persona=target_persona_context,
+                        preferences=preferences
+                    )
+                else:
+                    # Fallback to basic data for backward compatibility
+                    request = request_class(
+                        company_context={
+                            "company_name": test_case.get('expected_company_name', 'Test Company'),
+                            "description": "A test company for evaluation purposes",
+                            "capabilities": ["Test capability 1", "Test capability 2", "Test capability 3"]
+                        },
+                        target_account={"account_profile_name": test_case.get('account_profile_name', 'Target Account')},
+                        target_persona={"target_persona_name": test_case.get('persona_profile_name', 'Target Persona')},
+                        preferences={
+                            "use_case": "default_use_case", 
+                            "emphasis": "pain-point", 
+                            "opening_line": "not-personalized", 
+                            "cta_setting": "meeting",
+                            "template": "blossomer"
+                        }
+                    )
             else:
                 # Fallback to ProductOverviewRequest format
                 request = request_class(

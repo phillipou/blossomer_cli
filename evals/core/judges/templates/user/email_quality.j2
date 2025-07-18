@@ -1,0 +1,96 @@
+**Email to Evaluate:**
+
+Subject: {{ email.subjects.primary }}
+
+{{ email.full_email_body }}
+
+**Generation Context:**
+- User Preferences: {{ preferences|default("No specific preferences") }}
+- Personalization Request: {{ personalization|default("No personalization specified") }}
+- Uncertainty Indicators: {% if has_uncertainty %}Present in user inputs{% else %}None detected{% endif %}
+
+**Email Metadata:**
+- Word Count: {{ email.metadata.word_count|default("Not specified") }}
+- Confidence: {{ email.metadata.confidence|default("Not specified") }}
+- Personalization Level: {{ email.metadata.personalization_level|default("Not specified") }}
+
+---
+
+## Instructions
+Evaluate this email for:
+1. **Email Naturalness**: Does it sound like a real founder wrote it?
+2. **Genuine Helpfulness**: Does this feel like the sender actually wants to help vs just sell?
+3. **Personalization Appropriateness**: Is the personalization level appropriate OR is the email hyper-relevant?
+4. **Uncertainty Handling**: Are uncertain/gibberish inputs handled properly?
+5. **Structure Compliance**: Does it follow founder outreach best practices?
+
+**IMPORTANT**: For each check, identify and quote the specific lines/sentences from the email that most influenced your rating. These should be the exact text that made you give it that score.
+
+## Output Requirements
+
+Return exactly 5 checks in this format:
+
+```json
+{
+  "email_naturalness": {
+    "check_name": "email_naturalness",
+    "description": "Email sounds like a real founder wrote it",
+    "inputs_evaluated": [
+      {"field": "most_natural_phrase", "value": "Quote the specific phrase/sentence that sounds most natural and founder-like"},
+      {"field": "least_natural_phrase", "value": "Quote any phrase that sounds corporate/templated, or 'None found' if all natural"},
+      {"field": "subject_assessment", "value": "Quote the subject line and assess its naturalness"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of naturalness assessment, referencing the specific quotes above"
+  },
+  "genuine_helpfulness": {
+    "check_name": "genuine_helpfulness",
+    "description": "Email feels genuinely helpful rather than sales-focused",
+    "inputs_evaluated": [
+      {"field": "rhetorical_questions", "value": "Quote any rhetorical questions like 'right?', 'don't you think?', or 'None found' if avoided"},
+      {"field": "sales_manipulation", "value": "Quote any phrases that sound like sales tactics or fake friendliness, or 'None found' if genuine"},
+      {"field": "helpful_tone_evidence", "value": "Quote the phrase that best demonstrates genuine desire to help vs sell"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of how genuine and helpful the email feels, avoiding sales manipulation"
+  },
+  "personalization_appropriateness": {
+    "check_name": "personalization_appropriateness", 
+    "description": "Personalization is relevant without being creepy OR email is hyper-relevant to recipient",
+    "inputs_evaluated": [
+      {"field": "personalization_evidence", "value": "Quote specific personalized references, or 'None found' if generic"},
+      {"field": "hyper_relevance_evidence", "value": "Quote the most role/industry-relevant content that shows understanding of recipient's challenges"},
+      {"field": "overall_relevance_level", "value": "Assess if content feels targeted to this specific recipient type"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation. Focus on whether hyper-relevant content compensates for lack of traditional personalization."
+  },
+  "uncertainty_handling": {
+    "check_name": "uncertainty_handling",
+    "description": "Uncertain inputs handled properly with graceful fallbacks",
+    "inputs_evaluated": [
+      {"field": "uncertainty_indicators_present", "value": "{% if has_uncertainty %}Yes - identify what seems uncertain or forced{% else %}No uncertainty detected{% endif %}"},
+      {"field": "content_coherence", "value": "Quote any sentences that seem forced, unnatural, or like they contain gibberish content"},
+      {"field": "natural_fallback_evidence", "value": "Quote content that shows graceful handling of inputs (natural, coherent messaging)"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of how well uncertainty was handled"
+  },
+  "structure_compliance": {
+    "check_name": "structure_compliance",
+    "description": "Email follows founder outreach best practices",
+    "inputs_evaluated": [
+      {"field": "opening_hook", "value": "Quote the opening line(s) that establish 'why now'"},
+      {"field": "value_proposition", "value": "Quote the sentence(s) that explain how you help"},
+      {"field": "call_to_action", "value": "Quote the specific CTA and assess its effectiveness"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive", 
+    "rationale": "2-3 sentence explanation of structure quality, referencing the specific elements quoted above"
+  }
+}
+```

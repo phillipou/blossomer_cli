@@ -1,0 +1,264 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-18T13:14:05.934480",
+  "evaluation_time": 27.70760178565979,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://drdroid.io",
+        "context_type": "valid",
+        "expected_company_name": "DrDroid",
+        "company_context": "{\"company_name\": \"DrDroid\", \"description\": \"DrDroid is an incident response automation platform that helps engineering teams quickly diagnose and resolve production issues. It provides automated root cause analysis, intelligent alerting, and collaborative debugging tools for modern software teams.\", \"capabilities\": [\"Automated Root Cause Analysis: Uses AI to analyze logs, metrics, and traces to identify issue sources\", \"Intelligent Alerting: Reduces alert fatigue by correlating and prioritizing critical incidents\", \"Collaborative Debugging: Provides shared workspaces for team-based incident resolution\"]}",
+        "target_account_context": "{\"account_profile_name\": \"Early stage tech companies\", \"firmographics\": {\"industry\": [\"SaaS\", \"Technology\"], \"employees\": \"10-200\", \"revenue\": \"$1M-$20M\", \"funding_stage\": [\"Seed\", \"Series A\"]}, \"use_cases\": [\"Reduce time to resolution for production incidents\", \"Enable engineering teams to focus on feature development rather than firefighting\"]}",
+        "target_persona_context": "{\"target_persona_name\": \"Head of Engineering\", \"responsibilities\": [\"Oversee engineering team productivity and system reliability\", \"Manage incident response and system monitoring\", \"Balance feature development with operational stability\"], \"pain_points\": [\"Engineers spend too much time debugging production issues instead of building features\", \"Lack of dedicated SRE team means engineering owns all operational concerns\", \"Difficulty scaling incident response processes as team and product complexity grows\"], \"goals\": [\"Reduce mean time to resolution for production incidents\", \"Enable engineers to focus more time on feature development\"]}",
+        "preferences": "{\"use_case\": \"improve_efficiency\", \"emphasis\": \"pain-point\", \"opening_line\": \"not-personalized\", \"cta_setting\": \"demo\", \"template\": \"blossomer\"}",
+        "account_profile_name": "Early stage tech",
+        "persona_profile_name": "Head of Engineering"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"subjects\":{\"primary\":\"Improve incident response\",\"alternatives\":[\"Streamline troubleshooting\",\"Resolve issues faster\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed your team is scaling quickly—congrats!..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "subjects": {
+                "primary": "Improve incident response",
+                "alternatives": [
+                  "Streamline troubleshooting",
+                  "Resolve issues faster"
+                ]
+              },
+              "full_email_body": "Hi there,\n\nNoticed your team is scaling quickly—congrats! With that growth, incident response can get pretty chaotic, right? Founders often waste hours digging through logs or chasing alerts that don’t lead anywhere.\n\nWe’ve helped engineering teams cut downtime by automating root cause analysis and alerting, so they spend less time firefighting and more on building. It’s a game-changer for teams overwhelmed by production issues.\n\nWould you be open to a quick demo? I can show how it works and see if it fits your needs.\n\nBest,\nDrDroid",
+              "email_body_breakdown": [
+                {
+                  "text": "Hi there,",
+                  "type": "greeting"
+                },
+                {
+                  "text": "Noticed your team is scaling quickly—congrats! With that growth, incident response can get pretty chaotic, right? Founders often waste hours digging through logs or chasing alerts that don’t lead anywhere.",
+                  "type": "opening"
+                },
+                {
+                  "text": "We’ve helped engineering teams cut downtime by automating root cause analysis and alerting, so they spend less time firefighting and more on building. It’s a game-changer for teams overwhelmed by production issues.",
+                  "type": "pain-point"
+                },
+                {
+                  "text": "Would you be open to a quick demo? I can show how it works and see if it fits your needs.",
+                  "type": "cta"
+                }
+              ],
+              "writing_process": {
+                "trigger": "Noticed your team is scaling quickly",
+                "problem": "incident response can get pretty chaotic, wasting hours on firefighting",
+                "help": "helped teams automate root cause analysis and alerting to reduce downtime",
+                "cta": "offer a quick demo to show how it works"
+              },
+              "metadata": {
+                "generation_id": "eaa893c9-4c97-4c6a-a45e-f68cf7183769",
+                "confidence": "high",
+                "personalization_level": "low",
+                "processing_time_ms": 13773
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 5/5 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "subject_format",
+            "description": "Validates subject line has 3-4 words with proper capitalization",
+            "inputs_evaluated": [
+              {
+                "field": "primary_subject",
+                "value": "Improve incident response"
+              }
+            ],
+            "pass": true,
+            "rationale": "Subject line has correct format: 3-4 words with proper capitalization"
+          },
+          "D-4_field_cardinality": {
+            "check_name": "word_count",
+            "description": "Validates email body is between 50-100 words",
+            "inputs_evaluated": [
+              {
+                "field": "full_email_body",
+                "value": "87 words"
+              }
+            ],
+            "pass": true,
+            "rationale": "Email body has 87 words, within the 50-100 word range"
+          },
+          "D-5_url_preservation": {
+            "check_name": "identity_check",
+            "description": "Validates proper sender/recipient identity handling",
+            "inputs_evaluated": [
+              {
+                "field": "placeholder_present",
+                "value": "No"
+              },
+              {
+                "field": "sender_as_recipient",
+                "value": "No"
+              },
+              {
+                "field": "email_excerpt",
+                "value": "Hi there,\n\nNoticed your team is scaling quickly—congrats! With that growth, incident response can get pretty chaotic, right? Founders often waste hours digging through logs or chasing alerts that don’..."
+              }
+            ],
+            "pass": true,
+            "rationale": "Email correctly handles company identity without confusing sender/recipient or hallucinating company names"
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": false,
+        "judges": {
+          "email_quality": {
+            "email_naturalness": {
+              "check_name": "email_naturalness",
+              "description": "Email sounds like a real founder wrote it",
+              "inputs_evaluated": [
+                {
+                  "field": "most_natural_phrase",
+                  "value": "With that growth, incident response can get pretty chaotic, right?"
+                },
+                {
+                  "field": "least_natural_phrase",
+                  "value": "None found"
+                },
+                {
+                  "field": "subject_assessment",
+                  "value": "Improve incident response - This is straightforward and relevant, but lacks a personal touch."
+                }
+              ],
+              "pass": true,
+              "rating": "sufficient",
+              "rationale": "The email uses conversational language, particularly in the phrase, 'With that growth, incident response can get pretty chaotic, right?' which feels relatable and genuine. However, the subject line is somewhat generic and could benefit from a more personal touch."
+            },
+            "personalization_appropriateness": {
+              "check_name": "personalization_appropriateness",
+              "description": "Personalization is relevant without being creepy OR email is hyper-relevant to recipient",
+              "inputs_evaluated": [
+                {
+                  "field": "personalization_evidence",
+                  "value": "None found"
+                },
+                {
+                  "field": "hyper_relevance_evidence",
+                  "value": "Founders often waste hours digging through logs or chasing alerts that don’t lead anywhere."
+                },
+                {
+                  "field": "overall_relevance_level",
+                  "value": "The content addresses common pain points for scaling teams."
+                }
+              ],
+              "pass": true,
+              "rating": "sufficient",
+              "rationale": "While there is no direct personalization, the email effectively addresses a common pain point for founders in scaling teams, making it hyper-relevant. The mention of 'wasting hours digging through logs' resonates with the likely challenges faced by the recipient."
+            },
+            "uncertainty_handling": {
+              "check_name": "uncertainty_handling",
+              "description": "Uncertain inputs handled properly with graceful fallbacks",
+              "inputs_evaluated": [
+                {
+                  "field": "uncertainty_indicators_present",
+                  "value": "No uncertainty detected"
+                },
+                {
+                  "field": "content_coherence",
+                  "value": "None found"
+                },
+                {
+                  "field": "natural_fallback_evidence",
+                  "value": "We’ve helped engineering teams cut downtime by automating root cause analysis and alerting."
+                }
+              ],
+              "pass": true,
+              "rating": "impressive",
+              "rationale": "The email does not contain any uncertain or gibberish content, and it maintains coherence throughout. The fallback to discussing how the service has helped other teams is a strong way to convey value without relying on uncertain inputs."
+            },
+            "structure_compliance": {
+              "check_name": "structure_compliance",
+              "description": "Email follows founder outreach best practices",
+              "inputs_evaluated": [
+                {
+                  "field": "opening_hook",
+                  "value": "Noticed your team is scaling quickly—congrats!"
+                },
+                {
+                  "field": "value_proposition",
+                  "value": "We’ve helped engineering teams cut downtime by automating root cause analysis and alerting."
+                },
+                {
+                  "field": "call_to_action",
+                  "value": "Would you be open to a quick demo?"
+                }
+              ],
+              "pass": true,
+              "rating": "sufficient",
+              "rationale": "The email has a clear opening hook that acknowledges the recipient's growth, a solid value proposition that explains how the service can help, and a straightforward call-to-action. However, the flow could be improved for better engagement."
+            }
+          }
+        },
+        "total_calls": 1
+      },
+      "overall_pass": false,
+      "errors": [],
+      "generated_output": "{\"subjects\":{\"primary\":\"Improve incident response\",\"alternatives\":[\"Streamline troubleshooting\",\"Resolve issues faster\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed your team is scaling quickly—congrats! With that growth, incident response can get pretty chaotic, right? Founders often waste hours digging through logs or chasing alerts that don’t lead anywhere.\\n\\nWe’ve helped engineering teams cut downtime by automating root cause analysis and alerting, so they spend less time firefighting and more on building. It’s a game-changer for teams overwhelmed by production issues.\\n\\nWould you be open to a quick demo? I can show how it works and see if it fits your needs.\\n\\nBest,\\nDrDroid\",\"email_body_breakdown\":[{\"text\":\"Hi there,\",\"type\":\"greeting\"},{\"text\":\"Noticed your team is scaling quickly—congrats! With that growth, incident response can get pretty chaotic, right? Founders often waste hours digging through logs or chasing alerts that don’t lead anywhere.\",\"type\":\"opening\"},{\"text\":\"We’ve helped engineering teams cut downtime by automating root cause analysis and alerting, so they spend less time firefighting and more on building. It’s a game-changer for teams overwhelmed by production issues.\",\"type\":\"pain-point\"},{\"text\":\"Would you be open to a quick demo? I can show how it works and see if it fits your needs.\",\"type\":\"cta\"}],\"writing_process\":{\"trigger\":\"Noticed your team is scaling quickly\",\"problem\":\"incident response can get pretty chaotic, wasting hours on firefighting\",\"help\":\"helped teams automate root cause analysis and alerting to reduce downtime\",\"cta\":\"offer a quick demo to show how it works\"},\"metadata\":{\"generation_id\":\"eaa893c9-4c97-4c6a-a45e-f68cf7183769\",\"confidence\":\"high\",\"personalization_level\":\"low\",\"processing_time_ms\":13773}}",
+      "test_case_id": 1
+    }
+  ]
+}

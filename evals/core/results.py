@@ -125,7 +125,18 @@ class ResultsManager:
             if llm_results and 'judges' in llm_results:
                 self.console.print(f"\n  🧠 LLM Judge Checks:")
                 for judge_name, judge_result in llm_results['judges'].items():
-                    self._display_single_check(judge_result, "  ")
+                    # Check if this is a nested structure (like email_quality with multiple sub-checks)
+                    if isinstance(judge_result, dict) and any(
+                        isinstance(v, dict) and 'check_name' in v 
+                        for v in judge_result.values()
+                    ):
+                        # Handle nested checks (like email_quality)
+                        for sub_check_name, sub_check_result in judge_result.items():
+                            if isinstance(sub_check_result, dict) and 'check_name' in sub_check_result:
+                                self._display_single_check(sub_check_result, "  ")
+                    else:
+                        # Handle single check (like existing judges)
+                        self._display_single_check(judge_result, "  ")
     
     def _display_single_check(self, check_result: Dict[str, Any], indent: str = "") -> None:
         """Display a single check result with proper formatting."""
@@ -194,9 +205,22 @@ class ResultsManager:
             llm_results = case.get('llm_results', {})
             if llm_results and 'judges' in llm_results:
                 for judge_name, judge_result in llm_results['judges'].items():
-                    llm_total += 1
-                    if judge_result.get('pass', False):
-                        llm_passed += 1
+                    # Check if this is a nested structure (like email_quality with multiple sub-checks)
+                    if isinstance(judge_result, dict) and any(
+                        isinstance(v, dict) and 'check_name' in v 
+                        for v in judge_result.values()
+                    ):
+                        # Handle nested checks (like email_quality)
+                        for sub_check_name, sub_check_result in judge_result.items():
+                            if isinstance(sub_check_result, dict) and 'check_name' in sub_check_result:
+                                llm_total += 1
+                                if sub_check_result.get('pass', False):
+                                    llm_passed += 1
+                    else:
+                        # Handle single check (like existing judges)
+                        llm_total += 1
+                        if judge_result.get('pass', False):
+                            llm_passed += 1
         
         # Create summary table
         self.console.print(f"\n📊 Check Summary")
@@ -254,10 +278,24 @@ class ResultsManager:
             llm_results = case.get('llm_results', {})
             if llm_results and 'judges' in llm_results:
                 for judge_name, judge_result in llm_results['judges'].items():
-                    rating = judge_result.get('rating')
-                    if rating and rating in rating_counts:
-                        rating_counts[rating] += 1
-                        total_llm_checks += 1
+                    # Check if this is a nested structure (like email_quality with multiple sub-checks)
+                    if isinstance(judge_result, dict) and any(
+                        isinstance(v, dict) and 'check_name' in v 
+                        for v in judge_result.values()
+                    ):
+                        # Handle nested checks (like email_quality)
+                        for sub_check_name, sub_check_result in judge_result.items():
+                            if isinstance(sub_check_result, dict) and 'check_name' in sub_check_result:
+                                rating = sub_check_result.get('rating')
+                                if rating and rating in rating_counts:
+                                    rating_counts[rating] += 1
+                                    total_llm_checks += 1
+                    else:
+                        # Handle single check (like existing judges)
+                        rating = judge_result.get('rating')
+                        if rating and rating in rating_counts:
+                            rating_counts[rating] += 1
+                            total_llm_checks += 1
         
         # Only display if we have LLM checks with ratings
         if total_llm_checks == 0:
