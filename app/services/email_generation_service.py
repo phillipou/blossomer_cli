@@ -57,6 +57,26 @@ async def generate_email_campaign_service(
 
         logger.info(f"Using template: {prompt_template} for generation {generation_id}")
 
+        # Validate that user isn't trying to send email to their own company
+        if data.company_context and data.target_account:
+            user_company = data.company_context.get('company_name', '') if isinstance(data.company_context, dict) else getattr(data.company_context, 'company_name', '')
+            target_company = data.target_account.get('target_account_name', '') if isinstance(data.target_account, dict) else getattr(data.target_account, 'target_account_name', '')
+            
+            debug_print(f"[EmailValidation] User company: '{user_company}', Target company: '{target_company}'")
+            
+            if user_company and target_company and user_company.lower().strip() == target_company.lower().strip():
+                logger.error(f"Self-referential email detected: {user_company} -> {target_company}")
+                raise ValueError(
+                    f"Cannot send email to your own company ({user_company}). \n"
+                    f"This usually happens when the target account name matches your company name. \n"
+                    f"Please check your target account configuration and ensure it represents a different company."
+                )
+
+        # Debug: Log the context being passed to the LLM
+        debug_print(f"[EmailGeneration] Template: {prompt_template}")
+        debug_print(f"[EmailGeneration] User company: {data.company_context.get('company_name', 'N/A') if isinstance(data.company_context, dict) else getattr(data.company_context, 'company_name', 'N/A')}")
+        debug_print(f"[EmailGeneration] Target: {data.target_account.get('target_account_name', 'N/A') if isinstance(data.target_account, dict) else getattr(data.target_account, 'target_account_name', 'N/A')}")
+        
         # Generate the email using the LLM
         result = await service.analyze(
             request_data=data,
