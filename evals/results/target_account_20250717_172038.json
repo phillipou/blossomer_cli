@@ -1,0 +1,272 @@
+{
+  "prompt_name": "Target Account Profile Evaluation",
+  "timestamp": "2025-07-17T17:20:38.503335",
+  "evaluation_time": 25.006354808807373,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://flextract.com",
+        "context_type": "valid",
+        "account_profile_name": "Financial advisory firms",
+        "persona_profile_name": "Financial advisors",
+        "persona_hypothesis": "Financial advisors",
+        "account_hypothesis": "Independent firms growing aggressively (younger advisors targeting millennials, growing organically)",
+        "expected_company_name": "Flextract"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"target_account_name\":\"Independent Financial Advisory Firms\",\"target_account_description\":\"These are growing independent financial advisory firms, often led by younger advisors targeting millennial c..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "target_account_name": "Independent Financial Advisory Firms",
+              "target_account_description": "These are growing independent financial advisory firms, often led by younger advisors targeting millennial clients and expanding organically, which require scalable solutions to manage rapid growth and client engagement.",
+              "target_account_rationale": [
+                "These firms operate in a highly competitive and client-centric industry, necessitating tools that support rapid scaling and personalized client management.",
+                "Their growth driven by younger advisors targeting millennials indicates a need for modern, flexible technology solutions that can adapt to evolving operational demands.",
+                "Firms with organic growth patterns and expanding client bases are likely to face operational complexities, making them prime candidates for scalable SaaS solutions.",
+                "Focusing on independent firms allows targeting companies with sufficient size and growth stage to justify investment in advanced management tools, but not yet at enterprise scale.",
+                "Their emphasis on organic growth and younger leadership suggests a readiness to adopt innovative, cloud-based solutions to stay competitive."
+              ],
+              "firmographics": {
+                "industry": [
+                  "Financial Advisory Services"
+                ],
+                "employees": "10-50",
+                "department_size": null,
+                "revenue": null,
+                "geography": null,
+                "business_model": [
+                  "Independent financial advisory"
+                ],
+                "funding_stage": null,
+                "company_type": [
+                  "Private"
+                ],
+                "keywords": [
+                  "organic growth",
+                  "millennial clients",
+                  "independent advisors",
+                  "client-centric",
+                  "scalable management"
+                ]
+              },
+              "buying_signals": [
+                {
+                  "title": "Funding or Growth Announcements",
+                  "description": "Companies announcing funding rounds, strategic investments, or rapid growth milestones often indicate readiness to invest in scalable management solutions.",
+                  "type": "Company Data",
+                  "priority": "High",
+                  "detection_method": "Enrichment from company funding and growth news sources"
+                },
+                {
+                  "title": "Website Technology Adoption",
+                  "description": "Use of modern CRM, client portal, or cloud-based management tools on their website indicates operational scaling and technology adoption.",
+                  "type": "Website",
+                  "priority": "Medium",
+                  "detection_method": "Technology stack detection via website analysis"
+                },
+                {
+                  "title": "Job Postings for Growth Roles",
+                  "description": "Job postings for roles like 'Client Relations Manager' or 'Operations Associate' suggest expansion and operational complexity, signaling potential need.",
+                  "type": "Website",
+                  "priority": "Medium",
+                  "detection_method": "Keyword search in job postings"
+                },
+                {
+                  "title": "Industry Conference Participation",
+                  "description": "Participation in industry events focused on growth, technology, or innovation indicates active pursuit of scalable solutions.",
+                  "type": "Social Media",
+                  "priority": "Low",
+                  "detection_method": "Monitoring conference speaker lists and event mentions"
+                },
+                {
+                  "title": "Client Testimonials Highlighting Growth",
+                  "description": "Testimonials emphasizing rapid client onboarding or expansion suggest operational scaling needs.",
+                  "type": "Website",
+                  "priority": "Low",
+                  "detection_method": "Content analysis for growth-related keywords"
+                }
+              ],
+              "buying_signals_rationale": [
+                "Funding announcements and growth milestones are strong indicators of companies preparing to invest in scalable operational tools to support expansion.",
+                "Modern technology adoption on websites reflects a willingness to upgrade legacy systems, signaling readiness for SaaS solutions.",
+                "Job postings for growth-related roles reveal internal expansion efforts, often accompanied by a need for better management and client engagement tools.",
+                "Participation in industry events demonstrates proactive engagement with innovative solutions and openness to new technologies.",
+                "Customer testimonials emphasizing growth and scaling needs provide qualitative evidence of operational inflection points."
+              ],
+              "metadata": {
+                "primary_context_source": "user_input",
+                "sources_used": [
+                  "user_input",
+                  "company_context"
+                ],
+                "confidence_assessment": {
+                  "overall_confidence": "medium",
+                  "data_quality": "medium",
+                  "inference_level": "moderate",
+                  "recommended_improvements": [
+                    "Access to recent funding data",
+                    "More detailed firm size and revenue info"
+                  ]
+                },
+                "processing_notes": "Analysis combines inferred growth signals with observable online activity to identify firms at operational inflection points suitable for SaaS solutions."
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 7/7 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://flextract.com"
+              },
+              {
+                "field": "company_url",
+                "value": "Not in schema"
+              }
+            ],
+            "pass": true,
+            "rationale": "Schema does not include company_url field, URL preservation check not applicable."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "proxy_strength": {
+            "check_name": "proxy_strength",
+            "description": "Evaluates whether firmographics and buying signals are strong predictors of actual need",
+            "inputs_evaluated": [
+              {
+                "field": "firmographics",
+                "value": "Company size (10-50 employees), industry (Financial Advisory Services), independent firms targeting growth and millennial clients"
+              },
+              {
+                "field": "buying_signals",
+                "value": "Funding announcements, website tech adoption, growth-related job postings, industry conference participation, growth-focused testimonials"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The firmographics align well with companies likely facing operational scaling challenges, and the buying signals—such as funding news and tech adoption—are strong indicators of immediate need for scalable management solutions. These attributes are meaningful predictors of a company's readiness to invest now."
+          },
+          "detection_feasibility": {
+            "check_name": "detection_feasibility",
+            "description": "Assesses whether the specified detection methods can realistically identify the described signals",
+            "inputs_evaluated": [
+              {
+                "field": "detection_methods",
+                "value": "Funding news via enrichment, website tech stack detection, keyword searches in job postings, social media monitoring for conference participation, content analysis of testimonials"
+              },
+              {
+                "field": "signal_complexity",
+                "value": "Moderate; most signals are publicly available and can be monitored with existing tools, though some require integration of multiple sources"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "All signals are accessible through current GTM tools—enrichment APIs, web scraping, social media monitoring, and content analysis—making detection feasible and cost-effective. The signals are well-suited for automated monitoring and real-time alerts."
+          },
+          "profile_crispness": {
+            "check_name": "profile_crispness",
+            "description": "Evaluates how precisely defined and actionable the target customer profile is",
+            "inputs_evaluated": [
+              {
+                "field": "target_definition",
+                "value": "Independent financial advisory firms with 10-50 employees, targeting millennial clients, experiencing growth"
+              },
+              {
+                "field": "specificity_level",
+                "value": "Moderate to high; filters exclude very small or large firms, focusing on a growth-stage segment with clear operational needs"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The profile is specific enough to filter for firms likely facing operational scaling issues, and the focus on growth, millennial leadership, and independence creates a logically aligned target. These filters are implementable in modern prospecting platforms and provide a clear, actionable segment."
+          }
+        },
+        "total_calls": 1
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"target_account_name\":\"Independent Financial Advisory Firms\",\"target_account_description\":\"These are growing independent financial advisory firms, often led by younger advisors targeting millennial clients and expanding organically, which require scalable solutions to manage rapid growth and client engagement.\",\"target_account_rationale\":[\"These firms operate in a highly competitive and client-centric industry, necessitating tools that support rapid scaling and personalized client management.\",\"Their growth driven by younger advisors targeting millennials indicates a need for modern, flexible technology solutions that can adapt to evolving operational demands.\",\"Firms with organic growth patterns and expanding client bases are likely to face operational complexities, making them prime candidates for scalable SaaS solutions.\",\"Focusing on independent firms allows targeting companies with sufficient size and growth stage to justify investment in advanced management tools, but not yet at enterprise scale.\",\"Their emphasis on organic growth and younger leadership suggests a readiness to adopt innovative, cloud-based solutions to stay competitive.\"],\"firmographics\":{\"industry\":[\"Financial Advisory Services\"],\"employees\":\"10-50\",\"department_size\":null,\"revenue\":null,\"geography\":null,\"business_model\":[\"Independent financial advisory\"],\"funding_stage\":null,\"company_type\":[\"Private\"],\"keywords\":[\"organic growth\",\"millennial clients\",\"independent advisors\",\"client-centric\",\"scalable management\"]},\"buying_signals\":[{\"title\":\"Funding or Growth Announcements\",\"description\":\"Companies announcing funding rounds, strategic investments, or rapid growth milestones often indicate readiness to invest in scalable management solutions.\",\"type\":\"Company Data\",\"priority\":\"High\",\"detection_method\":\"Enrichment from company funding and growth news sources\"},{\"title\":\"Website Technology Adoption\",\"description\":\"Use of modern CRM, client portal, or cloud-based management tools on their website indicates operational scaling and technology adoption.\",\"type\":\"Website\",\"priority\":\"Medium\",\"detection_method\":\"Technology stack detection via website analysis\"},{\"title\":\"Job Postings for Growth Roles\",\"description\":\"Job postings for roles like 'Client Relations Manager' or 'Operations Associate' suggest expansion and operational complexity, signaling potential need.\",\"type\":\"Website\",\"priority\":\"Medium\",\"detection_method\":\"Keyword search in job postings\"},{\"title\":\"Industry Conference Participation\",\"description\":\"Participation in industry events focused on growth, technology, or innovation indicates active pursuit of scalable solutions.\",\"type\":\"Social Media\",\"priority\":\"Low\",\"detection_method\":\"Monitoring conference speaker lists and event mentions\"},{\"title\":\"Client Testimonials Highlighting Growth\",\"description\":\"Testimonials emphasizing rapid client onboarding or expansion suggest operational scaling needs.\",\"type\":\"Website\",\"priority\":\"Low\",\"detection_method\":\"Content analysis for growth-related keywords\"}],\"buying_signals_rationale\":[\"Funding announcements and growth milestones are strong indicators of companies preparing to invest in scalable operational tools to support expansion.\",\"Modern technology adoption on websites reflects a willingness to upgrade legacy systems, signaling readiness for SaaS solutions.\",\"Job postings for growth-related roles reveal internal expansion efforts, often accompanied by a need for better management and client engagement tools.\",\"Participation in industry events demonstrates proactive engagement with innovative solutions and openness to new technologies.\",\"Customer testimonials emphasizing growth and scaling needs provide qualitative evidence of operational inflection points.\"],\"metadata\":{\"primary_context_source\":\"user_input\",\"sources_used\":[\"user_input\",\"company_context\"],\"confidence_assessment\":{\"overall_confidence\":\"medium\",\"data_quality\":\"medium\",\"inference_level\":\"moderate\",\"recommended_improvements\":[\"Access to recent funding data\",\"More detailed firm size and revenue info\"]},\"processing_notes\":\"Analysis combines inferred growth signals with observable online activity to identify firms at operational inflection points suitable for SaaS solutions.\"}}",
+      "test_case_id": 1
+    }
+  ]
+}

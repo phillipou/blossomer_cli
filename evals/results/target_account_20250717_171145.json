@@ -1,0 +1,277 @@
+{
+  "prompt_name": "Target Account Profile Evaluation",
+  "timestamp": "2025-07-17T17:11:45.925802",
+  "evaluation_time": 20.541283130645752,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://mandrel.tech",
+        "context_type": "valid",
+        "account_profile_name": "Consumer goods companies",
+        "persona_profile_name": "Supply Chain Leads",
+        "persona_hypothesis": "Heads of supply chain, procurement, or operations",
+        "account_hypothesis": "Targeting brands with $5M–$50M in revenue that manage 30–50+ SKUs, buy a mix of raw and finished goods, and rely on outsourced manufacturing and fulfillment.",
+        "expected_company_name": "Mandrel"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"target_account_name\":\"Consumer Goods Brands\",\"target_account_description\":\"Mid-sized consumer goods companies with $5M–$50M revenue managing 30–50+ SKUs, relying on outsourced manufacturing and fulf..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "target_account_name": "Consumer Goods Brands",
+              "target_account_description": "Mid-sized consumer goods companies with $5M–$50M revenue managing 30–50+ SKUs, relying on outsourced manufacturing and fulfillment, are prime candidates for solutions that optimize supply chain and operational efficiency.",
+              "target_account_rationale": [
+                "These companies operate in a highly competitive and complex supply chain environment, requiring advanced tools to manage diverse SKUs and outsourced logistics.",
+                "Their revenue and size indicate sufficient operational scale and budget to adopt new supply chain or procurement solutions, especially during growth or scaling phases.",
+                "Focusing on brands with multiple SKUs and outsourced manufacturing suggests a need for integrated supply chain visibility and operational automation to reduce costs and improve responsiveness.",
+                "The target segment's operational complexity and growth stage make them more likely to seek solutions that streamline procurement, inventory, and fulfillment processes.",
+                "Market dynamics in consumer goods, including rapid product launches and multi-channel distribution, create an urgent need for flexible, scalable supply chain management tools."
+              ],
+              "firmographics": {
+                "industry": [
+                  "Consumer Packaged Goods",
+                  "Food & Beverage",
+                  "Personal Care",
+                  "Household Products"
+                ],
+                "employees": "50-500",
+                "department_size": null,
+                "revenue": "5M-50M",
+                "geography": null,
+                "business_model": [
+                  "Brand Owner",
+                  "Private Label",
+                  "OEM"
+                ],
+                "funding_stage": null,
+                "company_type": [
+                  "Private"
+                ],
+                "keywords": [
+                  "multi-SKU management",
+                  "outsourced manufacturing",
+                  "supply chain optimization",
+                  "inventory visibility",
+                  "product launch agility"
+                ]
+              },
+              "buying_signals": [
+                {
+                  "title": "Funding or Revenue Growth Announcements",
+                  "description": "Companies announcing revenue milestones or funding rounds often indicate readiness to invest in operational improvements.",
+                  "type": "Company Data",
+                  "priority": "High",
+                  "detection_method": "Enrichment from company funding and revenue data sources"
+                },
+                {
+                  "title": "Job Postings for Supply Chain Roles",
+                  "description": "Increased hiring for supply chain, procurement, or operations roles suggests scaling activities and operational upgrades.",
+                  "type": "Website",
+                  "priority": "Medium",
+                  "detection_method": "Web scraping of job boards and career pages"
+                },
+                {
+                  "title": "New Product Launches or SKU Expansions",
+                  "description": "Press releases or website mentions of new SKUs or product lines indicate operational scaling and potential need for supply chain solutions.",
+                  "type": "Website",
+                  "priority": "Medium",
+                  "detection_method": "Content scraping for product announcements"
+                },
+                {
+                  "title": "Supply Chain or Logistics Technology Adoption",
+                  "description": "Adoption of new ERP, inventory, or logistics software signals a transition phase where new solutions are being evaluated or implemented.",
+                  "type": "Tech Stack",
+                  "priority": "Medium",
+                  "detection_method": "Tech stack enrichment data"
+                },
+                {
+                  "title": "Industry Event Participation",
+                  "description": "Participation in supply chain or consumer goods trade shows and conferences indicates active interest in operational innovation.",
+                  "type": "Other",
+                  "priority": "Low",
+                  "detection_method": "Event participation data from industry sources"
+                }
+              ],
+              "buying_signals_rationale": [
+                "Funding and revenue growth signals reflect companies' capacity and willingness to invest in supply chain improvements during scaling phases.",
+                "Job postings and SKU expansion announcements are direct indicators of operational scaling, creating urgency for supply chain solutions.",
+                "Adoption of new logistics or inventory management tools demonstrates a transition point where companies seek integrated solutions.",
+                "Participation in industry events signals active exploration of innovative operational strategies, increasing purchase likelihood.",
+                "These signals collectively identify companies at inflection points where operational efficiency gains are both needed and financially feasible."
+              ],
+              "metadata": {
+                "primary_context_source": "user_input",
+                "sources_used": [
+                  "user_input",
+                  "company_context"
+                ],
+                "confidence_assessment": {
+                  "overall_confidence": "high",
+                  "data_quality": "high",
+                  "inference_level": "moderate",
+                  "recommended_improvements": [
+                    "Access to recent funding data",
+                    "More detailed operational metrics"
+                  ]
+                },
+                "processing_notes": "Analysis integrated target segment specifics with observable signals indicating operational scaling and readiness to invest."
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 7/7 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://mandrel.tech"
+              },
+              {
+                "field": "company_url",
+                "value": "Not in schema"
+              }
+            ],
+            "pass": true,
+            "rationale": "Schema does not include company_url field, URL preservation check not applicable."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "proxy_strength": {
+            "check_name": "proxy_strength",
+            "description": "Evaluates whether firmographics and buying signals are strong predictors of actual need",
+            "inputs_evaluated": [
+              {
+                "field": "firmographics",
+                "value": "Mid-sized consumer goods companies with $5M–$50M revenue managing 30–50+ SKUs, outsourcing manufacturing"
+              },
+              {
+                "field": "buying_signals",
+                "value": "Funding announcements, job postings for supply chain roles, new SKU launches, tech adoption, industry event participation"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The firmographics align well with companies likely to face operational scaling challenges, and the signals chosen—funding, hiring, product launches, tech adoption—are strong indicators of active operational growth and readiness to invest in supply chain solutions. These attributes are meaningful predictors of current need."
+          },
+          "detection_feasibility": {
+            "check_name": "detection_feasibility",
+            "description": "Assesses whether the specified detection methods can realistically identify the described signals",
+            "inputs_evaluated": [
+              {
+                "field": "detection_methods",
+                "value": "Enrichment from funding/revenue data, web scraping for job postings and press releases, tech stack data, industry event sources"
+              },
+              {
+                "field": "signal_complexity",
+                "value": "Moderate; signals like funding, job postings, and product launches are accessible via modern scraping, enrichment, and industry data APIs"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "All signals are detectable with current GTM tools—funding and revenue data can be enriched via APIs, job postings and press releases are accessible through web scraping, and tech adoption can be identified via tech stack enrichment. These methods are feasible and cost-effective with existing AI and scraping technologies."
+          },
+          "profile_crispness": {
+            "check_name": "profile_crispness",
+            "description": "Evaluates how precisely defined and actionable the target customer profile is",
+            "inputs_evaluated": [
+              {
+                "field": "target_definition",
+                "value": "Mid-sized consumer goods companies with specific revenue and SKU management characteristics"
+              },
+              {
+                "field": "specificity_level",
+                "value": "High; filters based on revenue, size, SKU count, outsourcing, and operational signals exclude broad market segments"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The profile is highly specific, focusing on companies at a clear operational inflection point with defined size, revenue, and SKU management traits. This level of detail enables precise filtering and targeting in modern prospecting platforms, making it highly actionable."
+          }
+        },
+        "total_calls": 1
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"target_account_name\":\"Consumer Goods Brands\",\"target_account_description\":\"Mid-sized consumer goods companies with $5M–$50M revenue managing 30–50+ SKUs, relying on outsourced manufacturing and fulfillment, are prime candidates for solutions that optimize supply chain and operational efficiency.\",\"target_account_rationale\":[\"These companies operate in a highly competitive and complex supply chain environment, requiring advanced tools to manage diverse SKUs and outsourced logistics.\",\"Their revenue and size indicate sufficient operational scale and budget to adopt new supply chain or procurement solutions, especially during growth or scaling phases.\",\"Focusing on brands with multiple SKUs and outsourced manufacturing suggests a need for integrated supply chain visibility and operational automation to reduce costs and improve responsiveness.\",\"The target segment's operational complexity and growth stage make them more likely to seek solutions that streamline procurement, inventory, and fulfillment processes.\",\"Market dynamics in consumer goods, including rapid product launches and multi-channel distribution, create an urgent need for flexible, scalable supply chain management tools.\"],\"firmographics\":{\"industry\":[\"Consumer Packaged Goods\",\"Food & Beverage\",\"Personal Care\",\"Household Products\"],\"employees\":\"50-500\",\"department_size\":null,\"revenue\":\"5M-50M\",\"geography\":null,\"business_model\":[\"Brand Owner\",\"Private Label\",\"OEM\"],\"funding_stage\":null,\"company_type\":[\"Private\"],\"keywords\":[\"multi-SKU management\",\"outsourced manufacturing\",\"supply chain optimization\",\"inventory visibility\",\"product launch agility\"]},\"buying_signals\":[{\"title\":\"Funding or Revenue Growth Announcements\",\"description\":\"Companies announcing revenue milestones or funding rounds often indicate readiness to invest in operational improvements.\",\"type\":\"Company Data\",\"priority\":\"High\",\"detection_method\":\"Enrichment from company funding and revenue data sources\"},{\"title\":\"Job Postings for Supply Chain Roles\",\"description\":\"Increased hiring for supply chain, procurement, or operations roles suggests scaling activities and operational upgrades.\",\"type\":\"Website\",\"priority\":\"Medium\",\"detection_method\":\"Web scraping of job boards and career pages\"},{\"title\":\"New Product Launches or SKU Expansions\",\"description\":\"Press releases or website mentions of new SKUs or product lines indicate operational scaling and potential need for supply chain solutions.\",\"type\":\"Website\",\"priority\":\"Medium\",\"detection_method\":\"Content scraping for product announcements\"},{\"title\":\"Supply Chain or Logistics Technology Adoption\",\"description\":\"Adoption of new ERP, inventory, or logistics software signals a transition phase where new solutions are being evaluated or implemented.\",\"type\":\"Tech Stack\",\"priority\":\"Medium\",\"detection_method\":\"Tech stack enrichment data\"},{\"title\":\"Industry Event Participation\",\"description\":\"Participation in supply chain or consumer goods trade shows and conferences indicates active interest in operational innovation.\",\"type\":\"Other\",\"priority\":\"Low\",\"detection_method\":\"Event participation data from industry sources\"}],\"buying_signals_rationale\":[\"Funding and revenue growth signals reflect companies' capacity and willingness to invest in supply chain improvements during scaling phases.\",\"Job postings and SKU expansion announcements are direct indicators of operational scaling, creating urgency for supply chain solutions.\",\"Adoption of new logistics or inventory management tools demonstrates a transition point where companies seek integrated solutions.\",\"Participation in industry events signals active exploration of innovative operational strategies, increasing purchase likelihood.\",\"These signals collectively identify companies at inflection points where operational efficiency gains are both needed and financially feasible.\"],\"metadata\":{\"primary_context_source\":\"user_input\",\"sources_used\":[\"user_input\",\"company_context\"],\"confidence_assessment\":{\"overall_confidence\":\"high\",\"data_quality\":\"high\",\"inference_level\":\"moderate\",\"recommended_improvements\":[\"Access to recent funding data\",\"More detailed operational metrics\"]},\"processing_notes\":\"Analysis integrated target segment specifics with observable signals indicating operational scaling and readiness to invest.\"}}",
+      "test_case_id": 1
+    }
+  ]
+}

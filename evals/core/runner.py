@@ -69,7 +69,7 @@ class EvaluationRunner:
         self.console.print(f"📊 Sample size: {sample_size}")
         
         # Load and sample test cases
-        test_cases = self.dataset_manager.load_test_cases(prompt_name, sample_size)
+        test_cases = self.dataset_manager.load_test_cases(prompt_name, sample_size, config.dataset_path)
         if not test_cases:
             self.console.print(f"❌ No test cases found for prompt: {prompt_name}", style="red")
             return {"error": f"No test cases found for prompt: {prompt_name}"}
@@ -181,9 +181,22 @@ class EvaluationRunner:
             service_module = __import__(config.service_module, fromlist=[''])
             service_function = getattr(service_module, config.service_function)
             
-            # Import required dependencies
-            from app.services.context_orchestrator_agent import ContextOrchestrator
-            from app.schemas import ProductOverviewRequest
+            # Import required dependencies based on service
+            if config.service_module == "app.services.product_overview_service":
+                from app.services.context_orchestrator_agent import ContextOrchestrator
+                from app.schemas import ProductOverviewRequest
+                request_class = ProductOverviewRequest
+                needs_orchestrator = True
+            elif config.service_module == "app.services.target_account_service":
+                from app.schemas import TargetAccountRequest
+                request_class = TargetAccountRequest
+                needs_orchestrator = False
+            else:
+                # Default fallback - assume it's like product_overview
+                from app.services.context_orchestrator_agent import ContextOrchestrator
+                from app.schemas import ProductOverviewRequest
+                request_class = ProductOverviewRequest
+                needs_orchestrator = True
             
             # Create request object - map CSV fields to ProductOverviewRequest schema
             # Build context from available hypothesis data
@@ -208,17 +221,36 @@ class EvaluationRunner:
             else:
                 combined_context = user_context
             
-            request = ProductOverviewRequest(
-                website_url=test_case.get('input_website_url', ''),
-                user_inputted_context=combined_context,
-                company_context=None  # Could be used for additional context if needed
-            )
+            # Create request object based on service type
+            if request_class.__name__ == "ProductOverviewRequest":
+                request = request_class(
+                    website_url=test_case.get('input_website_url', ''),
+                    user_inputted_context=combined_context,
+                    company_context=None  # Could be used for additional context if needed
+                )
+            elif request_class.__name__ == "TargetAccountRequest":
+                request = request_class(
+                    website_url=test_case.get('input_website_url', ''),
+                    account_profile_name=test_case.get('account_profile_name', ''),
+                    hypothesis=test_case.get('account_hypothesis', ''),
+                    additional_context=combined_context
+                )
+            else:
+                # Fallback to ProductOverviewRequest format
+                request = request_class(
+                    website_url=test_case.get('input_website_url', ''),
+                    user_inputted_context=combined_context,
+                    company_context=None
+                )
             
-            # Create orchestrator
-            orchestrator = ContextOrchestrator()
-            
-            # Call the service function
-            result = await service_function(request, orchestrator)
+            # Call the service function based on signature
+            if needs_orchestrator:
+                # Create orchestrator for services that need it
+                orchestrator = ContextOrchestrator()
+                result = await service_function(request, orchestrator)
+            else:
+                # Call directly for services that don't need orchestrator
+                result = await service_function(request)
             
             # Debug: Let's see what we're getting back
             if verbose:

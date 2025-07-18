@@ -1,12 +1,12 @@
-name: "Product Overview Evaluation"
+name: "Target Account Profile Evaluation"
 service:
-  module: "app.services.product_overview_service"
-  function: "generate_product_overview_service"
+  module: "app.services.target_account_service"
+  function: "generate_target_account_profile"
 schema: "schema.json"
 dataset: "../../datasets/eval_test_inputs.csv"
 judges:
   deterministic: ["D-1", "D-2", "D-3", "D-4", "D-5"]
-  llm: ["content_integrity", "business_insight"]
+  llm: ["account_targeting_quality"]
 models:
   default: "OpenAI/gpt-4.1-nano"
   fallback: "Gemini/models/gemini-1.5-flash"

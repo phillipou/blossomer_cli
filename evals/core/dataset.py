@@ -15,9 +15,15 @@ class DatasetManager:
     def __init__(self):
         self.prompts_dir = Path("evals/prompts")
     
-    def load_test_cases(self, prompt_name: str, sample_size: int = 5) -> List[Dict[str, Any]]:
+    def load_test_cases(self, prompt_name: str, sample_size: int = 5, dataset_path: Optional[str] = None) -> List[Dict[str, Any]]:
         """Load and sample test cases for a prompt."""
-        data_path = self.prompts_dir / prompt_name / "data.csv"
+        if dataset_path:
+            # Use custom dataset path (relative to evals/prompts/{prompt_name}/)
+            base_path = self.prompts_dir / prompt_name
+            data_path = base_path / dataset_path
+        else:
+            # Use default data.csv in prompt directory
+            data_path = self.prompts_dir / prompt_name / "data.csv"
         
         if not data_path.exists():
             return []

@@ -17,6 +17,7 @@ class EvalConfig:
     service_module: str
     service_function: str
     schema_path: Optional[str] = None
+    dataset_path: Optional[str] = None
     deterministic_checks: Optional[List[str]] = None
     llm_judges: Optional[List[str]] = None
     default_model: str = "OpenAI/gpt-4.1-nano"
@@ -40,6 +41,7 @@ class EvalConfig:
                 service_module=config_data.get("service", {}).get("module", ""),
                 service_function=config_data.get("service", {}).get("function", ""),
                 schema_path=config_data.get("schema"),
+                dataset_path=config_data.get("dataset"),
                 deterministic_checks=config_data.get("judges", {}).get("deterministic"),
                 llm_judges=config_data.get("judges", {}).get("llm"),
                 default_model=config_data.get("models", {}).get("default", "OpenAI/gpt-4.1-nano"),

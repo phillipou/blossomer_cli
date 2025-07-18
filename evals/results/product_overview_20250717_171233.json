@@ -1,0 +1,357 @@
+{
+  "prompt_name": "Product Overview Evaluation",
+  "timestamp": "2025-07-17T17:12:33.049356",
+  "evaluation_time": 29.029080867767334,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://hounddog.ai",
+        "context_type": "noise",
+        "account_profile_name": "Artificial Canine Intelligence Labs",
+        "persona_profile_name": "Neural Network Pet Trainer",
+        "persona_hypothesis": "Digital dog handlers who train AI models to fetch data insights and perform algorithmic tricks using virtual tennis balls and electronic treats",
+        "account_hypothesis": "Research facilities where genetically modified AI algorithms bark at data anomalies and chase machine learning rabbits through virtual dog parks",
+        "expected_company_name": "HoundDog"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"company_name\":\"HoundDog.ai\",\"company_url\":\"https://hounddog.ai\",\"description\":\"HoundDog.ai is a proactive privacy scanner designed for AI applications, enabling organizations to detect and prevent s..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "company_name": "HoundDog.ai",
+              "company_url": "https://hounddog.ai",
+              "description": "HoundDog.ai is a proactive privacy scanner designed for AI applications, enabling organizations to detect and prevent sensitive data leaks, shadow AI, and compliance violations early in the development lifecycle. Its platform integrates with codebases, CI/CD pipelines, and IDEs to provide real-time, code-level visibility and control over AI data handling and security.",
+              "business_profile_insights": [
+                "Category: AI Privacy and Security Platform",
+                "Business Model: Subscription-based SaaS targeting AI development teams, offering integrations with development tools and pipelines, with tiered pricing based on code repositories and scan volume",
+                "Existing Customers: Testimonials from security leaders at organizations like Juvare highlight seamless integration with GitLab and high-speed detection capabilities, indicating adoption by enterprise security teams handling sensitive data"
+              ],
+              "capabilities": [
+                "AI Model and SDK Discovery: Detects AI models, SDKs, and agents directly in codebases before deployment",
+                "Sensitive Data Leak Prevention: Identifies and blocks sensitive data in prompts, logs, files, and local storage during development",
+                "Code-level Privacy Enforcement: Applies allowlists and enforces privacy rules during code review and CI workflows",
+                "Data Flow Mapping: Automatically maps data movement and processing in code to identify potential leak points",
+                "Shadow AI Detection: Finds unauthorized or open-source AI tools embedded in code, increasing security visibility"
+              ],
+              "use_case_analysis_insights": [
+                "Process Impact: The platform impacts AI development workflows by integrating privacy and security checks into coding, review, and deployment stages, shifting security left in the SDLC",
+                "Problems Addressed: It solves issues related to unintentional data leaks, shadow AI usage, and compliance violations that occur late or post-deployment, reducing remediation costs and risks",
+                "Current State: Developers and security teams rely on manual reviews, pattern matching, or post-deployment scans, which are reactive and less effective at early detection"
+              ],
+              "positioning_insights": [
+                "Key Market Belief: Current detection methods depend on identity providers or network traffic, which miss embedded SDKs and open-source AI, leaving blind spots in security",
+                "Unique Approach: HoundDog.ai offers early, code-based discovery and prevention of shadow AI and data leaks, providing comprehensive visibility before deployment",
+                "Language Used: The company emphasizes proactive, shift-left security, real-time detection, and automation, framing their solution as essential for privacy-by-design in AI development"
+              ],
+              "objections": [
+                "Implementation Complexity: Concerns about integrating with existing development workflows and CI/CD pipelines",
+                "Cost Justification: Questions about ROI and cost savings compared to manual reviews or reactive tools",
+                "Adoption Resistance: Potential resistance from developers or teams accustomed to traditional security measures",
+                "Coverage Scope: Doubts about detection accuracy across diverse AI models and code environments"
+              ],
+              "target_customer_insights": [
+                "Target Accounts: Enterprises handling sensitive data in AI applications, especially those in healthcare, finance, or government sectors, with large codebases and compliance requirements",
+                "Key Personas: Security and compliance officers, AI/ML engineers, and DevOps leaders focused on data privacy, regulatory adherence, and secure AI deployment"
+              ],
+              "metadata": {
+                "sources_used": [
+                  "website"
+                ],
+                "context_quality": "medium",
+                "assessment_summary": "Analysis based on available website content",
+                "assumptions_made": [
+                  "Assumption: The platform's primary users are AI development teams and security officers based on product features",
+                  "Assumption: The company targets enterprise clients handling sensitive data, inferred from emphasis on privacy, compliance, and security"
+                ],
+                "discovery_gaps": [
+                  "Details on technical architecture and integration requirements",
+                  "Specific customer segments beyond enterprise security teams",
+                  "Pricing tiers and licensing models",
+                  "User onboarding and change management processes"
+                ]
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 10/10 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: AI Privacy and Security Platform",
+                  "Business Model: Subscription-based SaaS targeting AI development teams, offering integrations with development tools and pipelines, with tiered pricing based on code repositories and scan volume",
+                  "Existing Customers: Testimonials from security leaders at organizations like Juvare highlight seamless integration with GitLab and high-speed detection capabilities, indicating adoption by enterprise security teams handling sensitive data"
+                ]
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": [
+                  "Process Impact: The platform impacts AI development workflows by integrating privacy and security checks into coding, review, and deployment stages, shifting security left in the SDLC",
+                  "Problems Addressed: It solves issues related to unintentional data leaks, shadow AI usage, and compliance violations that occur late or post-deployment, reducing remediation costs and risks",
+                  "Current State: Developers and security teams rely on manual reviews, pattern matching, or post-deployment scans, which are reactive and less effective at early detection"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Current detection methods depend on identity providers or network traffic, which miss embedded SDKs and open-source AI, leaving blind spots in security",
+                  "Unique Approach: HoundDog.ai offers early, code-based discovery and prevention of shadow AI and data leaks, providing comprehensive visibility before deployment",
+                  "Language Used: The company emphasizes proactive, shift-left security, real-time detection, and automation, framing their solution as essential for privacy-by-design in AI development"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Enterprises handling sensitive data in AI applications, especially those in healthcare, finance, or government sectors, with large codebases and compliance requirements",
+                  "Key Personas: Security and compliance officers, AI/ML engineers, and DevOps leaders focused on data privacy, regulatory adherence, and secure AI deployment"
+                ]
+              },
+              {
+                "field": "capabilities",
+                "value": [
+                  "AI Model and SDK Discovery: Detects AI models, SDKs, and agents directly in codebases before deployment",
+                  "Sensitive Data Leak Prevention: Identifies and blocks sensitive data in prompts, logs, files, and local storage during development",
+                  "Code-level Privacy Enforcement: Applies allowlists and enforces privacy rules during code review and CI workflows",
+                  "Data Flow Mapping: Automatically maps data movement and processing in code to identify potential leak points",
+                  "Shadow AI Detection: Finds unauthorized or open-source AI tools embedded in code, increasing security visibility"
+                ]
+              },
+              {
+                "field": "objections",
+                "value": [
+                  "Implementation Complexity: Concerns about integrating with existing development workflows and CI/CD pipelines",
+                  "Cost Justification: Questions about ROI and cost savings compared to manual reviews or reactive tools",
+                  "Adoption Resistance: Potential resistance from developers or teams accustomed to traditional security measures",
+                  "Coverage Scope: Doubts about detection accuracy across diverse AI models and code environments"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "capabilities",
+                "value": "5 items (expected 3-5)"
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "objections",
+                "value": "4 items (expected 3-5)"
+              },
+              {
+                "field": "target_customer_insights",
+                "value": "2 items (expected 2-3)"
+              }
+            ],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://hounddog.ai"
+              },
+              {
+                "field": "company_url",
+                "value": "https://hounddog.ai"
+              }
+            ],
+            "pass": true,
+            "rationale": "Input URL is correctly preserved in the output company_url field."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "evidence_support": {
+            "check_name": "evidence_support",
+            "description": "Claims properly supported by evidence or marked as assumptions",
+            "inputs_evaluated": [
+              {
+                "field": "analysis_claims",
+                "value": "Most claims are supported by the detailed description, with explicit [ASSUMPTION] tags indicating inference, such as assumptions about primary users and target clients."
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis clearly distinguishes between evidence-backed claims and assumptions, with explicit tags, demonstrating thorough support and transparency."
+          },
+          "context_handling": {
+            "check_name": "context_handling",
+            "description": "Appropriate incorporation/ignoring of user context based on type",
+            "inputs_evaluated": [
+              {
+                "field": "context_type",
+                "value": "noise"
+              },
+              {
+                "field": "user_context",
+                "value": "noise"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "Given the context is noise, the analysis appropriately disregards it and focuses solely on the core content, maintaining clarity and relevance."
+          },
+          "content_distinctness": {
+            "check_name": "content_distinctness",
+            "description": "Sections provide unique value without excessive duplication",
+            "inputs_evaluated": [
+              {
+                "field": "section_overlap",
+                "value": "The analysis segments (company description, insights, objections, target customer, metadata) each contribute distinct insights, with minimal overlap."
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The sections offer varied and complementary information, avoiding redundancy and enhancing overall comprehensiveness."
+          },
+          "industry_sophistication": {
+            "check_name": "industry_sophistication",
+            "description": "Nuanced understanding of industry dynamics and competitive landscape",
+            "inputs_evaluated": [
+              {
+                "field": "full_analysis",
+                "value": "Complete analysis structure"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis demonstrates a deep understanding of the AI privacy and security landscape, including specific challenges like shadow AI, data leaks, and compliance issues. It recognizes existing detection gaps and emphasizes shift-left security, indicating industry insight beyond generic security solutions."
+          },
+          "strategic_depth": {
+            "check_name": "strategic_depth",
+            "description": "Non-obvious strategic implications and opportunities",
+            "inputs_evaluated": [
+              {
+                "field": "strategic_insights",
+                "value": "Analysis sections with strategic implications"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis identifies strategic opportunities in early detection and prevention, highlighting how HoundDog.ai can differentiate through proactive, code-based discovery. It also considers customer objections and adoption barriers, revealing a sophisticated grasp of market positioning and potential growth levers."
+          },
+          "authentic_voice_capture": {
+            "check_name": "authentic_voice_capture",
+            "description": "Company's unique positioning vs generic business-speak",
+            "inputs_evaluated": [
+              {
+                "field": "positioning_language",
+                "value": "Company positioning and voice analysis"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The language reflects a clear understanding of HoundDog.ai’s unique approach—early, proactive security integrated into development workflows—rather than generic SaaS or security language. It captures the company's emphasis on shift-left security and comprehensive visibility, aligning with their authentic positioning."
+          },
+          "actionable_specificity": {
+            "check_name": "actionable_specificity",
+            "description": "Insights specific to company that lead to valuable discovery questions",
+            "inputs_evaluated": [
+              {
+                "field": "discovery_value",
+                "value": "Analysis of insight specificity and actionability"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis offers specific insights into customer pain points, objections, and detection gaps, which can directly inform discovery questions around integration complexity, ROI, and detection scope. These are tailored to HoundDog.ai’s context, making them highly actionable."
+          }
+        },
+        "total_calls": 2
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"company_name\":\"HoundDog.ai\",\"company_url\":\"https://hounddog.ai\",\"description\":\"HoundDog.ai is a proactive privacy scanner designed for AI applications, enabling organizations to detect and prevent sensitive data leaks, shadow AI, and compliance violations early in the development lifecycle. Its platform integrates with codebases, CI/CD pipelines, and IDEs to provide real-time, code-level visibility and control over AI data handling and security.\",\"business_profile_insights\":[\"Category: AI Privacy and Security Platform\",\"Business Model: Subscription-based SaaS targeting AI development teams, offering integrations with development tools and pipelines, with tiered pricing based on code repositories and scan volume\",\"Existing Customers: Testimonials from security leaders at organizations like Juvare highlight seamless integration with GitLab and high-speed detection capabilities, indicating adoption by enterprise security teams handling sensitive data\"],\"capabilities\":[\"AI Model and SDK Discovery: Detects AI models, SDKs, and agents directly in codebases before deployment\",\"Sensitive Data Leak Prevention: Identifies and blocks sensitive data in prompts, logs, files, and local storage during development\",\"Code-level Privacy Enforcement: Applies allowlists and enforces privacy rules during code review and CI workflows\",\"Data Flow Mapping: Automatically maps data movement and processing in code to identify potential leak points\",\"Shadow AI Detection: Finds unauthorized or open-source AI tools embedded in code, increasing security visibility\"],\"use_case_analysis_insights\":[\"Process Impact: The platform impacts AI development workflows by integrating privacy and security checks into coding, review, and deployment stages, shifting security left in the SDLC\",\"Problems Addressed: It solves issues related to unintentional data leaks, shadow AI usage, and compliance violations that occur late or post-deployment, reducing remediation costs and risks\",\"Current State: Developers and security teams rely on manual reviews, pattern matching, or post-deployment scans, which are reactive and less effective at early detection\"],\"positioning_insights\":[\"Key Market Belief: Current detection methods depend on identity providers or network traffic, which miss embedded SDKs and open-source AI, leaving blind spots in security\",\"Unique Approach: HoundDog.ai offers early, code-based discovery and prevention of shadow AI and data leaks, providing comprehensive visibility before deployment\",\"Language Used: The company emphasizes proactive, shift-left security, real-time detection, and automation, framing their solution as essential for privacy-by-design in AI development\"],\"objections\":[\"Implementation Complexity: Concerns about integrating with existing development workflows and CI/CD pipelines\",\"Cost Justification: Questions about ROI and cost savings compared to manual reviews or reactive tools\",\"Adoption Resistance: Potential resistance from developers or teams accustomed to traditional security measures\",\"Coverage Scope: Doubts about detection accuracy across diverse AI models and code environments\"],\"target_customer_insights\":[\"Target Accounts: Enterprises handling sensitive data in AI applications, especially those in healthcare, finance, or government sectors, with large codebases and compliance requirements\",\"Key Personas: Security and compliance officers, AI/ML engineers, and DevOps leaders focused on data privacy, regulatory adherence, and secure AI deployment\"],\"metadata\":{\"sources_used\":[\"website\"],\"context_quality\":\"medium\",\"assessment_summary\":\"Analysis based on available website content\",\"assumptions_made\":[\"Assumption: The platform's primary users are AI development teams and security officers based on product features\",\"Assumption: The company targets enterprise clients handling sensitive data, inferred from emphasis on privacy, compliance, and security\"],\"discovery_gaps\":[\"Details on technical architecture and integration requirements\",\"Specific customer segments beyond enterprise security teams\",\"Pricing tiers and licensing models\",\"User onboarding and change management processes\"]}}",
+      "test_case_id": 1
+    }
+  ]
+}

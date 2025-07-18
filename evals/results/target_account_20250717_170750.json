@@ -1,0 +1,225 @@
+{
+  "prompt_name": "Target Account Profile Evaluation",
+  "timestamp": "2025-07-17T17:07:50.677752",
+  "evaluation_time": 12.300871849060059,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://flextract.com",
+        "context_type": "none",
+        "account_profile_name": "",
+        "persona_profile_name": "",
+        "persona_hypothesis": "",
+        "account_hypothesis": "",
+        "expected_company_name": "Flextract"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"target_account_name\":\"AI Developer Tools Companies\",\"target_account_description\":\"Mid-sized AI-focused software companies developing or deploying AI developer tools and platforms, requiring scalable..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "target_account_name": "AI Developer Tools Companies",
+              "target_account_description": "Mid-sized AI-focused software companies developing or deploying AI developer tools and platforms, requiring scalable infrastructure and advanced deployment solutions to support rapid growth and complex operations.",
+              "target_account_rationale": [
+                "These companies operate in a highly technical vertical with complex operational needs, making them prime candidates for solutions that enhance scalability and deployment efficiency.",
+                "Firms in this segment typically have 50-500 employees, indicating sufficient resource capacity and decision-making authority for adopting new SaaS solutions.",
+                "Rapid growth patterns and recent funding rounds (e.g., Series B or higher) suggest they are in inflection points where upgrading operational tools becomes critical.",
+                "Their focus on AI development and deployment often involves multi-location or 24/7 operations, creating implicit needs for robust infrastructure management.",
+                "Market dynamics and technological adoption in AI development drive these companies to seek advanced, scalable SaaS solutions to maintain competitive advantage."
+              ],
+              "firmographics": {
+                "industry": [
+                  "Artificial Intelligence Software",
+                  "Developer Tools"
+                ],
+                "employees": "50-500",
+                "department_size": null,
+                "revenue": null,
+                "geography": null,
+                "business_model": [
+                  "SaaS",
+                  "Platform-as-a-Service"
+                ],
+                "funding_stage": [
+                  "Series B",
+                  "Series C",
+                  "Series D"
+                ],
+                "company_type": [
+                  "Private"
+                ],
+                "keywords": [
+                  "AI development",
+                  "scalable infrastructure",
+                  "deployment automation",
+                  "multi-location",
+                  "rapid scaling"
+                ]
+              },
+              "buying_signals": [
+                {
+                  "title": "Funding Announcements",
+                  "description": "Recent funding rounds, especially Series B or higher, indicate growth and potential budget availability for operational upgrades.",
+                  "type": "Company Data",
+                  "priority": "High",
+                  "detection_method": "Crunchbase API, PitchBook, company press releases"
+                },
+                {
+                  "title": "Technology Migration",
+                  "description": "Companies migrating from basic cloud services (e.g., Heroku) to more robust cloud providers (e.g., AWS, GCP) signal operational scaling needs.",
+                  "type": "Company Data",
+                  "priority": "Medium",
+                  "detection_method": "LinkedIn job postings, tech stack scraping tools"
+                },
+                {
+                  "title": "Job Postings for DevOps/Cloud Engineers",
+                  "description": "Hiring for DevOps, cloud infrastructure, or deployment specialists suggests active scaling and operational complexity.",
+                  "type": "Website",
+                  "priority": "Medium",
+                  "detection_method": "Job board scraping, company career pages"
+                },
+                {
+                  "title": "Operational Expansion News",
+                  "description": "Press releases or news about opening new offices, expanding teams, or launching new products indicate growth inflection points.",
+                  "type": "News",
+                  "priority": "Medium",
+                  "detection_method": "News aggregators, Google News alerts"
+                },
+                {
+                  "title": "Thought Leadership Content",
+                  "description": "Publishing articles or speaking at industry conferences about scaling AI infrastructure signals readiness for advanced operational solutions.",
+                  "type": "Social Media",
+                  "priority": "Low",
+                  "detection_method": "LinkedIn posts, conference speaker lists"
+                }
+              ],
+              "buying_signals_rationale": [
+                "Funding announcements and news about operational expansion are strong indicators of companies entering growth phases that require new SaaS solutions.",
+                "Migration to cloud providers and hiring patterns reveal companies actively scaling their infrastructure and deployment capabilities.",
+                "These signals reflect inflection points where operational pain points become urgent, prompting technology upgrades.",
+                "Detection strategies focus on observable, publicly available data that signals imminent or ongoing growth and complexity.",
+                "Prioritizing high-confidence signals like funding rounds ensures outreach aligns with companies most likely to purchase soon."
+              ],
+              "metadata": {
+                "primary_context_source": "user_input",
+                "sources_used": [
+                  "user_input",
+                  "company_context",
+                  "website_content"
+                ],
+                "confidence_assessment": {
+                  "overall_confidence": "high",
+                  "data_quality": "high",
+                  "inference_level": "significant",
+                  "recommended_improvements": [
+                    "Additional recent funding data",
+                    "Specific technology stack details"
+                  ]
+                },
+                "processing_notes": "Analysis integrated multiple data points to identify growth inflection signals relevant to AI developer tools companies."
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 7/7 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://flextract.com"
+              },
+              {
+                "field": "company_url",
+                "value": "Not in schema"
+              }
+            ],
+            "pass": true,
+            "rationale": "Schema does not include company_url field, URL preservation check not applicable."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {},
+      "overall_pass": false,
+      "errors": [
+        "Invalid LLM judge(s) in config: ['account_targeting_quality']. Available judges are: ['content_integrity', 'business_insight']. Please update your config.yaml to use the correct judge names."
+      ],
+      "generated_output": "{\"target_account_name\":\"AI Developer Tools Companies\",\"target_account_description\":\"Mid-sized AI-focused software companies developing or deploying AI developer tools and platforms, requiring scalable infrastructure and advanced deployment solutions to support rapid growth and complex operations.\",\"target_account_rationale\":[\"These companies operate in a highly technical vertical with complex operational needs, making them prime candidates for solutions that enhance scalability and deployment efficiency.\",\"Firms in this segment typically have 50-500 employees, indicating sufficient resource capacity and decision-making authority for adopting new SaaS solutions.\",\"Rapid growth patterns and recent funding rounds (e.g., Series B or higher) suggest they are in inflection points where upgrading operational tools becomes critical.\",\"Their focus on AI development and deployment often involves multi-location or 24/7 operations, creating implicit needs for robust infrastructure management.\",\"Market dynamics and technological adoption in AI development drive these companies to seek advanced, scalable SaaS solutions to maintain competitive advantage.\"],\"firmographics\":{\"industry\":[\"Artificial Intelligence Software\",\"Developer Tools\"],\"employees\":\"50-500\",\"department_size\":null,\"revenue\":null,\"geography\":null,\"business_model\":[\"SaaS\",\"Platform-as-a-Service\"],\"funding_stage\":[\"Series B\",\"Series C\",\"Series D\"],\"company_type\":[\"Private\"],\"keywords\":[\"AI development\",\"scalable infrastructure\",\"deployment automation\",\"multi-location\",\"rapid scaling\"]},\"buying_signals\":[{\"title\":\"Funding Announcements\",\"description\":\"Recent funding rounds, especially Series B or higher, indicate growth and potential budget availability for operational upgrades.\",\"type\":\"Company Data\",\"priority\":\"High\",\"detection_method\":\"Crunchbase API, PitchBook, company press releases\"},{\"title\":\"Technology Migration\",\"description\":\"Companies migrating from basic cloud services (e.g., Heroku) to more robust cloud providers (e.g., AWS, GCP) signal operational scaling needs.\",\"type\":\"Company Data\",\"priority\":\"Medium\",\"detection_method\":\"LinkedIn job postings, tech stack scraping tools\"},{\"title\":\"Job Postings for DevOps/Cloud Engineers\",\"description\":\"Hiring for DevOps, cloud infrastructure, or deployment specialists suggests active scaling and operational complexity.\",\"type\":\"Website\",\"priority\":\"Medium\",\"detection_method\":\"Job board scraping, company career pages\"},{\"title\":\"Operational Expansion News\",\"description\":\"Press releases or news about opening new offices, expanding teams, or launching new products indicate growth inflection points.\",\"type\":\"News\",\"priority\":\"Medium\",\"detection_method\":\"News aggregators, Google News alerts\"},{\"title\":\"Thought Leadership Content\",\"description\":\"Publishing articles or speaking at industry conferences about scaling AI infrastructure signals readiness for advanced operational solutions.\",\"type\":\"Social Media\",\"priority\":\"Low\",\"detection_method\":\"LinkedIn posts, conference speaker lists\"}],\"buying_signals_rationale\":[\"Funding announcements and news about operational expansion are strong indicators of companies entering growth phases that require new SaaS solutions.\",\"Migration to cloud providers and hiring patterns reveal companies actively scaling their infrastructure and deployment capabilities.\",\"These signals reflect inflection points where operational pain points become urgent, prompting technology upgrades.\",\"Detection strategies focus on observable, publicly available data that signals imminent or ongoing growth and complexity.\",\"Prioritizing high-confidence signals like funding rounds ensures outreach aligns with companies most likely to purchase soon.\"],\"metadata\":{\"primary_context_source\":\"user_input\",\"sources_used\":[\"user_input\",\"company_context\",\"website_content\"],\"confidence_assessment\":{\"overall_confidence\":\"high\",\"data_quality\":\"high\",\"inference_level\":\"significant\",\"recommended_improvements\":[\"Additional recent funding data\",\"Specific technology stack details\"]},\"processing_notes\":\"Analysis integrated multiple data points to identify growth inflection signals relevant to AI developer tools companies.\"}}",
+      "test_case_id": 1
+    }
+  ]
+}

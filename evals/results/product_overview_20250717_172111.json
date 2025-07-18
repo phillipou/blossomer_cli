@@ -1,0 +1,358 @@
+{
+  "prompt_name": "Product Overview Evaluation",
+  "timestamp": "2025-07-17T17:21:11.600455",
+  "evaluation_time": 27.92103409767151,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://hounddog.ai",
+        "context_type": "valid",
+        "account_profile_name": "Enterprise tech",
+        "persona_profile_name": "Heads of secuity",
+        "persona_hypothesis": "CISOs or Heads of Engineering",
+        "account_hypothesis": "Large enterprises with PII data concerns, where security and compliance are top priorities",
+        "expected_company_name": "HoundDog"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"company_name\":\"HoundDog.ai\",\"company_url\":\"https://hounddog.ai\",\"description\":\"HoundDog.ai is a proactive privacy scanner designed for AI applications, enabling organizations to detect and prevent s..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "company_name": "HoundDog.ai",
+              "company_url": "https://hounddog.ai",
+              "description": "HoundDog.ai is a proactive privacy scanner designed for AI applications, enabling organizations to detect and prevent sensitive data leaks, shadow AI, and compliance violations throughout the development lifecycle. Its platform integrates with codebases, CI/CD pipelines, and IDEs to enforce privacy and security best practices early in the process.",
+              "business_profile_insights": [
+                "Category: AI-focused Privacy and Data Security Platform",
+                "Business Model: Subscription-based SaaS targeting enterprise security teams, offering integrations with development tools and pipelines, with tiered pricing based on code repositories and scan volume",
+                "Existing Customers: Referenced by security leaders like Juvare, with testimonials emphasizing speed, seamless integration, and peace of mind in handling sensitive data"
+              ],
+              "capabilities": [
+                "AI Model and SDK Discovery: Detects AI models, SDKs, and agents directly in codebases before deployment",
+                "Sensitive Data Leak Prevention: Identifies and blocks sensitive data in logs, files, and storage during development",
+                "Prompt Governance & Leak Prevention: Enforces allowlists and traces data flow to prevent leaks at the source",
+                "Data Mapping & Privacy Assessments: Automatically maps data flows, generates audit reports, and provides real-time visibility into data processing activities",
+                "CI/CD and IDE Integration: Integrates with GitHub, GitLab, Bitbucket, VS Code, IntelliJ, and Eclipse for continuous monitoring and early detection"
+              ],
+              "use_case_analysis_insights": [
+                "Process Impact: Alters the software development lifecycle by embedding privacy and security checks early in coding, review, and deployment stages",
+                "Problems Addressed: Solves issues of unintentional sensitive data leaks, shadow AI usage, and compliance gaps caused by reactive, post-deployment security measures",
+                "Current State: Developers and security teams rely on manual reviews, pattern matching, or post-deployment scans, which are often slow and incomplete"
+              ],
+              "positioning_insights": [
+                "Key Market Belief: Existing solutions focus on identity or network traffic, missing embedded AI SDKs and shadow AI, leaving blind spots in security",
+                "Unique Approach: Detects AI models, SDKs, and sensitive data directly in code before deployment, providing comprehensive visibility and shift-left security",
+                "Language Used: Emphasizes proactive, real-time detection, 'shift-left' privacy, and 'early prevention' metaphors, framing their platform as essential for privacy-by-design"
+              ],
+              "objections": [
+                "Cost Concerns: Potentially high subscription costs for large codebases or multiple repositories",
+                "Integration Complexity: Challenges integrating with existing CI/CD pipelines or IDEs in complex enterprise environments",
+                "Change Management: Resistance from development teams to adopt new security checks early in the development process",
+                "False Positives: Worries about over-blocking or false alarms impacting developer productivity"
+              ],
+              "target_customer_insights": [
+                "Target Accounts: Large enterprises in technology, finance, healthcare, and other regulated industries handling PII, PHI, or sensitive data, with a focus on security and compliance teams",
+                "Key Personas: CISOs, Heads of Engineering, Security Architects—prioritizing data protection, regulatory compliance, and reducing risk of leaks and shadow AI usage"
+              ],
+              "metadata": {
+                "sources_used": [
+                  "website"
+                ],
+                "context_quality": "high",
+                "assessment_summary": "Analysis based on available website content emphasizing privacy, security, and AI governance features",
+                "assumptions_made": [
+                  "Assumption: The platform targets enterprise security teams given the focus on large codebases and compliance",
+                  "Assumption: Pricing is subscription-based, typical for SaaS security tools",
+                  "Assumption: The primary use case is early detection and prevention of data leaks and shadow AI in development"
+                ],
+                "discovery_gaps": [
+                  "Details on technical architecture and deployment requirements",
+                  "Specific integration capabilities with existing enterprise security tools",
+                  "Pricing tiers and licensing models",
+                  "Customer onboarding and support processes"
+                ]
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "company_name",
+                  "company_url",
+                  "description",
+                  "business_profile_insights",
+                  "capabilities",
+                  "use_case_analysis_insights",
+                  "positioning_insights",
+                  "objections",
+                  "target_customer_insights",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 10/10 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": [
+                  "Category: AI-focused Privacy and Data Security Platform",
+                  "Business Model: Subscription-based SaaS targeting enterprise security teams, offering integrations with development tools and pipelines, with tiered pricing based on code repositories and scan volume",
+                  "Existing Customers: Referenced by security leaders like Juvare, with testimonials emphasizing speed, seamless integration, and peace of mind in handling sensitive data"
+                ]
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": [
+                  "Process Impact: Alters the software development lifecycle by embedding privacy and security checks early in coding, review, and deployment stages",
+                  "Problems Addressed: Solves issues of unintentional sensitive data leaks, shadow AI usage, and compliance gaps caused by reactive, post-deployment security measures",
+                  "Current State: Developers and security teams rely on manual reviews, pattern matching, or post-deployment scans, which are often slow and incomplete"
+                ]
+              },
+              {
+                "field": "positioning_insights",
+                "value": [
+                  "Key Market Belief: Existing solutions focus on identity or network traffic, missing embedded AI SDKs and shadow AI, leaving blind spots in security",
+                  "Unique Approach: Detects AI models, SDKs, and sensitive data directly in code before deployment, providing comprehensive visibility and shift-left security",
+                  "Language Used: Emphasizes proactive, real-time detection, 'shift-left' privacy, and 'early prevention' metaphors, framing their platform as essential for privacy-by-design"
+                ]
+              },
+              {
+                "field": "target_customer_insights",
+                "value": [
+                  "Target Accounts: Large enterprises in technology, finance, healthcare, and other regulated industries handling PII, PHI, or sensitive data, with a focus on security and compliance teams",
+                  "Key Personas: CISOs, Heads of Engineering, Security Architects—prioritizing data protection, regulatory compliance, and reducing risk of leaks and shadow AI usage"
+                ]
+              },
+              {
+                "field": "capabilities",
+                "value": [
+                  "AI Model and SDK Discovery: Detects AI models, SDKs, and agents directly in codebases before deployment",
+                  "Sensitive Data Leak Prevention: Identifies and blocks sensitive data in logs, files, and storage during development",
+                  "Prompt Governance & Leak Prevention: Enforces allowlists and traces data flow to prevent leaks at the source",
+                  "Data Mapping & Privacy Assessments: Automatically maps data flows, generates audit reports, and provides real-time visibility into data processing activities",
+                  "CI/CD and IDE Integration: Integrates with GitHub, GitLab, Bitbucket, VS Code, IntelliJ, and Eclipse for continuous monitoring and early detection"
+                ]
+              },
+              {
+                "field": "objections",
+                "value": [
+                  "Cost Concerns: Potentially high subscription costs for large codebases or multiple repositories",
+                  "Integration Complexity: Challenges integrating with existing CI/CD pipelines or IDEs in complex enterprise environments",
+                  "Change Management: Resistance from development teams to adopt new security checks early in the development process",
+                  "False Positives: Worries about over-blocking or false alarms impacting developer productivity"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [
+              {
+                "field": "business_profile_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "capabilities",
+                "value": "5 items (expected 3-5)"
+              },
+              {
+                "field": "use_case_analysis_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "positioning_insights",
+                "value": "3 items (expected 3-5)"
+              },
+              {
+                "field": "objections",
+                "value": "4 items (expected 3-5)"
+              },
+              {
+                "field": "target_customer_insights",
+                "value": "2 items (expected 2-3)"
+              }
+            ],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://hounddog.ai"
+              },
+              {
+                "field": "company_url",
+                "value": "https://hounddog.ai"
+              }
+            ],
+            "pass": true,
+            "rationale": "Input URL is correctly preserved in the output company_url field."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "evidence_support": {
+            "check_name": "evidence_support",
+            "description": "Claims properly supported by evidence or marked as assumptions",
+            "inputs_evaluated": [
+              {
+                "field": "analysis_claims",
+                "value": "The analysis cites the website as a source, and explicitly marks several assumptions such as target audience, pricing model, and primary use case."
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis clearly distinguishes between evidence from the website and assumptions, ensuring claims are supported or appropriately tagged, demonstrating high traceability."
+          },
+          "context_handling": {
+            "check_name": "context_handling",
+            "description": "Appropriate incorporation/ignoring of user context based on type",
+            "inputs_evaluated": [
+              {
+                "field": "context_type",
+                "value": "valid"
+              },
+              {
+                "field": "user_context",
+                "value": "Provided context details are fully integrated into the analysis."
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis effectively utilizes the valid user context, incorporating detailed insights and emphasizing the source quality, which enhances the overall evaluation."
+          },
+          "content_distinctness": {
+            "check_name": "content_distinctness",
+            "description": "Sections provide unique value without excessive duplication",
+            "inputs_evaluated": [
+              {
+                "field": "section_overlap",
+                "value": "Different sections cover distinct aspects: company overview, capabilities, use cases, positioning, objections, target insights, and metadata, with minimal overlap."
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The sections each contribute unique insights, avoiding redundancy and ensuring comprehensive coverage of the analysis without unnecessary repetition."
+          },
+          "industry_sophistication": {
+            "check_name": "industry_sophistication",
+            "description": "Nuanced understanding of industry dynamics and competitive landscape",
+            "inputs_evaluated": [
+              {
+                "field": "full_analysis",
+                "value": "Complete analysis structure"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis demonstrates a deep understanding of the AI privacy/security landscape, including the shift-left approach, integration challenges, and the specific blind spots in existing solutions like shadow AI detection. It reflects awareness of enterprise security priorities and the nuances of AI-specific security gaps."
+          },
+          "strategic_depth": {
+            "check_name": "strategic_depth",
+            "description": "Non-obvious strategic implications and opportunities",
+            "inputs_evaluated": [
+              {
+                "field": "strategic_insights",
+                "value": "Analysis sections with strategic implications"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis identifies strategic opportunities in early detection, shift-left security, and comprehensive visibility, as well as addressing common enterprise pain points like false positives and integration hurdles. It reveals a sophisticated understanding of how to position the product for maximum impact and differentiation."
+          },
+          "authentic_voice_capture": {
+            "check_name": "authentic_voice_capture",
+            "description": "Company's unique positioning vs generic business-speak",
+            "inputs_evaluated": [
+              {
+                "field": "positioning_language",
+                "value": "Company positioning and voice analysis"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The language emphasizes proactive, real-time detection, shift-left security, and privacy-by-design, aligning closely with the company's core messaging and market positioning. It avoids generic buzzwords, capturing the company's authentic approach to AI security and privacy."
+          },
+          "actionable_specificity": {
+            "check_name": "actionable_specificity",
+            "description": "Insights specific to company that lead to valuable discovery questions",
+            "inputs_evaluated": [
+              {
+                "field": "discovery_value",
+                "value": "Analysis of insight specificity and actionability"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The analysis offers specific insights into integration challenges, cost concerns, false positives, and change management, which can directly inform discovery questions. It demonstrates a clear understanding of the company's pain points and strategic positioning, enabling targeted follow-up."
+          }
+        },
+        "total_calls": 2
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"company_name\":\"HoundDog.ai\",\"company_url\":\"https://hounddog.ai\",\"description\":\"HoundDog.ai is a proactive privacy scanner designed for AI applications, enabling organizations to detect and prevent sensitive data leaks, shadow AI, and compliance violations throughout the development lifecycle. Its platform integrates with codebases, CI/CD pipelines, and IDEs to enforce privacy and security best practices early in the process.\",\"business_profile_insights\":[\"Category: AI-focused Privacy and Data Security Platform\",\"Business Model: Subscription-based SaaS targeting enterprise security teams, offering integrations with development tools and pipelines, with tiered pricing based on code repositories and scan volume\",\"Existing Customers: Referenced by security leaders like Juvare, with testimonials emphasizing speed, seamless integration, and peace of mind in handling sensitive data\"],\"capabilities\":[\"AI Model and SDK Discovery: Detects AI models, SDKs, and agents directly in codebases before deployment\",\"Sensitive Data Leak Prevention: Identifies and blocks sensitive data in logs, files, and storage during development\",\"Prompt Governance & Leak Prevention: Enforces allowlists and traces data flow to prevent leaks at the source\",\"Data Mapping & Privacy Assessments: Automatically maps data flows, generates audit reports, and provides real-time visibility into data processing activities\",\"CI/CD and IDE Integration: Integrates with GitHub, GitLab, Bitbucket, VS Code, IntelliJ, and Eclipse for continuous monitoring and early detection\"],\"use_case_analysis_insights\":[\"Process Impact: Alters the software development lifecycle by embedding privacy and security checks early in coding, review, and deployment stages\",\"Problems Addressed: Solves issues of unintentional sensitive data leaks, shadow AI usage, and compliance gaps caused by reactive, post-deployment security measures\",\"Current State: Developers and security teams rely on manual reviews, pattern matching, or post-deployment scans, which are often slow and incomplete\"],\"positioning_insights\":[\"Key Market Belief: Existing solutions focus on identity or network traffic, missing embedded AI SDKs and shadow AI, leaving blind spots in security\",\"Unique Approach: Detects AI models, SDKs, and sensitive data directly in code before deployment, providing comprehensive visibility and shift-left security\",\"Language Used: Emphasizes proactive, real-time detection, 'shift-left' privacy, and 'early prevention' metaphors, framing their platform as essential for privacy-by-design\"],\"objections\":[\"Cost Concerns: Potentially high subscription costs for large codebases or multiple repositories\",\"Integration Complexity: Challenges integrating with existing CI/CD pipelines or IDEs in complex enterprise environments\",\"Change Management: Resistance from development teams to adopt new security checks early in the development process\",\"False Positives: Worries about over-blocking or false alarms impacting developer productivity\"],\"target_customer_insights\":[\"Target Accounts: Large enterprises in technology, finance, healthcare, and other regulated industries handling PII, PHI, or sensitive data, with a focus on security and compliance teams\",\"Key Personas: CISOs, Heads of Engineering, Security Architects—prioritizing data protection, regulatory compliance, and reducing risk of leaks and shadow AI usage\"],\"metadata\":{\"sources_used\":[\"website\"],\"context_quality\":\"high\",\"assessment_summary\":\"Analysis based on available website content emphasizing privacy, security, and AI governance features\",\"assumptions_made\":[\"Assumption: The platform targets enterprise security teams given the focus on large codebases and compliance\",\"Assumption: Pricing is subscription-based, typical for SaaS security tools\",\"Assumption: The primary use case is early detection and prevention of data leaks and shadow AI in development\"],\"discovery_gaps\":[\"Details on technical architecture and deployment requirements\",\"Specific integration capabilities with existing enterprise security tools\",\"Pricing tiers and licensing models\",\"Customer onboarding and support processes\"]}}",
+      "test_case_id": 1
+    }
+  ]
+}

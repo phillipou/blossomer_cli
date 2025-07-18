@@ -308,11 +308,14 @@ class DeterministicJudge:
     def _check_url_preservation(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-5: URL preservation check."""
         input_url = test_case.get("input_website_url", "")
+        
+        # Check for company_url field (product_overview) or skip if not applicable
         output_url = data.get("company_url", "")
+        has_url_field = "company_url" in data
         
         inputs_evaluated = [
             {"field": "input_website_url", "value": input_url or "Not provided"},
-            {"field": "company_url", "value": output_url or "Not provided"}
+            {"field": "company_url", "value": output_url or "Not in schema"}
         ]
         
         if not input_url:
@@ -322,6 +325,16 @@ class DeterministicJudge:
                 "inputs_evaluated": inputs_evaluated,
                 "pass": True,
                 "rationale": "No input URL provided in test case, so URL preservation check is skipped."
+            }
+        
+        # Skip this check if the schema doesn't include a company_url field
+        if not has_url_field:
+            return {
+                "check_name": "url_preservation",
+                "description": "Validates that the input website URL is preserved in the output",
+                "inputs_evaluated": inputs_evaluated,
+                "pass": True,
+                "rationale": "Schema does not include company_url field, URL preservation check not applicable."
             }
         
         if not output_url:

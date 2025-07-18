@@ -145,6 +145,19 @@ class ResultsManager:
         # Display description
         self.console.print(f"{indent}       {description}", style="dim")
         
+        # Always show inputs evaluated first (important for understanding what's being evaluated)
+        inputs_evaluated = check_result.get('inputs_evaluated', [])
+        if inputs_evaluated:
+            self.console.print(f"{indent}       📋 Inputs evaluated:", style="dim")
+            for input_item in inputs_evaluated:
+                field = input_item.get('field', 'unknown')
+                value = input_item.get('value', 'unknown')
+                # Make values more readable - truncate very long values but show meaningful content
+                value_str = str(value)
+                if len(value_str) > 150:
+                    value_str = value_str[:150] + '...'
+                self.console.print(f"{indent}         • {field}: {value_str}", style="dim")
+        
         # Display rating if available (for LLM judges)
         if rating:
             rating_color = {

@@ -73,7 +73,8 @@ class LLMJudge:
         # Define available judges
         judge_functions = {
             "content_integrity": self._judge_content_integrity,
-            "business_insight": self._judge_business_insight
+            "business_insight": self._judge_business_insight,
+            "account_targeting_quality": self._judge_account_targeting_quality
         }
         
         # Get enabled judges from config
@@ -100,7 +101,7 @@ class LLMJudge:
                     results["total_calls"] += 1
                     
                     # Handle new format where each judge returns multiple individual checks
-                    if isinstance(judge_result, dict) and any(key in judge_result for key in ["evidence_support", "context_handling", "content_distinctness", "industry_sophistication", "strategic_depth", "authentic_voice_capture", "actionable_specificity"]):
+                    if isinstance(judge_result, dict) and any(key in judge_result for key in ["evidence_support", "context_handling", "content_distinctness", "industry_sophistication", "strategic_depth", "authentic_voice_capture", "actionable_specificity", "proxy_strength", "detection_feasibility", "profile_crispness"]):
                         # New format: multiple individual checks
                         for check_name, check_result in judge_result.items():
                             # Validate that each check_result is a dict
@@ -233,6 +234,24 @@ class LLMJudge:
         }
         
         return await self._call_judge("content_integrity", context)
+    
+    async def _judge_account_targeting_quality(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """L-3: Account targeting quality check - evaluate profile crispness, detection feasibility, and business logic depth."""
+        
+        # Extract company context if available
+        company_context = None
+        if test_case.get("input_website_url"):
+            company_context = {
+                "company_url": test_case.get("input_website_url"),
+                "description": f"Company analysis based on {test_case.get('input_website_url')}"
+            }
+        
+        context = {
+            "analysis": data,
+            "company_context": company_context
+        }
+        
+        return await self._call_judge("account_targeting_quality", context)
 
 
 # For standalone testing

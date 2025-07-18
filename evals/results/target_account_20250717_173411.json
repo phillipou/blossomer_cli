@@ -1,0 +1,284 @@
+{
+  "prompt_name": "Target Account Profile Evaluation",
+  "timestamp": "2025-07-17T17:34:11.056000",
+  "evaluation_time": 25.363778114318848,
+  "test_cases": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://hounddog.ai",
+        "context_type": "valid",
+        "account_profile_name": "Enterprise tech",
+        "persona_profile_name": "Heads of secuity",
+        "persona_hypothesis": "CISOs or Heads of Engineering",
+        "account_hypothesis": "Large enterprises with PII data concerns, where security and compliance are top priorities",
+        "expected_company_name": "HoundDog"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"target_account_name\":\"Enterprise Tech\",\"target_account_description\":\"Large enterprise technology companies handling PII data, where security and compliance are critical, making them prime candidates..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "target_account_name": "Enterprise Tech",
+              "target_account_description": "Large enterprise technology companies handling PII data, where security and compliance are critical, making them prime candidates for advanced security solutions.",
+              "target_account_rationale": [
+                "These companies operate at scale with complex data environments, increasing the need for robust security and compliance measures.",
+                "Large enterprises with PII concerns often face regulatory pressures, driving urgency for solutions that ensure data protection and compliance.",
+                "Firms in the tech sector frequently undergo transition events such as scaling or migrating to new infrastructure, creating opportunities for security upgrades.",
+                "Targeting companies with specific industry dynamics and operational complexities ensures alignment with the solution's value proposition.",
+                "Focusing on companies with certain size and funding stages increases the likelihood of decision-making authority and budget availability."
+              ],
+              "firmographics": {
+                "industry": [
+                  "Information Technology",
+                  "Software & SaaS",
+                  "Cybersecurity"
+                ],
+                "employees": "500-5000",
+                "department_size": "CISO/IT Security Teams",
+                "revenue": "50M-1B",
+                "geography": [
+                  "North America",
+                  "Europe"
+                ],
+                "business_model": [
+                  "Enterprise Software",
+                  "Cloud Services"
+                ],
+                "funding_stage": [
+                  "Series B",
+                  "Series C",
+                  "Private Equity"
+                ],
+                "company_type": [
+                  "Private",
+                  "Public"
+                ],
+                "keywords": [
+                  "PII data handling",
+                  "regulatory compliance",
+                  "enterprise security",
+                  "data protection",
+                  "multi-location operations"
+                ]
+              },
+              "buying_signals": [
+                {
+                  "title": "Funding Event Announcement",
+                  "description": "Companies announcing new funding rounds often indicate growth and increased security needs, especially if they mention scaling infrastructure.",
+                  "type": "Company Data",
+                  "priority": "High",
+                  "detection_method": "Enrichment source: Crunchbase or PitchBook API"
+                },
+                {
+                  "title": "Security-Related Job Postings",
+                  "description": "Hiring for senior security roles or compliance officers suggests active investment in security infrastructure.",
+                  "type": "Website",
+                  "priority": "Medium",
+                  "detection_method": "Keyword search: 'CISO', 'Security Engineer', 'Compliance Officer' in job postings"
+                },
+                {
+                  "title": "Technology Migration News",
+                  "description": "Announcements of moving to new cloud providers or security platforms indicate transition points where new solutions are needed.",
+                  "type": "News",
+                  "priority": "Medium",
+                  "detection_method": "Media monitoring for phrases like 'migrating to', 'adopting', 'upgrading' cloud/security platforms"
+                },
+                {
+                  "title": "Increased Data Privacy Regulations",
+                  "description": "Companies referencing GDPR, CCPA, or other compliance frameworks in public statements or reports signal heightened security and compliance focus.",
+                  "type": "News",
+                  "priority": "Low",
+                  "detection_method": "Monitoring regulatory compliance news and company disclosures"
+                },
+                {
+                  "title": "Security Conference Participation",
+                  "description": "Participation or speaking engagements at security or compliance conferences indicate strategic focus on security initiatives.",
+                  "type": "Social Media",
+                  "priority": "Low",
+                  "detection_method": "LinkedIn or Twitter mentions of conference involvement"
+                }
+              ],
+              "buying_signals_rationale": [
+                "Funding announcements often precede security infrastructure upgrades, reflecting increased budgets and strategic priorities.",
+                "Job postings for security roles reveal ongoing operational investments and immediate security needs.",
+                "News about technology migrations or platform upgrades highlight transition points where new security solutions are required.",
+                "Regulatory compliance references indicate operational pressures that drive urgency for security enhancements.",
+                "Industry event participation signals strategic focus and thought leadership, often aligning with upcoming purchasing decisions."
+              ],
+              "metadata": {
+                "primary_context_source": "user_input",
+                "sources_used": [
+                  "user_input",
+                  "company_context",
+                  "website_content"
+                ],
+                "confidence_assessment": {
+                  "overall_confidence": "high",
+                  "data_quality": "high",
+                  "inference_level": "moderate",
+                  "recommended_improvements": [
+                    "Additional recent news articles or press releases",
+                    "Specific company security initiatives or project disclosures"
+                  ]
+                },
+                "processing_notes": "Analysis integrated multiple data points to identify transition and inflection signals relevant to large enterprise security needs."
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "target_account_name",
+                  "target_account_description",
+                  "target_account_rationale",
+                  "firmographics",
+                  "buying_signals",
+                  "buying_signals_rationale",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 7/7 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "format_compliance",
+            "description": "Validates that insight fields follow 'Key: Value' format pattern",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All insight fields follow the required 'Key: Value' format pattern with proper key and value sections."
+          },
+          "D-4_field_cardinality": {
+            "check_name": "field_cardinality",
+            "description": "Validates that array fields contain the expected number of items",
+            "inputs_evaluated": [],
+            "pass": true,
+            "rationale": "All array fields contain the expected number of items within the specified ranges for comprehensive analysis."
+          },
+          "D-5_url_preservation": {
+            "check_name": "url_preservation",
+            "description": "Validates that the input website URL is preserved in the output",
+            "inputs_evaluated": [
+              {
+                "field": "input_website_url",
+                "value": "https://hounddog.ai"
+              },
+              {
+                "field": "company_url",
+                "value": "Not in schema"
+              }
+            ],
+            "pass": true,
+            "rationale": "Schema does not include company_url field, URL preservation check not applicable."
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": true,
+        "judges": {
+          "proxy_strength": {
+            "check_name": "proxy_strength",
+            "description": "Evaluates whether firmographics and buying signals are strong predictors of actual need",
+            "inputs_evaluated": [
+              {
+                "field": "firmographics",
+                "value": "Large enterprise tech companies handling PII data, 500-5000 employees, revenue 50M-1B, in North America/Europe, Series B/C or private equity funding"
+              },
+              {
+                "field": "buying_signals",
+                "value": "Funding announcements, security job postings, migration news, regulatory references, conference participation"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The firmographics align well with organizations that typically face urgent security and compliance needs, and the signals chosen—funding, hiring, news—are strong indicators of active security initiatives. These attributes are proven predictors of immediate security upgrade needs in large enterprises."
+          },
+          "detection_feasibility": {
+            "check_name": "detection_feasibility",
+            "description": "Assesses whether the specified detection methods can realistically identify the described signals",
+            "inputs_evaluated": [
+              {
+                "field": "detection_methods",
+                "value": "Crunchbase/PitchBook API for funding, keyword searches in job postings, media monitoring for news, social media scraping for conference mentions"
+              },
+              {
+                "field": "signal_complexity",
+                "value": "Moderate complexity requiring integration of multiple data sources and AI-powered content analysis"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "All signals are detectable with current GTM tools—enrichment APIs, web scraping, media monitoring, and social listening—though they require moderate integration effort. These methods are proven to be feasible and cost-effective for real-time or near-real-time detection."
+          },
+          "profile_crispness": {
+            "check_name": "profile_crispness",
+            "description": "Evaluates how precisely defined and actionable the target customer profile is",
+            "inputs_evaluated": [
+              {
+                "field": "target_definition",
+                "value": "Large enterprise tech companies handling PII, with specific size, revenue, industry, and funding criteria"
+              },
+              {
+                "field": "specificity_level",
+                "value": "High, with detailed signals and clear prioritization"
+              }
+            ],
+            "pass": true,
+            "rating": "impressive",
+            "rationale": "The profile is highly specific, combining firmographics with targeted signals that directly correlate with security and compliance needs. This granularity enables precise filtering and prioritization, making it highly actionable in modern prospecting platforms."
+          }
+        },
+        "total_calls": 1
+      },
+      "overall_pass": true,
+      "errors": [],
+      "generated_output": "{\"target_account_name\":\"Enterprise Tech\",\"target_account_description\":\"Large enterprise technology companies handling PII data, where security and compliance are critical, making them prime candidates for advanced security solutions.\",\"target_account_rationale\":[\"These companies operate at scale with complex data environments, increasing the need for robust security and compliance measures.\",\"Large enterprises with PII concerns often face regulatory pressures, driving urgency for solutions that ensure data protection and compliance.\",\"Firms in the tech sector frequently undergo transition events such as scaling or migrating to new infrastructure, creating opportunities for security upgrades.\",\"Targeting companies with specific industry dynamics and operational complexities ensures alignment with the solution's value proposition.\",\"Focusing on companies with certain size and funding stages increases the likelihood of decision-making authority and budget availability.\"],\"firmographics\":{\"industry\":[\"Information Technology\",\"Software & SaaS\",\"Cybersecurity\"],\"employees\":\"500-5000\",\"department_size\":\"CISO/IT Security Teams\",\"revenue\":\"50M-1B\",\"geography\":[\"North America\",\"Europe\"],\"business_model\":[\"Enterprise Software\",\"Cloud Services\"],\"funding_stage\":[\"Series B\",\"Series C\",\"Private Equity\"],\"company_type\":[\"Private\",\"Public\"],\"keywords\":[\"PII data handling\",\"regulatory compliance\",\"enterprise security\",\"data protection\",\"multi-location operations\"]},\"buying_signals\":[{\"title\":\"Funding Event Announcement\",\"description\":\"Companies announcing new funding rounds often indicate growth and increased security needs, especially if they mention scaling infrastructure.\",\"type\":\"Company Data\",\"priority\":\"High\",\"detection_method\":\"Enrichment source: Crunchbase or PitchBook API\"},{\"title\":\"Security-Related Job Postings\",\"description\":\"Hiring for senior security roles or compliance officers suggests active investment in security infrastructure.\",\"type\":\"Website\",\"priority\":\"Medium\",\"detection_method\":\"Keyword search: 'CISO', 'Security Engineer', 'Compliance Officer' in job postings\"},{\"title\":\"Technology Migration News\",\"description\":\"Announcements of moving to new cloud providers or security platforms indicate transition points where new solutions are needed.\",\"type\":\"News\",\"priority\":\"Medium\",\"detection_method\":\"Media monitoring for phrases like 'migrating to', 'adopting', 'upgrading' cloud/security platforms\"},{\"title\":\"Increased Data Privacy Regulations\",\"description\":\"Companies referencing GDPR, CCPA, or other compliance frameworks in public statements or reports signal heightened security and compliance focus.\",\"type\":\"News\",\"priority\":\"Low\",\"detection_method\":\"Monitoring regulatory compliance news and company disclosures\"},{\"title\":\"Security Conference Participation\",\"description\":\"Participation or speaking engagements at security or compliance conferences indicate strategic focus on security initiatives.\",\"type\":\"Social Media\",\"priority\":\"Low\",\"detection_method\":\"LinkedIn or Twitter mentions of conference involvement\"}],\"buying_signals_rationale\":[\"Funding announcements often precede security infrastructure upgrades, reflecting increased budgets and strategic priorities.\",\"Job postings for security roles reveal ongoing operational investments and immediate security needs.\",\"News about technology migrations or platform upgrades highlight transition points where new security solutions are required.\",\"Regulatory compliance references indicate operational pressures that drive urgency for security enhancements.\",\"Industry event participation signals strategic focus and thought leadership, often aligning with upcoming purchasing decisions.\"],\"metadata\":{\"primary_context_source\":\"user_input\",\"sources_used\":[\"user_input\",\"company_context\",\"website_content\"],\"confidence_assessment\":{\"overall_confidence\":\"high\",\"data_quality\":\"high\",\"inference_level\":\"moderate\",\"recommended_improvements\":[\"Additional recent news articles or press releases\",\"Specific company security initiatives or project disclosures\"]},\"processing_notes\":\"Analysis integrated multiple data points to identify transition and inflection signals relevant to large enterprise security needs.\"}}",
+      "test_case_id": 1
+    }
+  ]
+}
