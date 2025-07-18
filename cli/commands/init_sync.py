@@ -23,6 +23,7 @@ from cli.utils.console import enter_immersive_mode, exit_immersive_mode, ensure_
 from cli.utils.guided_email_builder import GuidedEmailBuilder
 from cli.utils.markdown_formatter import get_formatter
 from cli.utils.colors import Colors, format_project_status, format_step_flow
+from cli.utils.constants import MenuChoices, EmailGenerationMode
 from rich.markdown import Markdown
 
 console = Console()
@@ -308,12 +309,12 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         
         # Offer step selection menu
         choices = [
-            "🔄 Start from beginning (all steps)",
-            "📊 Start from Company Overview", 
-            "🎯 Start from Target Account Profile",
-            "👤 Start from Buyer Persona",
-            "📧 Start from Email Campaign",
-            "❌ Cancel (view existing results)"
+            MenuChoices.START_FRESH,
+            MenuChoices.START_FROM_COMPANY,
+            MenuChoices.START_FROM_ACCOUNT,
+            MenuChoices.START_FROM_PERSONA,
+            MenuChoices.START_FROM_EMAIL,
+            MenuChoices.CANCEL
         ]
         
         choice = show_menu_with_separator(
@@ -321,20 +322,13 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             choices=choices
         )
         
-        if choice is None or choice == "❌ Cancel (view existing results)":
+        if choice is None or choice == MenuChoices.CANCEL:
             console.print("Operation cancelled.")
             console.print(f"→ View current results: {Colors.format_command('blossomer show all')}")
             return
-        elif choice == "🔄 Start from beginning (all steps)":
-            start_from_step = "overview"
-        elif choice == "📊 Start from Company Overview":
-            start_from_step = "overview"
-        elif choice == "🎯 Start from Target Account Profile":
-            start_from_step = "account"
-        elif choice == "👤 Start from Buyer Persona":
-            start_from_step = "persona"
-        elif choice == "📧 Start from Email Campaign":
-            start_from_step = "email"
+        else:
+            # Get starting step from menu choice
+            start_from_step = MenuChoices.get_starting_step(choice)
     
     console.print()
     console.print(f"→ Starting from {Colors.format_command(start_from_step)} step and running all subsequent steps")
@@ -514,12 +508,13 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
         mode_choice = show_menu_with_separator(
             "📧 How would you like to create your email campaign?",
             choices=[
-                "🎯 Guided Builder (5-step interactive process ~2 min)",
-                "⚡ Automatic (AI generates based on your analysis ~30 sec)"
+                MenuChoices.EMAIL_MODE_GUIDED,
+                MenuChoices.EMAIL_MODE_AUTOMATIC
             ]
         )
         
-        is_guided = mode_choice.startswith("Guided")
+        email_mode = MenuChoices.get_email_mode(mode_choice)
+        is_guided = email_mode == EmailGenerationMode.GUIDED
     else:
         is_guided = False
     
@@ -559,10 +554,16 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
                 
                 console.print(f"   [green]✓[/green] Email Campaign generated successfully")
                 
+                # Show preview after guided generation
+                if not yolo:
+                    show_email_campaign_preview(domain)
+                
             except Exception as e:
                 progress.stop()
                 console.print(f"   [red]✗[/red] Failed to generate Email Campaign: {e}")
                 raise
+        
+        return  # Important: return here to avoid running automatic generation
     else:
         # Use the original automatic generation
         run_generation_step(

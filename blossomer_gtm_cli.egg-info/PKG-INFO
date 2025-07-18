@@ -52,7 +52,9 @@ Requires-Dist: mypy>=1.0.0; extra == "dev"
 ### Prerequisites
 
 - Python 3.8 or higher
-- OpenAI API key (set as `OPENAI_API_KEY` environment variable)
+- **TensorBlock Forge API key** (recommended) or OpenAI API key
+  - Forge provides access to 19+ models across OpenAI, Anthropic, Gemini, xAI, and Deepseek
+  - Cost-optimized with GPT-4.1-nano (~10x cheaper than GPT-4o-mini)
 
 ### Install from Source
 
@@ -273,6 +275,69 @@ blossomer export persona --domain acme.com  # Specific domain
 - **Complete documentation**: All analysis, insights, and metadata
 - **Shareable reports**: Perfect for stakeholder presentations
 
+#### `eval COMMAND`
+Run quality assurance evaluations on prompt templates
+
+**Commands:**
+- `eval list` - List all available prompt evaluations
+- `eval run PROMPT` - Run evaluation on a specific prompt
+- `eval validate PROMPT` - Validate prompt configuration and dataset
+- `eval create PROMPT` - Create new prompt evaluation
+
+**Options:**
+- `--sample-size N` - Number of test cases to sample (default: 5)
+- `--output PATH` - Save results to JSON file
+- `--verbose` - Enable detailed output with debugging info
+
+**Examples:**
+```bash
+# List available evaluations
+blossomer eval list
+
+# Run evaluation on product overview prompt
+blossomer eval run product_overview --sample-size 10
+
+# Validate prompt configuration
+blossomer eval validate product_overview
+
+# Run all evaluations with verbose output
+blossomer eval run all --verbose --sample-size 3
+
+# Save results to file
+blossomer eval run product_overview --output results.json
+```
+
+**Evaluation Features:**
+- **Deterministic checks**: JSON validation, schema compliance, format rules
+- **LLM judges**: Traceability, actionability, redundancy, context steering
+- **Cost-effective**: Uses GPT-4.1-nano for ultra-low cost evaluation
+- **Rich output**: Progress bars, detailed failure analysis, pass/fail rates
+- **Quality assurance**: Ensures consistent prompt template performance
+- **Simplified structure**: Each check shows description, inputs evaluated, pass/fail, and clear rationale
+
+**Evaluation Output Structure:**
+Each evaluation check follows a standardized format:
+
+```json
+{
+  "check_name": "traceability",
+  "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
+  "inputs_evaluated": [
+    {"field": "business_profile_insights", "value": ["Category: Financial Technology", "Market: Enterprise payments"]},
+    {"field": "website_content", "value": "Stripe powers online payments for millions..."}
+  ],
+  "pass": false,
+  "rationale": "Only 2 out of 5 sampled claims could be verified against website content. Claims about Series B funding and enterprise focus lack supporting evidence from the scraped content."
+}
+```
+
+**Structure Fields:**
+- **check_name**: Unique identifier for the evaluation check
+- **description**: Brief explanation of what the check evaluates (1-2 sentences)
+- **inputs_evaluated**: Array of {field: field_name, value: field_value} pairs showing what data was examined
+- **pass**: Boolean indicating if the check passed or failed
+- **rationale**: Clear 2-3 sentence explanation of why it passed or failed
+
 ### Not Yet Implemented
 
 These commands show "Command not yet implemented":
@@ -285,16 +350,33 @@ These commands show "Command not yet implemented":
 ### Environment Variables
 
 ```bash
-# Required
-export OPENAI_API_KEY="your-openai-api-key"
+# Recommended: TensorBlock Forge (unified access to all providers)
+export FORGE_API_KEY="forge-your-api-key-here"
 
 # Optional
 export BLOSSOMER_DEBUG=true        # Enable debug output
 ```
 
+#### Setting up TensorBlock Forge (Recommended)
+
+1. **Sign up** at [TensorBlock Forge](https://tensorblock.co/)
+2. **Get your API key** from the dashboard
+3. **Add to your environment**:
+   ```bash
+   # Add to your ~/.bashrc, ~/.zshrc, or .env file
+   export FORGE_API_KEY="forge-your-api-key-here"
+   ```
+
+**Available providers through Forge:**
+- OpenAI (GPT-4, GPT-4.1-nano, GPT-4o-mini, etc.)
+- Anthropic (Claude 3.5 Sonnet, Claude 3.5 Haiku)
+- Google (Gemini 1.5 Pro, Gemini 1.5 Flash)
+- xAI (Grok models)
+- Deepseek (Deepseek V3)
+
 ### Project Structure
 
-Generated projects are stored in `gtm_projects/`:
+Generated projects are stored in `gtm_projects/`, evaluations in `evals/`:
 
 ```
 gtm_projects/
@@ -305,6 +387,19 @@ gtm_projects/
 │   ├── persona.json      # Buyer persona
 │   ├── email.json        # Email campaign
 │   └── export/           # Future: exported assets
+
+evals/
+├── core/                 # Evaluation framework
+│   ├── config.py        # Configuration management
+│   ├── dataset.py       # Test case handling
+│   ├── results.py       # Results display
+│   ├── runner.py        # Main evaluation runner
+│   └── judges/          # Evaluation logic
+└── prompts/             # Per-prompt configurations
+    └── product_overview/
+        ├── config.yaml  # Evaluation configuration
+        ├── data.csv     # Test cases
+        └── schema.json  # Expected output schema
 ```
 
 ## Development
@@ -354,6 +449,7 @@ blossomer-cli/
 - **Project storage** and retrieval
 - **Domain normalization** and validation
 - **Existing project handling** with update options
+- **Evaluation system**: Quality assurance for prompt templates with deterministic and LLM judges
 
 ### ⚠️ Planned Features
 - **GTM Plan generation** (step 5) - roadmap and execution plan
@@ -368,7 +464,8 @@ Built with modern Python CLI tools:
 - **rich** - Beautiful terminal formatting
 - **questionary** - Interactive prompts
 - **pydantic** - Data validation
-- **openai** - LLM integration
+- **TensorBlock Forge** - Unified LLM provider access (19+ models)
+- **openai** - API compatibility layer
 - **firecrawl-py** - Website scraping
 
 ## Contributing

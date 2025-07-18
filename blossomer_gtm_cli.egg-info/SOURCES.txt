@@ -34,6 +34,7 @@ cli/config.py
 cli/main.py
 cli/schemas.py
 cli/commands/__init__.py
+cli/commands/eval.py
 cli/commands/export.py
 cli/commands/generate.py
 cli/commands/init.py
@@ -52,6 +53,7 @@ cli/services/target_persona_service.py
 cli/utils/__init__.py
 cli/utils/colors.py
 cli/utils/console.py
+cli/utils/constants.py
 cli/utils/debug.py
 cli/utils/domain.py
 cli/utils/editor.py
@@ -59,8 +61,11 @@ cli/utils/file_manager.py
 cli/utils/guided_email_builder.py
 cli/utils/logging.py
 cli/utils/markdown_formatter.py
+tests/test_auth_methods.py
 tests/test_cli_commands.py
+tests/test_correct_endpoint.py
 tests/test_dependencies.py
+tests/test_different_endpoints.py
 tests/test_domain_utils.py
 tests/test_error_handling.py
 tests/test_gtm_flow_integration.py
@@ -68,3 +73,4 @@ tests/test_guided_email_builder.py
 tests/test_project_storage.py
 tests/test_runner.py
 tests/test_services.py
+tests/test_structured_output.py
