@@ -1,0 +1,115 @@
+Please evaluate this target persona profile for quality across individual proxy strength, individual detection feasibility, and persona definition crispness.
+
+## Target Persona Profile Data
+
+**Target Persona Name:** {{ analysis.target_persona_name }}
+
+**Target Persona Description:** {{ analysis.target_persona_description }}
+
+**Target Persona Rationale:**
+{% for rationale in analysis.target_persona_rationale %}
+- {{ rationale }}
+{% endfor %}
+
+## Demographics
+**Job Titles:** {{ analysis.demographics.job_titles | join(", ") }}
+**Departments:** {{ analysis.demographics.departments | join(", ") }}
+**Seniority:** {{ analysis.demographics.seniority | join(", ") }}
+**Buying Roles:** {{ analysis.demographics.buying_roles | join(", ") }}
+**Job Description Keywords:** {{ analysis.demographics.job_description_keywords | join(", ") }}
+
+## Use Cases
+{% for use_case in analysis.use_cases %}
+**{{ use_case.use_case }}**
+- Pain Points: {{ use_case.pain_points }}
+- Capability: {{ use_case.capability }}
+- Desired Outcome: {{ use_case.desired_outcome }}
+
+{% endfor %}
+
+## Buying Signals
+{% for signal in analysis.buying_signals %}
+**{{ signal.title }}** ({{ signal.priority }} Priority, {{ signal.type }})
+- Description: {{ signal.description }}
+- Detection Method: {{ signal.detection_method }}
+
+{% endfor %}
+
+**Buying Signals Rationale:**
+{% for rationale in analysis.buying_signals_rationale %}
+- {{ rationale }}
+{% endfor %}
+
+## Additional Persona Data
+**Objections:** {{ analysis.objections | join("; ") }}
+**Goals:** {{ analysis.goals | join("; ") }}
+**Purchase Journey:** {{ analysis.purchase_journey | join("; ") }}
+
+## Metadata
+**Primary Context Source:** {{ analysis.metadata.primary_context_source }}
+**Sources Used:** {{ analysis.metadata.sources_used | join(", ") }}
+**Overall Confidence:** {{ analysis.metadata.confidence_assessment.overall_confidence }}
+**Data Quality:** {{ analysis.metadata.confidence_assessment.data_quality }}
+**Inference Level:** {{ analysis.metadata.confidence_assessment.inference_level }}
+
+## Company Context
+{% if company_context %}
+**Company Being Analyzed:** {{ company_context.get('company_name', 'Unknown') }}
+**Company URL:** {{ company_context.get('company_url', 'Not provided') }}
+**Problem/Solution:** {{ company_context.get('description', 'Not provided') }}
+{% else %}
+**Company Context:** Not provided in evaluation data
+{% endif %}
+
+## Instructions
+Evaluate this target persona profile as an expert individual targeting specialist. Focus on whether this targeting strategy would actually work in practice for finding specific people who need this product right now and would respond well to outreach.
+
+Pay special attention to:
+1. **Use Case Quality**: Do they map to specific workflows vs. generic business outcomes?
+2. **Signal Strategy Alignment**: Do buying signals answer the three critical strategy questions about urgency, receptivity, and internal influence?
+3. **Individual Targeting Feasibility**: Can these demographics and signals be realistically detected and used for person-level prospecting?
+
+## Output Requirements
+
+Evaluate the target persona profile and return exactly 3 checks in this format:
+
+```json
+{
+  "individual_proxy_strength": {
+    "check_name": "individual_proxy_strength",
+    "description": "Evaluates whether demographics, use cases, and buying signals are strong predictors of individual need and engagement",
+    "inputs_evaluated": [
+      {"field": "use_cases", "value": "{{ analysis.use_cases | length }} use cases: {% for uc in analysis.use_cases[:2] %}{{ uc.use_case }} → {{ uc.desired_outcome }}{% if not loop.last %}; {% endif %}{% endfor %}"},
+      {"field": "buying_signals", "value": "{{ analysis.buying_signals | length }} signals: {% for signal in analysis.buying_signals[:3] %}{{ signal.title }} ({{ signal.priority }}){% if not loop.last %}, {% endif %}{% endfor %}"},
+      {"field": "demographics", "value": "Job Titles: {{ analysis.demographics.job_titles | join(', ') }}, Departments: {{ analysis.demographics.departments | join(', ') }}"}
+    ],
+    "pass": true/false,
+    "rating": "impressive|sufficient|poor",
+    "rationale": "2-3 sentences explaining why these persona attributes and signals do/don't predict individual need, engagement, and workflow alignment"
+  },
+  "individual_detection_feasibility": {
+    "check_name": "individual_detection_feasibility",
+    "description": "Assesses whether the specified detection methods can realistically identify and engage these specific individuals",
+    "inputs_evaluated": [
+      {"field": "detection_methods", "value": "{% for signal in analysis.buying_signals[:3] %}{{ signal.detection_method }}{% if not loop.last %}; {% endif %}{% endfor %}"},
+      {"field": "demographics_targeting", "value": "Job Titles: {{ analysis.demographics.job_titles | join(', ') }}, Seniority: {{ analysis.demographics.seniority | join(', ') }}"},
+      {"field": "buying_signals", "value": "{{ analysis.buying_signals | length }} signals: {% for signal in analysis.buying_signals[:3] %}{{ signal.title }} ({{ signal.type }}){% if not loop.last %}, {% endif %}{% endfor %}"}
+    ],
+    "pass": true/false,
+    "rating": "impressive|sufficient|poor",
+    "rationale": "2-3 sentences explaining the technical feasibility of individual detection and outreach strategy using modern prospecting tools"
+  },
+  "persona_definition_crispness": {
+    "check_name": "persona_definition_crispness", 
+    "description": "Evaluates how precisely defined and actionable the individual buyer profile is for targeting",
+    "inputs_evaluated": [
+      {"field": "target_persona_name", "value": "{{ analysis.target_persona_name }}"},
+      {"field": "demographics", "value": "Job Titles: {{ analysis.demographics.job_titles | join(', ') }}, Keywords: {{ analysis.demographics.job_description_keywords | join(', ') }}"},
+      {"field": "use_case_specificity", "value": "{% for uc in analysis.use_cases[:2] %}{{ uc.use_case }}{% if not loop.last %}, {% endif %}{% endfor %}"}
+    ],
+    "pass": true/false,
+    "rating": "impressive|sufficient|poor",
+    "rationale": "2-3 sentences explaining the specificity and actionability of the persona definition for individual targeting and LinkedIn/CRM searchability"
+  }
+}
+```

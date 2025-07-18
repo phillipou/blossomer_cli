@@ -219,15 +219,21 @@ class DeterministicJudge:
     
     def _check_format_compliance(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """D-3: Format compliance check."""
-        # Check for "Key: Value" format in insight fields
-        insight_fields = [
-            "business_profile_insights",
-            "use_case_analysis_insights", 
-            "positioning_insights",
-            "target_customer_insights",
-            "capabilities",
-            "objections"
-        ]
+        # Check for "Key: Value" format in insight fields based on evaluation type
+        if self.config.service_module == "app.services.target_persona_service":
+            # For persona evaluations, we don't check any fields for Key:Value format
+            # since rationales are plain text descriptions
+            insight_fields = []
+        else:
+            # For product/account evaluations, check standard insight fields
+            insight_fields = [
+                "business_profile_insights",
+                "use_case_analysis_insights", 
+                "positioning_insights",
+                "target_customer_insights",
+                "capabilities",
+                "objections"
+            ]
         
         inputs_evaluated = []
         for field in insight_fields:

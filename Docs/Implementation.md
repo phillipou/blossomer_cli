@@ -292,7 +292,7 @@ python3 -m cli.main eval create new_prompt \
 
 #### Additional Prompts
 - **✅ Target Account Evaluation**: Profile definition crispness, detection quality, actionable prospect filters
-- **Buyer Persona Evaluation**: Demographic consistency, use case alignment
+- **✅ Target Persona Evaluation**: Demographics precision, use case alignment, buying signal relevance
 - **Email Generation Evaluation**: Subject line effectiveness, personalization quality
 - **GTM Plan Evaluation**: Actionability, timeline feasibility, metric relevance
 
@@ -423,6 +423,170 @@ evals/core/judges/templates/
 5. **✅ Integrated with main CLI workflow** - Continuous quality assurance
 6. **✅ Template refactoring** - Separated system instructions from user data for cleaner organization
 
+## 🎯 Target Persona Profile Evaluation Design
+
+### Overview
+Target persona evaluation assesses the quality of individual buyer persona generation using the same proven framework as target accounts: **Persona Definition Crispness**, **Individual Proxy Strength**, and **Individual Detection Feasibility**. This evaluation ensures persona profiles are specific enough for individual targeting while capturing realistic personal behaviors and engagement patterns.
+
+### Quality Framework
+
+Target persona evaluation adapts the proven account evaluation framework (**Proxy Strength**, **Definition Crispness**, **Detection Feasibility**) for individual buyer targeting.
+
+#### **Dimension 1: Persona Definition Crispness** 
+*"How precisely have you defined your ideal individual buyer?"*
+
+**Core Metric**: **Individual Exclusion Rate** - How many people in the broad role category are you excluding?
+- **Excellent**: "VP of Engineering at 100-500 employee SaaS companies with Kubernetes experience and recent DevOps tool adoption" (high exclusion rate, LinkedIn searchable)
+- **Poor**: "Tech leaders who care about efficiency" (excludes almost no one, too vague for targeting)
+
+**Evaluation Criteria**:
+- **Job Title Specificity**: Titles specific enough for LinkedIn/CRM searches (e.g., "VP of Engineering" vs "tech executive")
+- **Department Precision**: Departments align with solution's value proposition and persona's actual responsibilities
+- **Seniority Logic**: Seniority matches realistic buying authority and budget influence for this type of purchase
+- **Keyword Sophistication**: Job description keywords reflect day-to-day activities, not product relationships
+- **LinkedIn Readiness**: All demographic criteria can be copy-pasted into LinkedIn searches
+
+#### **Dimension 2: Individual Proxy Strength**
+*"Are your persona attributes/signals good predictors of individual need and engagement?"*
+
+**Sub-Components**:
+
+1. **Workflow-Problem Fit**: Do use cases connect to this persona's actual daily/critical workflows?
+   - **Workflow Specificity**: Daily/weekly processes (e.g., "manually entering CRM data") or critical tasks (e.g., "ensuring no financial details missed ahead of IPO")
+   - **Feature Mapping**: Desired outcomes connect directly to product capabilities, not lazy business outcomes
+   - **Pain-Solution Logic**: Clear use_case → pain_point → capability → desired_outcome progression
+
+2. **Signal-Strategy Fit**: Do buying signals answer the three critical strategy questions?
+   - **Strategy Question 1**: "What signals indicate someone is actively trying to solve this problem right now?"
+   - **Strategy Question 2**: "What signals indicate someone will respond well to cold outreach?" (intimately familiar with problem)
+   - **Strategy Question 3**: "What signals indicate someone can rally others internally?"
+   - **Personal Investment**: Signals show individual engagement with problem domain, not just job responsibilities
+
+3. **Priority Distribution Realism**: Is the signal priority realistic (~15% high, ~60% medium, ~25% low)?
+
+#### **Dimension 3: Individual Detection Feasibility**
+*"Can you actually find and engage these individuals?"*
+
+**Sub-Components**:
+
+1. **Individual Targeting Tools**: Can you detect these personas with available tools?
+   - **LinkedIn/CRM Compatibility**: Job titles, departments, seniority searchable in LinkedIn Sales Navigator, CRM systems
+   - **Enrichment Tools**: Buying signals detectable via Clay, Apollo, ZoomInfo, or professional databases
+   - **AI-Enhanced Capabilities**: Advanced signals identifiable through MCP servers, content analysis, social listening
+
+2. **Outreach Feasibility**: Can you actually engage these individuals effectively?
+   - **Contact Methods**: Signals indicate preferred communication channels and engagement patterns
+   - **Receptivity Indicators**: Signals suggest likelihood of responding to cold outreach
+   - **Detection Methods**: Every buying signal specifies exact detection method and data source
+
+**The Persona Quality Flow**:
+```
+Problem Definition → Persona Crispness → Workflow-Signal Quality → Detection Feasibility → Engagement Strategy
+     ↓                    ↓                     ↓                      ↓                     ↓
+"What problem    "What specific        "What workflows &      "Can we find         "Can we engage
+do we solve?"    people have this      signals indicate       these individuals    these people
+                 problem?"             need & receptivity?"   with existing        effectively?"
+                                                             tools?"
+```
+
+### Evaluation Structure
+
+#### **Deterministic Checks (Persona Specific)**
+- **D-1 Valid JSON**: Basic parsing validation
+- **D-2 Schema Compliance**: Field presence and type validation (BuyerPersonaResponse schema)
+- **D-3 Priority Distribution**: Buying signals follow ~15%/60%/25% high/medium/low distribution
+- **D-4 Field Cardinality**: Rationale arrays contain 3-5 items, use cases contain 3-4 items
+- **D-5 Detection Specification**: Every buying signal specifies detection method and data source
+
+Note: LinkedIn compatibility and use case logic are assessed qualitatively in the `persona_targeting_quality` LLM judge.
+
+#### **LLM Judge Categories**
+- **content_integrity**: Evidence support, context handling, content distinctness (shared)
+- **persona_targeting_quality**: Demographics precision, use case relevance, individual signal quality (persona-specific)
+
+### Persona-Specific Quality Criteria
+
+#### **Persona Definition Crispness Assessment**
+- **Individual Exclusion Rate**: Criteria exclude significant portion of people in broad role category
+- **LinkedIn Searchability**: Job titles, departments, seniority directly searchable in LinkedIn Sales Navigator
+- **Demographic Precision**: Specific enough for CRM filtering and enrichment tool targeting
+- **Keyword Sophistication**: Job description keywords reflect actual daily activities, not product relationships
+- **Buying Authority Logic**: Seniority and role align with realistic purchasing influence for this solution type
+
+#### **Individual Proxy Strength Assessment**  
+- **Workflow-Problem Connection**: Use cases map to persona's actual daily/critical workflows (not business outcomes)
+- **Feature-Outcome Mapping**: Desired outcomes connect directly to specific product capabilities (avoid "increase revenue")
+- **Signal-Strategy Alignment**: Buying signals answer the three core strategy questions about urgency, receptivity, and influence
+- **Process Depth**: Pain points dig 3-4 levels from high-level goals to specific workflow inefficiencies
+- **Personal Investment Indicators**: Signals show individual engagement with problem domain beyond job requirements
+
+#### **Individual Detection Feasibility Assessment**
+- **Tool Compatibility**: Demographics and signals detectable through LinkedIn, Clay, Apollo, ZoomInfo, professional databases
+- **Detection Method Specificity**: Every buying signal specifies exact detection method and data source
+- **Outreach Viability**: Signals indicate realistic methods for initiating contact and engagement
+- **Enrichment Readiness**: Persona criteria compatible with existing prospecting and enrichment workflows
+- **Scalability**: Detection methods work for both individual targeting and list building at scale
+
+### Success Metrics
+- **Persona Definition Crispness**: >85% demonstrate high individual exclusion rate with LinkedIn-searchable criteria
+- **Workflow-Problem Fit**: >90% of use cases map to specific daily/critical workflows (not business outcomes)
+- **Anti-Lazy Outcomes**: >95% of desired outcomes specify feature-mapped improvements (avoid "increase revenue")
+- **Signal-Strategy Fit**: >80% of buying signals answer at least 2 of the 3 core strategy questions
+- **Priority Distribution**: >95% compliance with 15/60/25 priority allocation for buying signals
+- **Individual Detection Feasibility**: >90% of signals specify realistic detection methods for person-level targeting
+- **LinkedIn Readiness**: >95% of demographic criteria are copy-paste ready for LinkedIn Sales Navigator
+
+### End Goal
+Generate **actionable persona profiles** that enable sales teams to: "Target individuals with job titles X, in departments Y, showing personal signals Z, using detection methods A/B/C"
+
+### Implementation Files
+```
+evals/prompts/target_persona/
+├── config.yaml              # Service mapping and judge configuration
+├── schema.json              # BuyerPersonaResponse validation schema
+└── ../datasets/eval_test_inputs.csv  # Shared test dataset with persona test cases
+```
+
+### Judge Template Structure
+```
+evals/core/judges/templates/
+├── system/
+│   ├── content_integrity.j2           # Existing general content validation
+│   └── persona_targeting_quality.j2   # New: Demographics precision + individual signal quality
+└── user/
+    ├── content_integrity.j2           # Data input for content validation  
+    └── persona_targeting_quality.j2   # Data input for persona assessment
+```
+
+### Usage Examples
+```bash
+# Run persona evaluation
+python3 -m cli.main eval run target_persona --sample-size 5
+
+# Include persona in full evaluation suite
+python3 -m cli.main eval run all --sample-size 3
+
+# Validate persona configuration
+python3 -m cli.main eval validate target_persona
+```
+
+### Quality Assurance Focus Areas
+
+#### **Demographics vs. Firmographics**
+- **Personas**: Job titles, departments, seniority, individual responsibilities
+- **Accounts**: Company size, industry, revenue, organizational structure
+- **Key Difference**: Individual targeting criteria vs. company-level characteristics
+
+#### **Individual vs. Company Buying Signals**
+- **Persona Signals**: LinkedIn activity, profile changes, personal content engagement, career development
+- **Account Signals**: Company announcements, funding rounds, technology adoption, organizational changes
+- **Key Difference**: Personal intent indicators vs. organizational buying triggers
+
+#### **Personal vs. Organizational Outcomes**
+- **Persona Outcomes**: Individual KPIs, role success metrics, career advancement goals
+- **Account Outcomes**: Company performance, organizational efficiency, business transformation
+- **Key Difference**: What matters to this person vs. what matters to the company
+
 ### 🎯 Current Evaluation Commands
 ```bash
 # List available evaluations
@@ -433,6 +597,8 @@ python3 -m cli.main eval validate product_overview
 
 # Run single evaluation
 python3 -m cli.main eval run product_overview --sample-size 5
+python3 -m cli.main eval run target_account --sample-size 5
+python3 -m cli.main eval run target_persona --sample-size 5
 
 # Run all evaluations
 python3 -m cli.main eval run all --sample-size 3
@@ -485,7 +651,8 @@ evals/
 │               └── account_targeting_quality.j2
 ├── prompts/                # ✅ Per-prompt configurations
 │   ├── product_overview/   # Product overview evaluation
-│   └── target_account/     # Target account profile evaluation
+│   ├── target_account/     # Target account profile evaluation
+│   └── target_persona/     # Target persona profile evaluation
 └── datasets/               # ✅ Centralized test data
     └── eval_test_inputs.csv    # Shared test cases across evaluations
 ```

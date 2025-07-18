@@ -43,7 +43,8 @@ class EvaluationRunner:
         prompt_name: str,
         sample_size: int = 5,
         output_file: Optional[str] = None,
-        verbose: bool = False
+        verbose: bool = False,
+        context_type: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Run complete evaluation for a specific prompt.
@@ -67,9 +68,11 @@ class EvaluationRunner:
         
         self.console.print(f"🚀 Starting evaluation for: {config.name}")
         self.console.print(f"📊 Sample size: {sample_size}")
+        if context_type:
+            self.console.print(f"🔍 Context type filter: {context_type}")
         
         # Load and sample test cases
-        test_cases = self.dataset_manager.load_test_cases(prompt_name, sample_size, config.dataset_path)
+        test_cases = self.dataset_manager.load_test_cases(prompt_name, sample_size, config.dataset_path, context_type)
         if not test_cases:
             self.console.print(f"❌ No test cases found for prompt: {prompt_name}", style="red")
             return {"error": f"No test cases found for prompt: {prompt_name}"}
@@ -177,6 +180,10 @@ class EvaluationRunner:
     async def _generate_output(self, test_case: Dict[str, Any], config: EvalConfig, verbose: bool = False) -> Optional[str]:
         """Generate output using the same service as the CLI."""
         try:
+            # Suppress website content warnings for persona and account evals (only matters for product_overview)
+            import logging
+            if config.service_module in ["app.services.target_persona_service", "app.services.target_account_service"]:
+                logging.getLogger("app.services.context_orchestrator_service").setLevel(logging.ERROR)
             # Import the service dynamically based on config
             service_module = __import__(config.service_module, fromlist=[''])
             service_function = getattr(service_module, config.service_function)
@@ -190,6 +197,10 @@ class EvaluationRunner:
             elif config.service_module == "app.services.target_account_service":
                 from app.schemas import TargetAccountRequest
                 request_class = TargetAccountRequest
+                needs_orchestrator = False
+            elif config.service_module == "app.services.target_persona_service":
+                from app.schemas import TargetPersonaRequest
+                request_class = TargetPersonaRequest
                 needs_orchestrator = False
             else:
                 # Default fallback - assume it's like product_overview
@@ -233,6 +244,13 @@ class EvaluationRunner:
                     website_url=test_case.get('input_website_url', ''),
                     account_profile_name=test_case.get('account_profile_name', ''),
                     hypothesis=test_case.get('account_hypothesis', ''),
+                    additional_context=combined_context
+                )
+            elif request_class.__name__ == "TargetPersonaRequest":
+                request = request_class(
+                    website_url=test_case.get('input_website_url', ''),
+                    persona_profile_name=test_case.get('persona_profile_name', ''),
+                    hypothesis=test_case.get('persona_hypothesis', ''),
                     additional_context=combined_context
                 )
             else:
@@ -367,6 +385,12 @@ Examples:
         help="Enable verbose output"
     )
     
+    parser.add_argument(
+        "--context-type", "-c",
+        choices=["none", "valid", "noise"],
+        help="Filter test cases by context type (none, valid, noise)"
+    )
+    
     args = parser.parse_args()
     
     console = Console()
@@ -463,7 +487,8 @@ Examples:
             prompt_name=args.prompt_name,
             sample_size=args.sample_size,
             output_file=args.output,
-            verbose=args.verbose
+            verbose=args.verbose,
+            context_type=args.context_type
         )
         
         if "error" in results:

@@ -74,7 +74,9 @@ class LLMJudge:
         judge_functions = {
             "content_integrity": self._judge_content_integrity,
             "business_insight": self._judge_business_insight,
-            "account_targeting_quality": self._judge_account_targeting_quality
+            "account_targeting_quality": self._judge_account_targeting_quality,
+            "persona_targeting_quality": self._judge_persona_targeting_quality,
+            "context_handling": self._judge_context_handling
         }
         
         # Get enabled judges from config
@@ -100,8 +102,13 @@ class LLMJudge:
                     # Track calls
                     results["total_calls"] += 1
                     
+                    # Handle case where judge result is wrapped in the judge name
+                    if judge_name in judge_result and isinstance(judge_result[judge_name], dict):
+                        # Unwrap the nested structure
+                        judge_result = judge_result[judge_name]
+                    
                     # Handle new format where each judge returns multiple individual checks
-                    if isinstance(judge_result, dict) and any(key in judge_result for key in ["evidence_support", "context_handling", "content_distinctness", "industry_sophistication", "strategic_depth", "authentic_voice_capture", "actionable_specificity", "proxy_strength", "detection_feasibility", "profile_crispness"]):
+                    if isinstance(judge_result, dict) and any(key in judge_result for key in ["evidence_support", "context_handling", "content_distinctness", "industry_sophistication", "strategic_depth", "authentic_voice_capture", "actionable_specificity", "proxy_strength", "detection_feasibility", "profile_crispness", "individual_proxy_strength", "individual_detection_feasibility", "persona_definition_crispness"]):
                         # New format: multiple individual checks
                         for check_name, check_result in judge_result.items():
                             # Validate that each check_result is a dict
@@ -252,6 +259,45 @@ class LLMJudge:
         }
         
         return await self._call_judge("account_targeting_quality", context)
+    
+    async def _judge_persona_targeting_quality(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """L-3: Persona targeting quality check - evaluate individual proxy strength, detection feasibility, and persona definition crispness."""
+        
+        # Extract company context if available
+        company_context = None
+        if test_case.get("input_website_url"):
+            company_context = {
+                "company_url": test_case.get("input_website_url"),
+                "company_name": test_case.get("expected_company_name", "Unknown"),
+                "description": f"Company analysis based on {test_case.get('input_website_url')}"
+            }
+        
+        context = {
+            "analysis": data,
+            "company_context": company_context
+        }
+        
+        return await self._call_judge("persona_targeting_quality", context)
+    
+    async def _judge_context_handling(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
+        """Context handling check - evaluate appropriate handling of user context based on type."""
+        
+        # Determine analysis type based on the data structure
+        if "target_persona_name" in data:
+            analysis_type = "persona"
+        elif "target_account_name" in data:
+            analysis_type = "account"
+        else:
+            analysis_type = "product"
+        
+        context = {
+            "analysis": data,
+            "context_type": test_case.get("context_type", "none"),
+            "user_context": test_case.get("user_inputted_context", "") or test_case.get("persona_hypothesis", "") or test_case.get("account_hypothesis", ""),
+            "analysis_type": analysis_type
+        }
+        
+        return await self._call_judge("context_handling", context)
 
 
 # For standalone testing

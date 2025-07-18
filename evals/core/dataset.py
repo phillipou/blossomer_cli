@@ -15,7 +15,7 @@ class DatasetManager:
     def __init__(self):
         self.prompts_dir = Path("evals/prompts")
     
-    def load_test_cases(self, prompt_name: str, sample_size: int = 5, dataset_path: Optional[str] = None) -> List[Dict[str, Any]]:
+    def load_test_cases(self, prompt_name: str, sample_size: int = 5, dataset_path: Optional[str] = None, context_type: Optional[str] = None) -> List[Dict[str, Any]]:
         """Load and sample test cases for a prompt."""
         if dataset_path:
             # Use custom dataset path (relative to evals/prompts/{prompt_name}/)
@@ -39,6 +39,10 @@ class DatasetManager:
                         row['website_content'] = website_content
                     
                     test_cases.append(row)
+            
+            # Filter by context type if specified
+            if context_type:
+                test_cases = [tc for tc in test_cases if tc.get('context_type') == context_type]
             
             # Sample test cases
             if sample_size and len(test_cases) > sample_size:
