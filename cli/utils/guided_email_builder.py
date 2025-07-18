@@ -6,7 +6,7 @@ import questionary
 from typing import Dict, Any, List, Optional
 from rich.console import Console
 from rich.panel import Panel
-from cli.utils.console import ensure_breathing_room
+from cli.utils.console import ensure_breathing_room, clear_console
 
 console = Console()
 
@@ -21,6 +21,8 @@ class GuidedEmailBuilder:
         # Extract structured data from persona
         self.use_cases = persona_data.get('use_cases', [])
         self.buying_signals = persona_data.get('buying_signals', [])
+        # Track completed steps for display
+        self.completed_steps = []
     
     def run_guided_flow(self) -> Dict[str, Any]:
         """Run the complete 5-step guided email building flow"""
@@ -97,11 +99,18 @@ class GuidedEmailBuilder:
         console.print(f"✓ Focusing on {emphasis_value.replace('_', ' ')}")
         console.print()
         
+        # Track completed step
+        self.completed_steps.append(f"Step 1: Focusing on {emphasis_value.replace('_', ' ')}")
+        
         return {"type": emphasis_value}
     
     def _step_2_content_selection(self, emphasis: Dict[str, Any]) -> Dict[str, Any]:
         """Step 2: Select specific content based on emphasis choice"""
         emphasis_type = emphasis["type"]
+        
+        # Clear screen and show previous steps
+        clear_console()
+        self._show_previous_steps()
         
         console.print(f"[bold]Step 2/5: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
         console.print()
@@ -152,10 +161,17 @@ class GuidedEmailBuilder:
         console.print(f"✓ Selected: {selected_content['value']}")
         console.print()
         
+        # Track completed step
+        self.completed_steps.append(f"Step 2: Selected {selected_content['value']}")
+        
         return selected_content
     
     def _step_3_social_proof(self) -> Optional[str]:
         """Step 3: Collect social proof (optional)"""
+        # Clear screen and show previous steps
+        clear_console()
+        self._show_previous_steps()
+        
         console.print("[bold]Step 3/5: Add Social Proof (Optional)[/bold]")
         console.print()
         console.print("💪 Social proof adds credibility to your outreach")
@@ -172,14 +188,26 @@ class GuidedEmailBuilder:
         if social_proof and social_proof.strip():
             console.print("✓ Social proof added")
             console.print()
+            
+            # Track completed step
+            self.completed_steps.append("Step 3: Social proof added")
+            
             return social_proof.strip()
         else:
             console.print("✓ Skipping social proof")
             console.print()
+            
+            # Track completed step
+            self.completed_steps.append("Step 3: Skipping social proof")
+            
             return None
     
     def _step_4_personalization(self) -> Dict[str, Any]:
         """Step 4: Select personalization angle"""
+        # Clear screen and show previous steps
+        clear_console()
+        self._show_previous_steps()
+        
         console.print("[bold]Step 4/5: How should we personalize this email?[/bold]")
         console.print()
         console.print("Based on your target account analysis:")
@@ -228,10 +256,17 @@ class GuidedEmailBuilder:
         console.print(f"✓ Will reference: {selected_personalization.get('title', 'custom approach')}")
         console.print()
         
+        # Track completed step
+        self.completed_steps.append(f"Step 4: Will reference {selected_personalization.get('title', 'custom approach')}")
+        
         return selected_personalization
     
     def _step_5_call_to_action(self) -> Dict[str, Any]:
         """Step 5: Select call-to-action"""
+        # Clear screen and show previous steps
+        clear_console()
+        self._show_previous_steps()
+        
         console.print("[bold]Step 5/5: What should the call-to-action be?[/bold]")
         console.print()
         
@@ -304,7 +339,18 @@ class GuidedEmailBuilder:
         console.print(f"✓ Will {selected_cta['intent'].replace('_', ' ')}")
         console.print()
         
+        # Track completed step
+        self.completed_steps.append(f"Step 5: Will {selected_cta['intent'].replace('_', ' ')}")
+        
         return selected_cta
+    
+    def _show_previous_steps(self) -> None:
+        """Show all completed steps at the top of the screen"""
+        if self.completed_steps:
+            console.print("✓ Previous steps:")
+            for step in self.completed_steps:
+                console.print(f"  {step}")
+            console.print()
     
     def _extract_pain_points(self) -> List[Dict[str, Any]]:
         """Extract pain points from persona data"""

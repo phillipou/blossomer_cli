@@ -30,7 +30,32 @@
 ```bash
 git clone <repository-url>
 cd blossomer-cli
-pip install -e .
+
+# Clean installation (recommended) 
+make install
+
+# Alternative options:
+./install.sh                     # Install script with tips
+make install-verbose             # Full pip output if needed
+pip install -e . --quiet         # Manual clean install
+```
+
+**What you'll see:**
+```
+🚀 Installing Blossomer CLI...
+✅ Installation complete!
+
+🎯 Try it out:
+   blossomer --help
+   blossomer init example.com
+```
+
+**Development commands:**
+```bash
+make help      # Show all available commands
+make status    # Check installation status
+make clean     # Clean build artifacts
+make dev       # Install + run example
 ```
 
 ## Quick Start
@@ -380,16 +405,18 @@ evals/
 git clone <repository-url>
 cd blossomer-cli
 
-# Install in development mode with dev dependencies
-pip install -e ".[dev]"
+# Quick setup with clean output
+make install
 
-# Run tests
-pytest
+# Or install with verbose output
+make install-verbose
 
-# Code formatting
-black cli/ app/
-flake8 cli/ app/
-mypy cli/ app/
+# Development workflow
+make dev          # Install + run example
+make test         # Run tests (when available)
+make lint         # Code formatting (when available)
+make clean        # Clean build artifacts
+make status       # Show installation status
 ```
 
 ### Project Structure

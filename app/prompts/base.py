@@ -21,8 +21,13 @@ def render_template(template_name: str, variables: dict) -> Tuple[Optional[str],
     template = env.get_template(f"{template_name}.jinja2")
     rendered = template.render(**variables)
 
-    # Split on {# User Prompt #} to separate system and user prompts
-    parts = rendered.split("{# User Prompt #}")
+    # Split on --- USER PROMPT --- to separate system and user prompts
+    parts = rendered.split("--- USER PROMPT ---")
+    
+    if len(parts) == 1:
+        # Fallback: try the old method for backward compatibility
+        parts = rendered.split("{# User Prompt #}")
+    
     if len(parts) == 2:
         system_prompt = parts[0].strip()
         user_prompt = parts[1].strip()

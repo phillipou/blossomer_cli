@@ -19,11 +19,14 @@ from rich.text import Text
 from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
-from cli.utils.console import enter_immersive_mode, exit_immersive_mode, ensure_breathing_room
+from cli.utils.console import enter_immersive_mode, exit_immersive_mode, ensure_breathing_room, clear_console
 from cli.utils.guided_email_builder import GuidedEmailBuilder
 from cli.utils.markdown_formatter import get_formatter
 from cli.utils.colors import Colors, format_project_status, format_step_flow
 from cli.utils.constants import MenuChoices, EmailGenerationMode
+from cli.utils.step_config import step_manager
+from cli.utils.panel_utils import create_step_panel_by_key, create_welcome_panel, create_status_panel, create_completion_panel
+from cli.utils.preview_utils import show_step_preview, show_guided_email_preview
 from rich.markdown import Markdown
 
 console = Console()
@@ -140,20 +143,9 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
     # Enter immersive mode - clear console for fresh experience
     enter_immersive_mode()
     
-    # Welcome message for new project - using Panel like existing projects
+    # Welcome message for new project
     console.print()
-    welcome_content = (
-        f"🚀 [bold cyan]Starting GTM Generation for {normalized_domain}[/bold cyan]\n"
-        f"\n"
-        f"[bold]Creating:[/bold] [green]Overview[/green] → [green]Account Profile[/green] → [green]Buyer Persona[/green] → [green]Email Campaign[/green]"
-    )
-    
-    console.print(Panel(
-        welcome_content,
-        border_style="cyan",
-        expand=False,
-        padding=(1, 2)
-    ))
+    console.print(create_welcome_panel(normalized_domain))
     
     # Capture hypotheses (if not in YOLO mode and context not provided)
     hypothesis_context = None
@@ -248,17 +240,7 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         
         # Success message
         console.print()
-        console.print(Panel(
-            "[bold green]✅ GTM Generation Complete![/bold green]\n"
-            "\n"
-            "[bold]Your go-to-market package is ready:[/bold]\n"
-            f"• View results: {Colors.format_command('blossomer show all')}\n"
-            f"• Edit content: {Colors.format_command('blossomer edit <step>')}\n"
-            f"• Export report: {Colors.format_command('blossomer export')}",
-            border_style="green",
-            expand=False,
-            padding=(1, 2)
-        ))
+        console.print(create_completion_panel())
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
@@ -282,24 +264,10 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
     last_updated = metadata.updated_at if metadata else "Unknown"
     
     console.print()
-    # Show project status in bordered panel (Claude Code style)
-    status_content = (
-        f"[bold cyan]Project: {domain}[/bold cyan]\n"
-        f"\n"
-        f"[bold]Status:[/bold] {Colors.format_success(', '.join(status['available_steps']))} | "
-        f"[bold cyan]{status['progress_percentage']:.0f}%[/bold cyan] complete\n"
-        f"[dim]Last updated: {last_updated}[/dim]"
-    )
-    
-    if status.get('has_stale_data'):
-        status_content += f"\n{Colors.format_warning('Some data may need updates')}"
-    
-    console.print(Panel(
-        status_content,
-        border_style="cyan",
-        expand=False,
-        padding=(1, 2)
-    ))
+    # Show project status in bordered panel
+    status_with_metadata = dict(status)
+    status_with_metadata['last_updated'] = last_updated
+    console.print(create_status_panel(domain, status_with_metadata))
     
     if yolo:
         console.print(Colors.format_section("YOLO mode: Updating all steps with fresh data", "⚡"))
@@ -336,7 +304,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
     
     # Continue with generation flow - start from selected step and run all subsequent steps
     try:
-        step_order = ["overview", "account", "persona", "email"]
+        step_order = step_manager.get_step_keys()
         start_index = step_order.index(start_from_step)
         steps_to_run = step_order[start_index:]
         
@@ -396,17 +364,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         
         # Success message
         console.print()
-        console.print(Panel(
-            "[bold green]✅ GTM Generation Complete![/bold green]\n"
-            "\n"
-            "[bold]Your go-to-market package is ready:[/bold]\n"
-            f"• View results: {Colors.format_command('blossomer show all')}\n"
-            f"• Edit content: {Colors.format_command('blossomer edit <step>')}\n"
-            f"• Export report: {Colors.format_command('blossomer export')}",
-            border_style="green",
-            expand=False,
-            padding=(1, 2)
-        ))
+        console.print(create_completion_panel())
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
@@ -430,16 +388,27 @@ def run_generation_step(
 ) -> None:
     """Run a single generation step with proper loading and user interaction"""
     
-    # Create a bordered panel for each step
+    # Create a bordered panel for each step using step manager
     console.print()
-    console.print(Panel(
-        f"[bold cyan][{step_number}/4] {step_name}[/bold cyan]\n"
-        f"\n"
-        f"{explanation}",
-        border_style="cyan",
-        expand=False,
-        padding=(1, 2)
-    ))
+    # Find step config to use proper panel
+    step_config = None
+    for step in step_manager.steps:
+        if step.name == step_name:
+            step_config = step
+            break
+    
+    if step_config:
+        console.print(create_step_panel_by_key(step_config.key))
+    else:
+        # Fallback for unknown steps
+        console.print(Panel(
+            f"[bold cyan][{step_number}/{step_manager.get_total_steps()}] {step_name}[/bold cyan]\n"
+            f"\n"
+            f"{explanation}",
+            border_style="cyan",
+            expand=False,
+            padding=(1, 2)
+        ))
     
     # Show loading animation during generation
     with Progress(
@@ -475,15 +444,8 @@ def run_generation_step(
     
     # Post-generation choices (if not in YOLO mode)
     if not yolo:
-        # Show preview for each step - preview functions handle user choices internally
-        if step_key == "overview":
-            show_company_overview_preview(domain)
-        elif step_key == "account":
-            show_target_account_preview(domain)
-        elif step_key == "persona":
-            show_buyer_persona_preview(domain)
-        elif step_key == "email":
-            show_email_campaign_preview(domain)
+        # Show preview for each step using generic preview function
+        show_step_preview(domain, step_key)
         
         console.print(f"[green]✓[/green] {step_name} completed!")
         
@@ -494,14 +456,7 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
     """Run the email generation step with guided mode choice"""
     
     console.print()
-    console.print(Panel(
-        f"[bold cyan][4/4] Email Campaign[/bold cyan]\n"
-        f"\n"
-        f"Crafting personalized outreach emails based on your analysis",
-        border_style="cyan",
-        expand=False,
-        padding=(1, 2)
-    ))
+    console.print(create_step_panel_by_key("email"))
     
     # Ask for mode choice (unless in YOLO mode)
     if not yolo:
@@ -556,7 +511,7 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
                 
                 # Show preview after guided generation
                 if not yolo:
-                    show_email_campaign_preview(domain)
+                    show_step_preview(domain, "email")
                 
             except Exception as e:
                 progress.stop()
@@ -583,37 +538,11 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
     
     # Show preview for guided mode (automatic mode handled by run_generation_step)
     if not yolo:
-        show_guided_email_campaign_preview(domain)
+        show_guided_email_preview(domain)
         console.print(f"[green]✓[/green] Email Campaign completed!")
 
 
-def edit_step_content(domain: str, step_key: str, step_name: str) -> None:
-    """Open step content in system editor"""
-    try:
-        project_dir = gtm_service.storage.get_project_dir(domain)
-        step_file = project_dir / f"{step_key}.json"
-        
-        if not step_file.exists():
-            console.print(f"[red]Error:[/red] {step_name} file not found")
-            return
-        
-        editor = detect_editor()
-        console.print(f"   [blue]→[/blue] Opening in {editor}...")
-        
-        success = open_file_in_editor(step_file, editor)
-        
-        if success:
-            console.print(f"   [green]✓[/green] {step_name} updated")
-            
-            # Mark dependent steps as stale
-            stale_steps = gtm_service.storage.mark_steps_stale(domain, step_key)
-            if stale_steps:
-                console.print(f"   [yellow]⚠️[/yellow] Dependent steps marked as stale: {', '.join(stale_steps)}")
-        else:
-            console.print(f"   [yellow]⚠️[/yellow] Editor closed")
-            
-    except Exception as e:
-        console.print(f"   [red]✗[/red] Failed to edit {step_name}: {e}")
+# edit_step_content moved to preview_utils.py
 
 
 def run_async_generation(coro):
@@ -626,315 +555,4 @@ def run_async_generation(coro):
         loop.close()
 
 
-def show_target_account_preview(domain: str) -> None:
-    """Show target account preview with 3 options"""
-    try:
-        # Load the generated account data
-        account_data = gtm_service.storage.load_step_data(domain, "account")
-        if not account_data:
-            return
-        
-        # Use markdown formatter for preview
-        formatter = get_formatter('account')
-        preview_markdown = formatter.format(account_data, preview=True, max_chars=400)
-        
-        # Create compact preview
-        console.print()
-        console.print(f"\n🎯 [bold]TARGET ACCOUNT - Preview[/bold]")
-        console.print()
-        
-        # Display raw markdown content without Rich's markdown rendering
-        console.print(preview_markdown)
-        
-        console.print()
-        console.print()
-        
-        # Show file save info
-        project_dir = gtm_service.storage.get_project_dir(domain)
-        file_size = (project_dir / "account.json").stat().st_size / 1024
-        console.print(f"✓ Full profile saved to: account.json ({file_size:.1f}KB)")  
-
-        console.print()
-        console.print()
-        
-        # Get user choice
-        choice = show_menu_with_separator(
-            "What would you like to do?",
-            choices=[
-                "Continue to next step",
-                "Edit full analysis in editor", 
-                "Abort"
-            ]
-        )
-        
-        
-        if choice == "Abort":
-            raise KeyboardInterrupt()
-        elif choice == "Edit full analysis in editor":
-            edit_step_content(domain, "account", "Target Account Profile")
-            # After editing, show options again
-            console.print()
-            continue_choice = typer.confirm("Continue to next step?", default=None)
-            ensure_breathing_room(console)
-            # Handle CTRL+C (typer.confirm returns None when interrupted)
-            if continue_choice is None or not continue_choice:
-                raise KeyboardInterrupt()
-        # If "Continue to next step", just return and let the flow continue
-        
-    except Exception as e:
-        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
-
-
-def show_company_overview_preview(domain: str) -> None:
-    """Show company overview preview with 3 options"""
-    try:
-        # Load the generated overview data
-        overview_data = gtm_service.storage.load_step_data(domain, "overview")
-        if not overview_data:
-            return
-        
-        # Use markdown formatter for preview (same as before)
-        formatter = get_formatter('overview')
-        preview_markdown = formatter.format(overview_data, preview=True, max_chars=400)
-        
-        # Create compact preview
-        console.print()
-        console.print(f"\n📋 [bold]COMPANY OVERVIEW - Preview[/bold]")
-        console.print()
-        
-        # Display raw markdown content without Rich's markdown rendering
-        console.print(preview_markdown)
-        
-        console.print()
-        console.print()
-        
-        # Show file save info
-        project_dir = gtm_service.storage.get_project_dir(domain)
-        file_size = (project_dir / "overview.json").stat().st_size / 1024
-        console.print(f"✓ Full overview saved to: overview.json ({file_size:.1f}KB)")  
-
-        console.print()
-        console.print()
-        
-        # Get user choice
-        choice = show_menu_with_separator(
-            "What would you like to do?",
-            choices=[
-                "Continue to next step",
-                "Edit full analysis in editor", 
-                "Abort"
-            ]
-        )
-        
-        
-        if choice == "Abort":
-            raise KeyboardInterrupt()
-        elif choice == "Edit full analysis in editor":
-            edit_step_content(domain, "overview", "Company Overview")
-            # After editing, show options again
-            console.print()
-            continue_choice = typer.confirm("Continue to next step?", default=None)
-            ensure_breathing_room(console)
-            # Handle CTRL+C (typer.confirm returns None when interrupted)
-            if continue_choice is None or not continue_choice:
-                raise KeyboardInterrupt()
-        # If "Continue to next step", just return and let the flow continue
-        
-    except Exception as e:
-        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
-
-
-def show_buyer_persona_preview(domain: str) -> None:
-    """Show buyer persona preview with 3 options"""
-    try:
-        # Load the generated persona data
-        persona_data = gtm_service.storage.load_step_data(domain, "persona")
-        if not persona_data:
-            return
-        
-        # Use markdown formatter for preview
-        formatter = get_formatter('persona')
-        preview_markdown = formatter.format(persona_data, preview=True, max_chars=400)
-        
-        # Create compact preview
-        console.print()
-        console.print(f"\n👤 [bold]BUYER PERSONA - Preview[/bold]")
-        console.print()
-        
-        # Display raw markdown content without Rich's markdown rendering
-        console.print(preview_markdown)
-        
-        console.print()
-        console.print()
-        
-        # Show file save info
-        project_dir = gtm_service.storage.get_project_dir(domain)
-        file_size = (project_dir / "persona.json").stat().st_size / 1024
-        console.print(f"✓ Full persona saved to: persona.json ({file_size:.1f}KB)")  
-
-        console.print()
-        console.print()
-        
-        # Get user choice
-        choice = show_menu_with_separator(
-            "What would you like to do?",
-            choices=[
-                "Continue to next step",
-                "Edit full analysis in editor", 
-                "Abort"
-            ]
-        )
-        
-        
-        if choice == "Abort":
-            raise KeyboardInterrupt()
-        elif choice == "Edit full analysis in editor":
-            edit_step_content(domain, "persona", "Buyer Persona")
-            # After editing, show options again
-            console.print()
-            continue_choice = typer.confirm("Continue to next step?", default=None)
-            ensure_breathing_room(console)
-            # Handle CTRL+C (typer.confirm returns None when interrupted)
-            if continue_choice is None or not continue_choice:
-                raise KeyboardInterrupt()
-        # If "Continue to next step", just return and let the flow continue
-        
-    except Exception as e:
-        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
-
-
-def show_email_campaign_preview(domain: str) -> None:
-    """Show email campaign preview with 3 options"""
-    try:
-        # Load the generated email data
-        email_data = gtm_service.storage.load_step_data(domain, "email")
-        if not email_data:
-            return
-        
-        # Use markdown formatter for preview
-        formatter = get_formatter('email')
-        preview_markdown = formatter.format(email_data, preview=True, max_chars=400)
-        
-        # Create compact preview
-        console.print()
-        console.print(f"\n📧 [bold]EMAIL CAMPAIGN - Preview[/bold]")
-        console.print()
-        
-        # Display raw markdown content without Rich's markdown rendering
-        console.print(preview_markdown)
-        
-        console.print()
-        console.print()
-        
-        console.print()
-        
-        # Show file save info
-        project_dir = gtm_service.storage.get_project_dir(domain)
-        file_size = (project_dir / "email.json").stat().st_size / 1024
-        console.print(f"✓ Full campaign saved to: email.json ({file_size:.1f}KB)")
-        console.print()
-        console.print()
-        
-        
-        # Get user choice
-        choice = show_menu_with_separator(
-            "What would you like to do?",
-            choices=[
-                "Complete generation",
-                "Edit full campaign in editor", 
-                "Abort"
-            ]
-        )
-        
-        
-        if choice == "Abort":
-            raise KeyboardInterrupt()
-        elif choice == "Edit full campaign in editor":
-            edit_step_content(domain, "email", "Email Campaign")
-            # After editing, just continue to completion
-            console.print()
-        # If "Complete generation", just return and let the flow continue
-        
-    except Exception as e:
-        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
-
-
-def show_guided_email_campaign_preview(domain: str) -> None:
-    """Show enhanced email campaign preview for guided mode"""
-    try:
-        # Load the generated email data
-        email_data = gtm_service.storage.load_step_data(domain, "email")
-        if not email_data:
-            return
-        
-        # Create enhanced preview based on PRD spec
-        console.print()
-        console.print(f"\n📧 [bold]EMAIL CAMPAIGN - Preview[/bold]")
-        
-        # Show main email content
-        emails = email_data.get("emails", [])
-        if emails:
-            first_email = emails[0]
-            subject = first_email.get("subject", "Your personalized subject line")
-            body = first_email.get("body", "Your personalized email content")
-            
-            console.print(f"Subject: {subject}")
-            console.print()
-            console.print("Hi {{FirstName}},")
-            console.print()
-            
-            # Show a preview of the body (first few lines)
-            body_lines = body.split('\n')[:4]
-            for line in body_lines:
-                console.print(line)
-            
-            if len(body.split('\n')) > 4:
-                console.print("...")
-            
-            console.print()
-            console.print("Best,")
-            console.print("{{Your name}}")
-            
-            # Show alternative subjects if available
-            alt_subjects = first_email.get("alternative_subjects", [])
-            if alt_subjects:
-                console.print()
-                console.print("Alternative subjects:")
-                for alt in alt_subjects[:2]:
-                    console.print(f'- "{alt}"')
-        
-        console.print()
-        
-        # Show file save info
-        project_dir = gtm_service.storage.get_project_dir(domain)
-        file_size = (project_dir / "email.json").stat().st_size / 1024
-        console.print(f"✓ Full campaign saved to: email.json ({file_size:.1f}KB)")
-        console.print()
-        
-        # Get user choice
-        choice = questionary.select(
-            "What would you like to do?",
-            choices=[
-                "Continue to GTM plan",
-                "Edit full campaign in editor", 
-                "Abort"
-            ]
-        ).ask()
-        
-        ensure_breathing_room(console)
-        
-        if choice == "Abort":
-            raise KeyboardInterrupt()
-        elif choice == "Edit full campaign in editor":
-            edit_step_content(domain, "email", "Email Campaign")
-            # After editing, show options again
-            console.print()
-            continue_choice = typer.confirm("Continue to next step?", default=None)
-            ensure_breathing_room(console)
-            # Handle CTRL+C (typer.confirm returns None when interrupted)
-            if continue_choice is None or not continue_choice:
-                raise KeyboardInterrupt()
-        # If "Continue to GTM plan", just return and let the flow continue
-        
-    except Exception as e:
-        console.print(f"[yellow]Could not show preview: {e}[/yellow]")
+# All preview functions have been replaced with generic show_step_preview and show_guided_email_preview
