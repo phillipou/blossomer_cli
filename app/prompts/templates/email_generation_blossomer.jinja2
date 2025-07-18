@@ -49,6 +49,18 @@ You are a founder texting another founder about a problem they might be having. 
 
 **For personalization specifically:**
 
+**CUSTOM PERSONALIZATION HANDLING:**
+
+**✅ GOOD CUSTOM INPUTS (USE THESE):**
+- Specific, factual references about the target company
+- Clear personalization instructions
+- Contextually relevant details
+
+**❌ UNCERTAIN INPUTS (IGNORE AND USE NOT-PERSONALIZED):**
+- Vague uncertainty expressions
+- Gibberish or meaningless text
+- Dismissive responses
+
 **If not-personalized OR uncertainty detected:**
 - IMPORTANT: Don't make up buying signals or fake personalization
 - Default to a more general but honest opening that answers why you're reaching out
@@ -82,6 +94,18 @@ You are a founder texting another founder about a problem they might be having. 
 - This is a good place to insert social proof if available.
 - ✅ GOOD:"We just helped [OtherCompany] automate their most painful document processing workflows"
 - ❌ BAD:"Would you be interested in 20x'ing your sales pipeline?"
+
+**CUSTOM CONTENT HANDLING (Step 2 guidance):**
+
+**✅ GOOD CUSTOM INPUTS (USE THESE):**
+- Specific pain points, use cases, or desired outcomes
+- Clear, contextually relevant content
+- Meaningful business challenges or goals
+
+**❌ UNCERTAIN CUSTOM INPUTS (IGNORE AND USE PERSONA DATA):**
+- Vague uncertainty expressions
+- Gibberish or test input
+- Dismissive or meaningless responses
 
 ## The Rewrite Test (CRITICAL)
 After writing, read it out loud. If it feels like you're shoe-horning variables into a template OR it sounds really forced or generic, START OVER!
@@ -283,23 +307,32 @@ Write an email FROM {{ company_context.company_name }} TO {{ target_account.targ
 
 **CRITICAL - UNCERTAINTY HANDLING FOR ALL INPUTS:**
 BEFORE using ANY preference above, check if it contains uncertainty indicators.
-If ANY field seems uncertain, unclear, or gibberish - IGNORE it and use sensible defaults:
 
-**Uncertain emphasis** → use "pain-point"
-**Uncertain opening** → use "not-personalized"
-**Uncertain CTA** → use "meeting"
-**Uncertain social proof** → omit entirely
-**Uncertain use case** → pick most relevant from persona data
-**Uncertain selected content** → ignore custom instructions, use persona data
-**Uncertain personalization** → treat as "not-personalized"
+**HOW TO HANDLE CUSTOM INPUTS:**
 
-Examples of uncertainty to detect and ignore:
+**LEGITIMATE CUSTOM INPUTS (USE THESE):**
+- Specific, contextually relevant responses
+- Clear pain points, use cases, or desired outcomes
+- Meaningful social proof or personalization details
+- Specific CTA requests
+
+**UNCERTAIN INPUTS (IGNORE AND USE DEFAULTS):**
 - "idk", "not sure", "whatever", "anything", "nothing", "dunno"
 - Gibberish: "asdf", "test", "123", "qwerty", very short inputs
 - Dismissive: "meh", "eh", "pass", "skip", ".", "?"
 - Empty or meaningless responses
+- Responses that don't make sense in context
 
-Do NOT try to incorporate meaningless user input into the email. Better to use defaults than sound unnatural.
+**FALLBACK RULES:**
+- **Uncertain emphasis** → use "pain-point"
+- **Uncertain opening** → use "not-personalized"
+- **Uncertain CTA** → use "meeting"
+- **Uncertain social proof** → omit entirely
+- **Uncertain use case** → pick most relevant from persona data
+- **Uncertain selected content** → ignore custom instructions, use persona data
+- **Uncertain personalization** → treat as "not-personalized"
+
+**KEY PRINCIPLE:** If user input is specific and contextually relevant, USE IT. If it's vague, unclear, or gibberish, IGNORE IT and use defaults.
 
 {% if preferences.template == 'custom' and preferences.custom_template -%}
 **Custom instructions:**
@@ -321,7 +354,14 @@ This email was generated through guided mode. User provided:
 - Step 5 CTA: {{ preferences.call_to_action }}
 {%- endif %}
 
-**IMPORTANT:** Check each guided input above for uncertainty. If any seems unclear or gibberish, ignore it and use sensible defaults instead.
+**EVALUATION INSTRUCTIONS:**
+For each guided input above:
+1. **If it's specific and contextually relevant** → USE IT in the email
+2. **If it's vague, unclear, or gibberish** → IGNORE IT and use persona data/defaults
+3. **If it's custom but makes sense** → INCORPORATE IT naturally
+4. **If it's uncertain/dismissive** → FALL BACK to defaults
+
+Apply the same principle: if it's specific and contextually relevant, use it; if it's vague or uncertain, ignore it and use defaults.
 {%- endif %}
 
 Remember: Write ONE flowing email, not segments. Make it so specific to their company that it couldn't possibly be sent to anyone else. If it sounds like a template, start over.
