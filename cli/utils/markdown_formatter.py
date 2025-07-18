@@ -102,7 +102,7 @@ class MarkdownHeaderConfig:
         ],
         'email': [
             'subjects.primary',
-            'email_body'                  # First 2 segments
+            'full_email_body'             # Full email body
         ]
     }
     
@@ -709,17 +709,24 @@ class EmailFormatter(MarkdownFormatter):
         subjects = data.get('subjects', {})
         primary_subject = subjects.get('primary', 'Email Subject')
         alternative_subjects = subjects.get('alternatives', [])
-        email_body = data.get('email_body', [])
-        breakdown = data.get('breakdown', {})
+        full_email_body = data.get('full_email_body', '')
+        email_body_breakdown = data.get('email_body_breakdown', [])
+        writing_process = data.get('writing_process', {})
         
         if preview:
-            # Preview mode: Show the email as it would appear
+            # Preview mode: Show the email as it would appear using full_email_body
             lines.append(self.config.get_header(self.config.MAJOR_SECTION, f"Email Preview"))
             lines.append("")
             
-            # Render coherent email
-            coherent_email = self._render_coherent_email(primary_subject, email_body)
-            lines.append(coherent_email)
+            # Use full_email_body directly for preview
+            if full_email_body:
+                lines.append(f"**Subject:** {primary_subject}")
+                lines.append("")
+                lines.append(full_email_body)
+            else:
+                # Fallback to breakdown if full_email_body is not available
+                coherent_email = self._render_coherent_email(primary_subject, email_body_breakdown)
+                lines.append(coherent_email)
                 
         else:
             # Export mode: Complete formatting with analysis
@@ -730,10 +737,18 @@ class EmailFormatter(MarkdownFormatter):
             lines.append(self.config.get_header(self.config.SUB_SECTION, "Final Email"))
             lines.append("")
             
-            coherent_email = self._render_coherent_email(primary_subject, email_body)
-            lines.append("```email")
-            lines.append(coherent_email)
-            lines.append("```")
+            if full_email_body:
+                lines.append("```email")
+                lines.append(f"Subject: {primary_subject}")
+                lines.append("")
+                lines.append(full_email_body)
+                lines.append("```")
+            else:
+                # Fallback to breakdown if full_email_body is not available
+                coherent_email = self._render_coherent_email(primary_subject, email_body_breakdown)
+                lines.append("```email")
+                lines.append(coherent_email)
+                lines.append("```")
             lines.append("")
             
             # Alternative Subject Lines
@@ -745,25 +760,41 @@ class EmailFormatter(MarkdownFormatter):
                 lines.append("")
             
             # Email Structure Breakdown
-            if email_body and breakdown:
+            if email_body_breakdown:
                 lines.append(self.config.get_header(self.config.SUB_SECTION, "Email Structure Analysis"))
                 lines.append("")
                 
                 # Show each segment with its purpose
-                for segment in email_body:
+                for segment in email_body_breakdown:
                     segment_type = segment.get('type', 'text')
                     text = segment.get('text', '')
                     
-                    # Get breakdown info for this segment type
-                    type_info = breakdown.get(segment_type, {})
-                    label = type_info.get('label', segment_type.replace('-', ' ').title())
-                    description = type_info.get('description', '')
+                    # Simple label based on segment type
+                    label = segment_type.replace('-', ' ').title()
                     
                     lines.append(f"**{label}**")
-                    if description:
-                        lines.append(f"*Purpose: {description}*")
                     lines.append(f"> {text}")
                     lines.append("")
+            
+            # Writing Process Analysis
+            if writing_process:
+                lines.append(self.config.get_header(self.config.SUB_SECTION, "Writing Process"))
+                lines.append("")
+                
+                trigger = writing_process.get('trigger', '')
+                problem = writing_process.get('problem', '')
+                help_offered = writing_process.get('help', '')
+                cta = writing_process.get('cta', '')
+                
+                if trigger:
+                    lines.append(f"**Trigger**: {trigger}")
+                if problem:
+                    lines.append(f"**Problem**: {problem}")
+                if help_offered:
+                    lines.append(f"**Help Offered**: {help_offered}")
+                if cta:
+                    lines.append(f"**Call to Action**: {cta}")
+                lines.append("")
             
             # Generation Metadata
             metadata = data.get('metadata', {})
@@ -800,7 +831,7 @@ class EmailFormatter(MarkdownFormatter):
             
         return content
     
-    def _render_coherent_email(self, subject: str, email_body: List[Dict[str, str]]) -> str:
+    def _render_coherent_email(self, subject: str, email_body_breakdown: List[Dict[str, str]]) -> str:
         """
         Render a coherent email from the structured email_body array.
         
@@ -820,9 +851,9 @@ class EmailFormatter(MarkdownFormatter):
         lines.append("")
         
         # Process email body segments
-        if email_body:
+        if email_body_breakdown:
             # Skip the subject segment (if present) since we already handled it
-            body_segments = [seg for seg in email_body if seg.get('type') != 'subject']
+            body_segments = [seg for seg in email_body_breakdown if seg.get('type') != 'subject']
             
             # Group non-CTA segments into paragraphs, keep CTA separate
             body_paragraphs = []

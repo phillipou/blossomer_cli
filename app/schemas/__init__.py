@@ -419,7 +419,8 @@ class EmailSubjects(BaseModel):
 
 
 # EmailBreakdown is a flexible dictionary structure to match frontend expectations
-# Frontend uses: breakdown[segment.type]?.label, breakdown[segment.type]?.description, etc.
+# Note: This is kept for backward compatibility but may not be used with the new API structure
+# that uses 'writing_process' instead of 'breakdown'
 EmailBreakdown = Dict[str, Dict[str, str]]
 
 
@@ -508,12 +509,15 @@ class EmailGenerationResponse(BaseModel):
     """Response model for email generation API."""
 
     subjects: EmailSubjects = Field(..., description="Generated subject lines")
-    email_body: List[EmailSegment] = Field(
-        ..., description="Email content broken into structured segments"
+    full_email_body: str = Field(
+        ..., description="Complete natural email from greeting to sign-off"
     )
-    breakdown: EmailBreakdown = Field(
+    email_body_breakdown: List[EmailSegment] = Field(
+        ..., description="Email content broken into structured segments (extracted from full_email_body)"
+    )
+    writing_process: Dict[str, str] = Field(
         ...,
-        description="Flexible segment breakdown for UI rendering - maps segment types to {label, description, color}",
+        description="Writing process breakdown with trigger, problem, help, and cta",
     )
     metadata: EmailGenerationMetadata = Field(
         ..., description="Generation metadata and quality metrics"

@@ -76,8 +76,9 @@ async def generate_email_campaign_service(
         if not isinstance(result, EmailGenerationResponse):
             result = EmailGenerationResponse.model_validate(result)
 
-        # Assign colors to breakdown entries
-        result.breakdown = assign_breakdown_colors(result.breakdown)
+        # Assign colors to breakdown entries if they exist
+        if hasattr(result, 'breakdown') and result.breakdown:
+            result.breakdown = assign_breakdown_colors(result.breakdown)
 
         # Calculate processing time
         processing_time = int((time.time() - start_time) * 1000)
@@ -155,7 +156,10 @@ def validate_email_generation_context(data: EmailGenerationRequest) -> Dict[str,
 
 
 def assign_breakdown_colors(breakdown: Dict[str, Any]) -> Dict[str, Any]:
-    """Assign consistent colors to breakdown entries based on segment types."""
+    """Assign consistent colors to breakdown entries based on segment types.
+    Note: This function is kept for backward compatibility but may not be used
+    with the new API structure that uses 'writing_process' instead of 'breakdown'.
+    """
     # Default color mapping for common segment types
     COLOR_MAPPING = {
         "subject": "bg-purple-50 border-purple-200",
