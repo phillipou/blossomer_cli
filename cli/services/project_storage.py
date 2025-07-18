@@ -45,6 +45,10 @@ class ProjectStorage:
         project_dir = self.get_project_dir(domain)
         project_dir.mkdir(parents=True, exist_ok=True)
         
+        # Create json_output subdirectory for all JSON files
+        json_output_dir = project_dir / "json_output"
+        json_output_dir.mkdir(exist_ok=True)
+        
         # Create export subdirectory
         export_dir = project_dir / "export"
         export_dir.mkdir(exist_ok=True)
@@ -80,8 +84,10 @@ class ProjectStorage:
         data_dict["_generated_at"] = datetime.now().isoformat()
         data_dict["_step"] = step
         
-        # Save to appropriate file
-        step_file = project_dir / f"{step}.json"
+        # Save to json_output directory
+        json_output_dir = project_dir / "json_output"
+        json_output_dir.mkdir(exist_ok=True)
+        step_file = json_output_dir / f"{step}.json"
         with open(step_file, 'w', encoding='utf-8') as f:
             json.dump(data_dict, f, indent=2, ensure_ascii=False)
         
@@ -94,7 +100,7 @@ class ProjectStorage:
     def load_step_data(self, domain: str, step: str) -> Optional[Dict[str, Any]]:
         """Load data for a specific step"""
         project_dir = self.get_project_dir(domain)
-        step_file = project_dir / f"{step}.json"
+        step_file = project_dir / "json_output" / f"{step}.json"
         
         if not step_file.exists():
             return None
@@ -116,9 +122,10 @@ class ProjectStorage:
         
         steps = []
         step_files = ["overview.json", "account.json", "persona.json", "email.json", "plan.json"]
+        json_output_dir = project_dir / "json_output"
         
         for step_file in step_files:
-            if (project_dir / step_file).exists():
+            if (json_output_dir / step_file).exists():
                 step_name = step_file.replace(".json", "")
                 steps.append(step_name)
         
@@ -221,8 +228,9 @@ class ProjectStorage:
         project_dir = self.get_project_dir(domain)
         
         stale_steps = []
+        json_output_dir = project_dir / "json_output"
         for step in dependent_steps:
-            step_file = project_dir / f"{step}.json"
+            step_file = json_output_dir / f"{step}.json"
             if step_file.exists():
                 # Add stale marker to the file
                 try:

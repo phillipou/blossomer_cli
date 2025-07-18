@@ -80,6 +80,10 @@ class ProjectManager:
         project_path = self.get_project_path(domain)
         project_path.mkdir(parents=True, exist_ok=True)
         
+        # Create json_output subdirectory for all JSON files
+        json_output_path = project_path / "json_output"
+        json_output_path.mkdir(exist_ok=True)
+        
         # Create export subdirectory
         export_path = project_path / "export"
         export_path.mkdir(exist_ok=True)
@@ -104,8 +108,10 @@ class ProjectManager:
         if not project_path.exists():
             project_path = self.create_project(domain)
         
-        # Save the step data
-        file_path = project_path / self.STEP_FILES[step]
+        # Save the step data to json_output directory
+        json_output_path = project_path / "json_output"
+        json_output_path.mkdir(exist_ok=True)
+        file_path = json_output_path / self.STEP_FILES[step]
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         
@@ -124,7 +130,7 @@ class ProjectManager:
             raise ValueError(f"Unknown step: {step}")
         
         project_path = self.get_project_path(domain)
-        file_path = project_path / self.STEP_FILES[step]
+        file_path = project_path / "json_output" / self.STEP_FILES[step]
         
         if not file_path.exists():
             return None
@@ -141,7 +147,7 @@ class ProjectManager:
             raise ValueError(f"Unknown step: {step}")
         
         project_path = self.get_project_path(domain)
-        return project_path / self.STEP_FILES[step]
+        return project_path / "json_output" / self.STEP_FILES[step]
     
     def list_projects(self) -> List[Tuple[str, ProjectMetadata]]:
         """List all projects with their metadata."""

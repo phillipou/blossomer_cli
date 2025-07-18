@@ -830,11 +830,12 @@ def get_formatter(step_type: str) -> MarkdownFormatter
 ```
 gtm_projects/
 ├── {domain}/
-│   ├── overview.json      # Company analysis
-│   ├── account.json       # Target account profile  
-│   ├── persona.json       # Buyer persona
-│   ├── email.json         # Email campaign
-│   ├── plan.json          # GTM execution plan
+│   ├── json_output/       # All JSON files stored here
+│   │   ├── overview.json      # Company analysis
+│   │   ├── account.json       # Target account profile  
+│   │   ├── persona.json       # Buyer persona
+│   │   ├── email.json         # Email campaign
+│   │   └── plan.json          # GTM execution plan
 │   ├── .metadata.json     # Generation metadata
 │   └── export/
 │       └── gtm-report-{date}.md
