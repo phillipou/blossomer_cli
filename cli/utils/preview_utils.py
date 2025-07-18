@@ -52,6 +52,13 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         # Display preview content
         console.print(preview_markdown)
         
+        # Add character count indicator
+        full_content = formatter.format(step_data, preview=False)
+        total_chars = len(full_content)
+        preview_chars = len(preview_markdown)
+        console.print()
+        console.print(f"[dim][Previewing {preview_chars:,} of {total_chars:,} characters][/dim]")
+        
         console.print()
         console.print()
         
@@ -116,6 +123,17 @@ def show_guided_email_preview(domain: str) -> None:
         console.print()
         console.print(create_step_panel_by_key("email"))
         console.print()
+        
+        # Show guided steps Q&A history if available
+        guided_preferences = email_data.get("guided_preferences", {})
+        qa_history = guided_preferences.get("qa_history", [])
+        if qa_history:
+            console.print("✓ Previous guided steps:")
+            for qa in qa_history:
+                console.print(f"  [bold]{qa['question']}[/bold]")
+                console.print(f"  → {qa['answer']}")
+                console.print()
+        
         console.print(create_preview_header("email"))
         
         # Show main email content
@@ -132,6 +150,7 @@ def show_guided_email_preview(domain: str) -> None:
             
             # Show a preview of the body (first few lines)
             body_lines = body.split('\n')[:4]
+            preview_body = "\n".join(body_lines)
             for line in body_lines:
                 console.print(line)
             
@@ -149,6 +168,13 @@ def show_guided_email_preview(domain: str) -> None:
                 console.print("Alternative subjects:")
                 for alt in alt_subjects[:2]:
                     console.print(f'- "{alt}"')
+            
+            # Add character count indicator
+            full_body = body
+            total_chars = len(subject) + len(full_body) + 50  # Add some for template parts
+            preview_chars = len(subject) + len(preview_body) + 50
+            console.print()
+            console.print(f"[dim][Previewing {preview_chars:,} of {total_chars:,} characters][/dim]")
         
         console.print()
         

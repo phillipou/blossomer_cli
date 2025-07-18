@@ -8,6 +8,9 @@ dev_cache/
 gtm_projects/
 blogs/
 
+# Internal Files
+LLMs.txt
+
 # Python
 __pycache__/
 *.py[cod]

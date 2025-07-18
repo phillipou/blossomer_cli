@@ -388,6 +388,9 @@ def run_generation_step(
 ) -> None:
     """Run a single generation step with proper loading and user interaction"""
     
+    # Clear screen before showing step panel for clean UX
+    clear_console()
+    
     # Create a bordered panel for each step using step manager
     console.print()
     # Find step config to use proper panel
@@ -454,6 +457,9 @@ def run_generation_step(
 
 def run_email_generation_step(domain: str, yolo: bool = False) -> None:
     """Run the email generation step with guided mode choice"""
+    
+    # Clear screen before showing step panel for clean UX
+    clear_console()
     
     console.print()
     console.print(create_step_panel_by_key("email"))

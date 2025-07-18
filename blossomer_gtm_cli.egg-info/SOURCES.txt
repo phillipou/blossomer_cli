@@ -61,6 +61,9 @@ cli/utils/file_manager.py
 cli/utils/guided_email_builder.py
 cli/utils/logging.py
 cli/utils/markdown_formatter.py
+cli/utils/panel_utils.py
+cli/utils/preview_utils.py
+cli/utils/step_config.py
 tests/test_auth_methods.py
 tests/test_cli_commands.py
 tests/test_correct_endpoint.py
