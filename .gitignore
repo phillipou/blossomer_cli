@@ -6,6 +6,7 @@
 # Project data directories
 dev_cache/
 gtm_projects/
+blogs/
 
 # Python
 __pycache__/

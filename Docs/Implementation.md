@@ -42,7 +42,7 @@
 
 ## Current Implementation Status
 
-**Status:** ✅ Core CLI Complete + Evaluation System Complete - Focus on Remaining Features  
+**Status:** ✅ Core CLI Complete + Evaluation System Complete with Template-Driven Architecture - Focus on Remaining Features  
 **Last Updated:** July 17, 2025
 
 ### ✅ Completed Core Features
@@ -53,7 +53,7 @@
 - **Project Management** - State tracking, dependency management, stale detection
 - **System Editor Integration** - Auto-detected editor with fallback options
 - **YOLO Mode** - Non-interactive batch generation for power users
-- **✅ Evaluation System** - Complete prompt quality assurance with CLI integration
+- **✅ Evaluation System** - Complete prompt quality assurance with template-driven architecture and actual field value display
 
 ### 🎯 Current Working Commands
 ```bash
@@ -66,6 +66,7 @@ python3 -m cli.main generate email      # Regenerate email with guided flow
 # Evaluation System
 python3 -m cli.main eval list           # List available evaluations
 python3 -m cli.main eval run product_overview --sample-size 5
+python3 -m cli.main eval run target_account --sample-size 5
 python3 -m cli.main eval run all        # Run all evaluations
 ```
 
@@ -160,6 +161,7 @@ evals/core/judges/templates/
 **LLM Judge Categories (Ultra-Low Cost):**
 - **content_integrity**: Returns 3 individual checks - evidence_support, context_handling, content_distinctness
 - **business_insight**: Returns 4 individual checks - industry_sophistication, strategic_depth, authentic_voice_capture, actionable_specificity
+- **account_targeting_quality**: Returns 3 individual checks - proxy_strength, detection_feasibility, profile_crispness
 
 #### Individual Check Output Structure
 
@@ -189,6 +191,7 @@ Each evaluation check (both deterministic and LLM) follows a standardized format
 **LLM Judge Categories Return Multiple Individual Checks:**
 - **content_integrity** → 3 checks: evidence_support, context_handling, content_distinctness
 - **business_insight** → 4 checks: industry_sophistication, strategic_depth, authentic_voice_capture, actionable_specificity
+- **account_targeting_quality** → 3 checks: proxy_strength, detection_feasibility, profile_crispness
 
 **Example Deterministic Check:**
 ```json
@@ -220,7 +223,8 @@ Each evaluation check (both deterministic and LLM) follows a standardized format
 **Display Features:**
 - **Rating Display**: Each LLM check shows color-coded rating (IMPRESSIVE/SUFFICIENT/POOR)
 - **Rating Distribution Table**: Summary showing count and percentage of each rating level
-- **Cost Efficiency**: 2 LLM calls return 7 individual actionable checks
+- **Inputs Evaluated**: Shows actual field values being assessed (not summaries)
+- **Cost Efficiency**: 3 LLM calls return 10 individual actionable checks
 - **Granular Feedback**: Each criterion can be individually analyzed and improved
 
 ### Usage Examples
@@ -229,10 +233,12 @@ Each evaluation check (both deterministic and LLM) follows a standardized format
 ```bash
 # CLI integration (preferred method)
 python3 -m cli.main eval run product_overview --sample-size 3
+python3 -m cli.main eval run target_account --sample-size 3
 python3 -m cli.main eval run all --sample-size 5
 
 # Direct runner access (for development)
 python3 -m evals.core.runner product_overview --sample-size 3
+python3 -m evals.core.runner target_account --sample-size 3
 python3 -m evals.core.runner all --sample-size 5
 ```
 
@@ -285,7 +291,7 @@ python3 -m cli.main eval create new_prompt \
 ### Future Extensions
 
 #### Additional Prompts
-- **Target Account Evaluation**: Firmographic accuracy, buying signal relevance
+- **✅ Target Account Evaluation**: Profile definition crispness, detection quality, actionable prospect filters
 - **Buyer Persona Evaluation**: Demographic consistency, use case alignment
 - **Email Generation Evaluation**: Subject line effectiveness, personalization quality
 - **GTM Plan Evaluation**: Actionability, timeline feasibility, metric relevance
@@ -320,6 +326,94 @@ models:
 ```
 
 This evaluation system ensures prompt quality while remaining practical, efficient, and closely aligned with the actual application architecture.
+
+## 🎯 Target Account Profile Evaluation Design
+
+### Overview
+Target account evaluation assesses the quality of ideal customer profile (ICP) generation using two core dimensions: **Profile Definition Crispness** and **Detection Quality**. This evaluation ensures target account profiles are specific enough to be actionable while remaining technically feasible to implement.
+
+### Quality Framework
+
+#### **Dimension 1: Profile Definition Crispness** 
+*"How precisely have you defined your ideal customer?"*
+
+**Core Metric**: **Exclusion Rate** - How many companies in the broad category are you excluding?
+- **Excellent**: "Series B SaaS companies with 50-200 employees using Kubernetes in production" (high exclusion rate)
+- **Poor**: "Growing tech companies that need better tools" (excludes almost no one)
+
+**Evaluation Criteria**:
+- **Specificity**: Are firmographics specific enough to filter effectively? (e.g., "100-500 employees" vs "mid-size companies")
+- **Logical Alignment**: Does the profile logically connect to the problem being solved?
+- **Clay Readiness**: Can all firmographic filters be copy-pasted into prospecting tools?
+- **Keyword Sophistication**: Do keywords indicate implicit need vs. explicit solution seeking?
+
+#### **Dimension 2: Detection Quality**
+*"Can you actually find these companies and identify when they need you?"*
+
+**Sub-Components**:
+
+1. **Proxy Strength**: Are your attributes/signals good predictors of need?
+   - Do firmographics correlate with having the problem?
+   - Do buying signals indicate "need now" vs. "might need someday"?
+   - Is the priority distribution realistic (~10% high, ~65% medium, ~25% low)?
+
+2. **Technical Feasibility**: Can you detect these with available tools?
+   - Traditional tools: Clay, Apollo, ZoomInfo for firmographics
+   - AI-enhanced capabilities: MCP servers, web scraping, deep research for advanced signals
+   - Detection methods clearly specified for each signal
+
+**The Quality Flow**:
+```
+Problem Definition → Profile Crispness → Attribute Quality → Detection Feasibility → Rationale Clarity
+     ↓                    ↓                  ↓                    ↓                    ↓
+"What problem    "What specific     "What do they      "Can we find       "Can someone
+do we solve?"    companies have     look like &        these signals      follow our 
+                 this problem?"     when do they       with existing      logic?"
+                                   need it?"          tools?"
+```
+
+### Evaluation Structure
+
+#### **Deterministic Checks (Target Account Specific)**
+- **D-1 Valid JSON**: Basic parsing validation
+- **D-2 Schema Compliance**: Field presence and type validation  
+- **D-3 Priority Distribution**: Buying signals follow ~10%/65%/25% high/medium/low distribution
+- **D-4 Field Cardinality**: Rationale arrays contain 3-5 items, keywords contain 3-5 items
+- **D-5 Detection Specification**: Every buying signal specifies detection method and type
+- **D-6 Clay Compatibility**: Firmographic values use exact, searchable terminology
+
+#### **LLM Judge Categories**
+- **content_integrity**: Evidence support, context handling, content distinctness
+- **account_targeting_quality**: Profile crispness, detection feasibility, business logic depth
+
+### Success Metrics
+- **Profile Specificity**: >80% of outputs demonstrate high exclusion rate
+- **Detection Feasibility**: >90% of buying signals specify realistic detection methods
+- **Priority Distribution**: >95% compliance with 10/65/25 priority allocation
+- **Clay Readiness**: >95% of firmographics use exact, searchable values
+- **Business Logic**: >85% demonstrate sophisticated understanding of customer dynamics
+
+### End Goal
+Generate a **usable roadmap** that tells sales teams: "Look for companies that look like X, behave like Y, at moments when Z happens, using tools A/B/C"
+
+### Implementation Files
+```
+evals/prompts/target_account/
+├── config.yaml              # Service mapping and judge configuration
+├── schema.json              # TargetAccountResponse validation schema
+└── ../datasets/eval_test_inputs.csv  # Shared test dataset
+```
+
+### Judge Template Structure
+```
+evals/core/judges/templates/
+├── system/
+│   ├── content_integrity.j2        # Existing general content validation
+│   └── account_targeting_quality.j2# New: Profile crispness + detection quality
+└── user/
+    ├── content_integrity.j2        # Data input for content validation
+    └── account_targeting_quality.j2# Data input for targeting assessment
+```
 
 ### ✅ Implementation Complete (July 17, 2025)
 1. **✅ Refactored existing evaluation code** - Clean up current spaghetti code
@@ -375,20 +469,25 @@ evals/
 ├── core/                    # ✅ Unified evaluation framework
 │   ├── config.py           # YAML configuration management
 │   ├── dataset.py          # CSV test case loading
-│   ├── results.py          # Rich terminal output
+│   ├── results.py          # Rich terminal output with actual field values
 │   ├── runner.py           # Single command interface
 │   └── judges/             # Evaluation logic
 │       ├── deterministic.py    # Zero-cost validation checks
-│       ├── llm_judge.py        # LLM-based evaluation with dual templates
+│       ├── llm_judge.py        # LLM-based evaluation with template-driven architecture
 │       └── templates/          # Jinja2 templates for LLM judge categories
-│           ├── system/         # System prompt templates (instructions)
+│           ├── system/         # System prompt templates (instructions & formats)
 │           │   ├── content_integrity.j2
-│           │   └── business_insight.j2
-│           └── user/           # User prompt templates (data only)
+│           │   ├── business_insight.j2
+│           │   └── account_targeting_quality.j2
+│           └── user/           # User prompt templates (data + JSON format)
 │               ├── content_integrity.j2
-│               └── business_insight.j2
-└── prompts/                # ✅ Per-prompt configurations
-    └── product_overview/   # Product overview evaluation
+│               ├── business_insight.j2
+│               └── account_targeting_quality.j2
+├── prompts/                # ✅ Per-prompt configurations
+│   ├── product_overview/   # Product overview evaluation
+│   └── target_account/     # Target account profile evaluation
+└── datasets/               # ✅ Centralized test data
+    └── eval_test_inputs.csv    # Shared test cases across evaluations
 ```
 
 ## 📄 JSON-to-Markdown Utility Project

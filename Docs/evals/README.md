@@ -70,6 +70,7 @@ Each category makes a single LLM call but returns multiple individual checks:
 
 - **content_integrity**: Returns 3 checks - evidence_support, context_handling, content_distinctness (prompt-agnostic)
 - **business_insight**: Returns 4 checks - industry_sophistication, strategic_depth, authentic_voice_capture, actionable_specificity (product_overview specific)
+- **account_targeting_quality**: Returns 3 checks - proxy_strength, detection_feasibility, profile_crispness (target_account specific)
 
 **Individual Check Structure**:
 Each check (deterministic and LLM) follows a standardized format:
@@ -77,7 +78,7 @@ Each check (deterministic and LLM) follows a standardized format:
 {
   "check_name": "evidence_support",
   "description": "Claims properly supported by evidence or marked as assumptions",
-  "inputs_evaluated": [{"field": "analysis_claims", "value": "Sampled claims"}],
+  "inputs_evaluated": [{"field": "positioning_insights", "value": "Key Market Belief: Manual QA methods don't scale; Unique Approach: AI-powered sampling"}],
   "pass": true,
   "rating": "impressive",  // Optional for LLM checks only
   "rationale": "2-3 sentence explanation of assessment"
@@ -87,12 +88,13 @@ Each check (deterministic and LLM) follows a standardized format:
 **Display Features**:
 - **Rating Display**: LLM checks show color-coded ratings (IMPRESSIVE/SUFFICIENT/POOR)
 - **Rating Distribution Table**: Summary showing count and percentage of each rating level
+- **Inputs Evaluated**: Shows actual field values being assessed (not summaries)
 - **Granular Feedback**: Each criterion provides individual actionable feedback
 
 **Template Organization**:
 - System prompts contain all evaluation criteria, instructions, and response formats
-- User prompts contain only the data/variables to be evaluated
-- Clean separation enables easier editing and better scalability
+- User prompts contain the data to be evaluated AND JSON format specification with actual field values
+- Clean separation enables easier editing and prevents variable naming drift
 
 ## Configuration
 
@@ -107,6 +109,7 @@ schema: "schema.json"
 judges:
   deterministic: ["D-1", "D-2", "D-3", "D-4", "D-5"]
   llm: ["content_integrity", "business_insight"]
+# For target_account prompts, use account_targeting_quality instead of business_insight
 models:
   default: "OpenAI/gpt-4.1-nano"
   fallback: "Gemini/models/gemini-1.5-flash"
@@ -147,11 +150,12 @@ python3 -m evals.core.runner all --sample-size 5 --output combined_results.json
 ## Benefits
 
 - **Quality Assurance**: Consistent output quality across different inputs
-- **Cost Effective**: 2 LLM calls return 7 individual actionable checks (~75% cost reduction)
+- **Cost Effective**: 3 LLM calls return 10 individual actionable checks (~70% cost reduction)
+- **Actual Field Values**: Shows real data being evaluated, not summaries
 - **Granular Feedback**: Each criterion provides specific, actionable feedback with ratings
 - **Fast Feedback**: Deterministic checks catch issues before expensive LLM calls
 - **Extensible**: Easy to add new prompts and evaluation criteria
 - **Regression Prevention**: Catch quality degradation early with detailed ratings
 - **Model Comparison**: A/B test different LLM providers
-- **Clean Template Organization**: System/user prompt separation for better maintainability and scalability
+- **Template-Driven Architecture**: System/user prompt separation prevents variable naming drift
 - **Actionable Results**: Individual check format makes debugging and improvement straightforward
