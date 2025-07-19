@@ -1,0 +1,42 @@
+Tool Name,Descriptions,Website,Category,Phil's Notes,Recommended
+Perplexity AI,Use Perplexity's online AI to search the web for information or their non-online AI model.,perplexity.ai,Buying Signals,,
+Owler,"Owler : Find company updates, data, and competitors using a domain.",owler.com,Account Data,,
+Ocean.io,Ocean.io : Find companies similar to a given company based on various criteria.,ocean.io,Account Data,Great for finding lookalike accounts based on your existing customers,
+Dealroom.co,Dealroom : Retrieve fundraising data for companies.,dealroom.co,Buying Signals,,
+Capterra,"Capterra  retrieves company data from Capterra using a domain name, simplifying information enrichment.",capterra.com,Account Data,,
+BuiltWith,BuiltWith  quickly uncovers the tech stack of websites or companies.,builtwith.com,Buying Signals,Great for finding tech stack,
+Salesforce,"Manage prospect and deal data, create/update records, and access reports and views.",salesforce.com,CRM,,
+HubSpot,"Manage prospect and deal data, create/update records, and access reports and views.",hubspot.com,CRM,,
+Attio,"Manage prospect and deal data, create/update records, and access reports and views.",attio.com,CRM,Preferred CRM,TRUE
+Pipedrive,"Manage prospect and deal data, create/update records, and access reports and views.",pipedrive.com,CRM,,
+Close,"Manage prospect and deal data, create/update records, and access reports and views.",close.com,CRM,,
+Apollo.io,"Manage prospect and deal data, create/update records, and access reports and views.",apollo.io,CRM,,
+YouTube,"Effortlessly work with YouTube video data : extract complete video transcripts for detailed analysis and enrich videos with additional metadata, providing deeper insights and actionable context.",youtube.com,Buying Signals,,
+RSS Feeds,Fetch and display RSS feed items (up to 2MB)  using the URL.,rssfeeds.co.il,Buying Signals,,
+Github,"Access and analyze GitHub data : user details, repo metrics, contributors, and more.",github.com,Buying Signals,,
+Smartlead.ai,"Smartlead.ai : create, manage, update leads and campaigns; add, remove, lookup leads.",Smartlead.ai,"Outreach (Email), Email Infrastructure",Best for email campaigns. Would also highly recommend for Email Infrastructure,TRUE
+Lemlist,"Lemlist  efficiently manages leads in campaigns via email lookup: add, update, check existence.",lemlist.com,"Outreach (LinkedIn), Outreach (Email)",Good for multi-channel all-in-one,
+Instantly,Instantly : Efficiently add leads to campaigns within the app.,instantly.ai,Outreach (Email),,
+HeyReach,This action allows users to add leads to HeyReach campaigns directly from Clay.,heyreach.io,Outreach (LinkedIn),Best for LinkedIn Outreach,TRUE
+Apollo.io,"Apollo.io : find, enrich contacts, accounts; discover jobs using search criteria and identifiers.",apollo.io,Account Data,,
+Prospeo,"Prospeo  finds work emails and enriches person details using name, domain, or LinkedIn.",prospeo.com.pl,Contact Verification,,
+BetterContact,BetterContact  enables users to find work emails and mobile phone numbers for prospects.,bettercontact.rocks,Contact Verification,,
+People Data Labs,"Enrich person data, find emails, and generate segmented lists using query parameters .",peopledatalabs.com,Contact Verification,,
+Icypeas,Icypeas : Find work email addresses with a name and company domain.,,Contact Verification,,
+FullEnrich,Find a person's phone numbers and work email address from their social profile and company details,,Contact Verification,Best for contact verification,TRUE
+Influencer Club,Influencer Club offers powerful tools to enhance influencer outreach by providing direct access to creators' contact details and social profiles.,influencerclub.asia,Buying Signals,,
+CrustData,Enables users to enrich target companies and individuals using Crustdata's API.,crustdata.com,"Account Data, Persona Data",,
+Warmly,Users are able to add Warmly person-level intent signals.,warmlydecor.com,Buying Signals,,
+Trigify,Allows users to search for prospects who have engaged with specific social content.,trigify.io,Buying Signals,Great for standard buying signals,
+PredictLeads,"PredictLeads : Find job openings, tech stack, news, and connections for a company domain.",predictleads.com,Buying Signals,Great for finding job openings,
+Hacker News,Hacker News : Retrieve user and post details from URLs quickly.,hacker-news.news,Buying Signals,,
+PhantomBuster,"PhantomBuster : pull extracted data from PhantomBuster, push data into agent executions.",phantombuster.com,Buying Signals,Great for LinkedIn data,
+Apify,Apify  simplifies data retrieval and automation by executing Apify actors effortlessly.,apify.com,Buying Signals,multiple API's and datasources to pull from,TRUE
+Serper,Scrape search results of websites at scale with Serper,serper1.com,Buying Signals,,
+Browserbase,Browserbase powers web browsing capabilities for AI agents and applications. Useful for Webscraping and workflow automation,https://www.browserbase.com/,"Buying Signals, Web Scraping",,TRUE
+Firecrawl,"Power your AI apps with clean data crawled from any website. 
+It's also open source.",https://www.firecrawl.dev/,"Buying Signals, Web Scraping",,TRUE
+n8n,Automate different API's and workflows,n8n.io,Orchestration,Great for technical users (defvelopers prefer this),
+Clay,Automate different API's and workflows,clay.com,Orchestration,Great for non-technical users,
+Lemwarm,Warm up inboxes for better deliverability,lemwarm.com,Email Infrastructure,,TRUE
+MailReach,Warm up inboxes for better deliverability,mailreach.co,Email Infrastructure,,

@@ -238,6 +238,17 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
             yolo=yolo
         )
         
+        # Step 5: GTM Strategic Plan
+        run_generation_step(
+            step_name="GTM Strategic Plan",
+            step_number=5,
+            explanation="Synthesizing comprehensive go-to-market strategy from your analysis",
+            generate_func=lambda: run_async_generation(run_async_advisor_generation(normalized_domain)),
+            domain=normalized_domain,
+            step_key="advisor",
+            yolo=yolo
+        )
+        
         # Success message
         console.print()
         console.print(create_completion_panel())
@@ -282,6 +293,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             MenuChoices.START_FROM_ACCOUNT,
             MenuChoices.START_FROM_PERSONA,
             MenuChoices.START_FROM_EMAIL,
+            MenuChoices.START_FROM_ADVISOR,
             MenuChoices.CANCEL
         ]
         
@@ -361,6 +373,16 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
                 domain=domain,
                 yolo=yolo
             )
+            step_counter += 1
+        
+        # Step 5: GTM Strategic Plan
+        if "advisor" in steps_to_run:
+            run_advisor_generation_step(
+                domain=domain,
+                yolo=yolo,
+                step_counter=5  # Always show as step 5/5
+            )
+            step_counter += 1
         
         # Success message
         console.print()
@@ -549,6 +571,123 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
 
 
 # edit_step_content moved to preview_utils.py
+
+
+def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: int = 5) -> None:
+    """Run the GTM Strategic Plan generation step"""
+    
+    # Clear screen before showing step panel for clean UX (unless in YOLO mode)
+    if not yolo:
+        clear_console()
+    
+    console.print()
+    console.print(create_step_panel_by_key("advisor"))
+    
+    # In YOLO mode, skip the prompt and generate automatically
+    if not yolo:
+        generate_plan = show_menu_with_separator(
+            "🎯 Would you like to generate a comprehensive GTM strategic plan?",
+            choices=[
+                "Yes, create strategic plan",
+                "Skip for now"
+            ]
+        )
+        
+        if generate_plan == "Skip for now":
+            console.print()
+            console.print("[yellow]Skipping strategic plan generation.[/yellow]")
+            console.print("→ You can generate it later with: [bold cyan]blossomer advisor {domain}[/bold cyan]")
+            return
+    
+    console.print()
+    
+    # Generate the strategic plan directly (not using run_generation_step)
+    try:
+        from cli.services.llm_service import LLMClient
+        from app.services.gtm_advisor_service import GTMAdvisorService
+        
+        # Create step panel
+        step_name = "GTM Strategic Plan"
+        console.print()
+        console.print(f"[bold cyan][{step_counter}/5] {step_name}[/bold cyan]")
+        console.print("Creating comprehensive go-to-market execution plan with scoring frameworks and tool recommendations")
+        console.print()
+        
+        # Show progress
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            TimeElapsedColumn(),
+            console=console,
+            transient=False
+        ) as progress:
+            
+            task = progress.add_task("→ Synthesizing strategic plan...", total=None)
+            start_time = time.time()
+            
+            try:
+                strategic_plan_content = run_async_generation(run_async_advisor_generation(domain))
+                elapsed = time.time() - start_time
+                
+                progress.update(task, description=f"→ completed in {elapsed:.1f}s")
+                progress.stop()
+                
+                console.print(f"   {Colors.format_success('GTM Strategic Plan generated successfully')}")
+                
+            except Exception as e:
+                progress.stop()
+                console.print(f"   {Colors.format_error(f'Failed to generate GTM Strategic Plan: {e}')}")
+                raise
+        
+        # Show strategic plan summary and preview (unless in YOLO mode)
+        if not yolo:
+            console.print()
+            console.print("─" * 60)
+            console.print()
+            console.print("[bold cyan]Strategic Plan Generated![/bold cyan]")
+            console.print()
+            console.print("Your comprehensive GTM execution plan includes:")
+            console.print("  • Lead scoring frameworks (account + contact)")
+            console.print("  • Tool stack recommendations (9 categories)")
+            console.print("  • Email methodology framework")
+            console.print("  • Metrics interpretation guide")
+            console.print("  • Implementation timeline")
+            console.print()
+            
+            # Show 1600 character preview
+            if strategic_plan_content and len(strategic_plan_content.strip()) > 0:
+                preview = strategic_plan_content[:1600]
+                if len(strategic_plan_content) > 1600:
+                    preview += "..."
+                console.print("[bold]Preview (first 1600 characters):[/bold]")
+                console.print("─" * 40)
+                console.print(preview)
+                console.print("─" * 40)
+                console.print()
+            
+            console.print(f"→ View full plan: Open gtm_projects/{domain}/plans/strategic_plan.md")
+            console.print(f"→ Edit plan: gtm_projects/{domain}/plans/strategic_plan.md")
+        
+        console.print()
+        console.print(f"[green]✓[/green] {step_name} completed!")
+        
+    except Exception as e:
+        console.print(f"[red]Failed to generate strategic plan:[/red] {e}")
+        console.print("→ You can try again later with: [bold cyan]blossomer advisor {domain}[/bold cyan]")
+
+
+async def run_async_advisor_generation(domain: str):
+    """Async wrapper for advisor generation"""
+    from app.services.gtm_advisor_service import GTMAdvisorService
+    from cli.utils.domain import normalize_domain
+    
+    # Normalize domain to ensure consistent format
+    normalized = normalize_domain(domain)
+    normalized_domain = normalized.domain  # Use just the domain part, not the full URL
+    
+    advisor_service = GTMAdvisorService()
+    
+    return await advisor_service.generate_strategic_plan(normalized_domain)
 
 
 def run_async_generation(coro):

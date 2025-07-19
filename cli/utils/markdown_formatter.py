@@ -918,8 +918,93 @@ class PersonaFormatter(MarkdownFormatter):
             lines.append(persona_description)
             lines.append("")
         
-        # Placeholder for other fields - TODO: implement full persona formatting
-        lines.append("<!-- TODO: Implement full PersonaFormatter.format_with_markers -->")
+        # Demographics (with marker)
+        demographics = data.get('demographics', {})
+        if demographics:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Demographics", "demographics"))
+            lines.append(self._format_table(demographics))
+            lines.append("")
+        
+        # Use Cases (with marker)
+        use_cases = data.get('use_cases', [])
+        if use_cases:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Use Cases", "use_cases"))
+            lines.append("")
+            
+            for i, use_case in enumerate(use_cases, 1):
+                use_case_name = use_case.get('use_case', f'Use Case {i}')
+                pain_points = use_case.get('pain_points', '')
+                capability = use_case.get('capability', '')
+                desired_outcome = use_case.get('desired_outcome', '')
+                
+                # Use case header
+                lines.append(self.config.get_header(self.config.DETAIL_SECTION, use_case_name))
+                
+                if pain_points:
+                    lines.append(f"**Pain Points**: {pain_points}")
+                    lines.append("")
+                
+                if capability:
+                    lines.append(f"**Solution**: {capability}")
+                    lines.append("")
+                
+                if desired_outcome:
+                    lines.append(f"**Desired Outcome**: {desired_outcome}")
+                    lines.append("")
+        
+        # Buying Signals (with marker)
+        buying_signals = data.get('buying_signals', [])
+        if buying_signals:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Buying Signals", "buying_signals"))
+            lines.append("")
+            
+            for signal in buying_signals:
+                title = signal.get('title', 'Signal')
+                priority = signal.get('priority', 'Medium')
+                description = signal.get('description', '')
+                detection = signal.get('detection_method', '')
+                
+                lines.append(f"- **{title}** ({priority})")
+                if description:
+                    lines.append(f"  {description}")
+                if detection:
+                    lines.append(f"  *Detection: {detection}*")
+                lines.append("")
+        
+        # Goals & Motivations (with marker)
+        goals = data.get('goals', [])
+        if goals:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Goals & Motivations", "goals"))
+            lines.append(self._format_list(goals))
+            lines.append("")
+        
+        # Common Objections (with marker)
+        objections = data.get('objections', [])
+        if objections:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Common Objections", "objections"))
+            lines.append(self._format_list(objections))
+            lines.append("")
+        
+        # Purchase Journey (with marker)
+        journey = data.get('purchase_journey', [])
+        if journey:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Purchase Journey", "purchase_journey"))
+            lines.append(self._format_list(journey, ordered=True))
+            lines.append("")
+        
+        # Targeting Rationale (with marker)
+        rationale = data.get('target_persona_rationale', [])
+        if rationale:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Targeting Rationale", "target_persona_rationale"))
+            lines.append(self._format_list(rationale))
+            lines.append("")
+        
+        # Buying Signals Rationale (with marker)
+        signals_rationale = data.get('buying_signals_rationale', [])
+        if signals_rationale:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Buying Signals Rationale", "buying_signals_rationale"))
+            lines.append(self._format_list(signals_rationale))
+            lines.append("")
         
         return "\n".join(lines).strip()
 
