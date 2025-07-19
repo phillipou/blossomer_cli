@@ -74,6 +74,7 @@ tests/test_dependencies.py
 tests/test_different_endpoints.py
 tests/test_domain_utils.py
 tests/test_error_handling.py
+tests/test_follow_up_email.py
 tests/test_gtm_flow_integration.py
 tests/test_guided_email_builder.py
 tests/test_project_storage.py
