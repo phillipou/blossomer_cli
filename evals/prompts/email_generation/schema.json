@@ -86,10 +86,35 @@
         "word_count": {
           "type": "integer",
           "description": "Word count of email body"
+        },
+        "follow_up_word_count": {
+          "type": "integer",
+          "description": "Word count of follow-up email body"
         }
       },
       "required": ["generation_id", "confidence", "personalization_level"],
       "description": "Generation metadata and quality metrics"
+    },
+    "follow_up_email": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "description": "Follow-up email subject line (3-4 words)"
+        },
+        "body": {
+          "type": "string",
+          "description": "Complete follow-up email body (60 words max)"
+        },
+        "wait_days": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 7,
+          "description": "Days to wait before sending follow-up"
+        }
+      },
+      "required": ["subject", "body", "wait_days"],
+      "description": "Follow-up email to be sent 3-5 days after initial email"
     }
   },
   "required": [

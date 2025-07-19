@@ -490,6 +490,14 @@ def get_default_email_breakdown() -> EmailBreakdown:
     }
 
 
+class FollowUpEmail(BaseModel):
+    """Follow-up email details."""
+    
+    subject: str = Field(..., description="Follow-up email subject line (3-4 words)")
+    body: str = Field(..., description="Complete follow-up email body (60 words max)")
+    wait_days: int = Field(default=4, ge=3, le=7, description="Days to wait before sending follow-up")
+
+
 class EmailGenerationMetadata(BaseModel):
     """Metadata about the email generation process."""
 
@@ -502,6 +510,12 @@ class EmailGenerationMetadata(BaseModel):
     )
     processing_time_ms: Optional[int] = Field(
         None, description="Time taken to generate email in milliseconds"
+    )
+    word_count: Optional[int] = Field(
+        None, description="Word count of the initial email"
+    )
+    follow_up_word_count: Optional[int] = Field(
+        None, description="Word count of the follow-up email"
     )
 
 
@@ -518,6 +532,9 @@ class EmailGenerationResponse(BaseModel):
     writing_process: Dict[str, str] = Field(
         ...,
         description="Writing process breakdown with trigger, problem, help, and cta",
+    )
+    follow_up_email: Optional[FollowUpEmail] = Field(
+        None, description="Follow-up email to be sent 3-5 days after initial email"
     )
     metadata: EmailGenerationMetadata = Field(
         ..., description="Generation metadata and quality metrics"

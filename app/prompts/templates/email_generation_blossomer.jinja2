@@ -237,6 +237,61 @@ That's it. If your email does anything else, you're overcomplicating it.
 - Don't make up buying signals when none are provided
 - Don't use fake friendly language that sounds like sales manipulation
 
+## Follow-Up Email Guidelines
+After generating the initial email, create a follow-up email with these rules:
+- **60 words maximum** - Even shorter than the first
+- **No platitudes** - Don't say "following up", "circling back", "making sure this hit your inbox"
+- **Opening line** - Briefly reinforce why you're reaching out (they're a good fit, you've helped similar companies)
+- **Include website link** - MUST include a link to the sender's website, formatted naturally in text like "Check us [out]({{ company_context.company_name | lower | replace(' ', '') }}.com)" or "Details [here](website)" or "Learn [more](website)"
+- **Non-salesy CTA** - Keep it helpful and genuine
+- **Wait 3-5 days** - Suggest timing between emails
+
+**CRITICAL - Different Angle Requirement:**
+The follow-up MUST take a different angle than the initial email:
+- If initial emphasized pain points → follow-up emphasizes capabilities or outcomes
+- If initial emphasized capabilities → follow-up emphasizes pain points or social proof
+- If initial emphasized outcomes → follow-up emphasizes specific capabilities or use cases
+- Always offer NEW information or a DIFFERENT perspective
+- Never just rephrase the same points from the initial email
+
+## Follow-Up Email Examples
+
+✅ GOOD (Different angle - if initial was pain-focused, follow-up shows capability):
+"Hey [First Name],
+
+Thought [Company] would be a great fit. 
+
+We integrate with the most popular planning tools and CRMs so you can wow clients with speed without changing your workflow.
+
+Check us [out](website) and let me know if I can be helpful."
+
+✅ GOOD (Different angle - if initial was capability-focused, follow-up shows results):
+"Hi [First Name],
+
+Just helped [Similar Company] cut their document processing time by 70%.
+
+Figured [Company] might face similar challenges scaling operations.
+
+Here's how we did it: [details](website). Worth a quick look?"
+
+✅ GOOD (Different angle - if initial was outcome-focused, follow-up shows social proof):
+"[First Name] - 
+
+We specialize in exactly what [Company] is building.
+
+3 of your competitors use us to [specific capability]. 
+
+Details [here](website). Happy to share what's working for them."
+
+✅ GOOD (Different angle - if initial was generic, follow-up gets specific):
+"Hi [First Name],
+
+Quick follow-up - noticed [Company] is hiring developers.
+
+We've helped 5 similar startups avoid the "team scaling bottleneck" completely.
+
+Here's the [playbook](website). Might save you months."
+
 ## Required Output Format
 
 ```json
@@ -281,11 +336,17 @@ That's it. If your email does anything else, you're overcomplicating it.
     "help": "[How you can help or what experience you shared]",
     "cta": "[Your casual ask]"
   },
+  "follow_up_email": {
+    "subject": "3-4 word follow-up subject",
+    "body": "[Complete follow-up email, 60 words max]",
+    "wait_days": 3
+  },
   "metadata": {
     "generation_id": "unique-uuid",
     "confidence": "high|medium|low",
     "personalization_level": "high|medium|low",
-    "word_count": 85
+    "word_count": 85,
+    "follow_up_word_count": 45
   }
 }
 ```
@@ -378,3 +439,17 @@ Apply the same principle: if it's specific and contextually relevant, use it; if
 Remember: Write ONE flowing email, not segments. Make it so specific to their company that it couldn't possibly be sent to anyone else. If it sounds like a template, start over.
 
 **CRITICAL:** Use [Company Name] as a placeholder in your email - do NOT invent or make up an actual company name.
+
+**FOLLOW-UP EMAIL REQUIREMENT:**
+After writing the initial email, you MUST also generate a follow-up email that:
+1. Is 60 words maximum
+2. Reinforces fit without saying "following up" 
+3. Includes a natural link to {{ company_context.company_name }}'s website formatted as markdown: "Check us [out](website)" or "Details [here](website)" etc.
+4. Has a helpful, non-salesy CTA
+5. Suggests waiting 3-5 days between emails
+
+**CRITICAL:** The follow-up MUST take a DIFFERENT angle than the initial email:
+- Analyze what the initial email emphasized (pain/capability/outcome)
+- Choose a DIFFERENT emphasis for the follow-up
+- Offer NEW information, not just rephrased content
+- Think: "What additional value can I provide that I didn't mention before?"

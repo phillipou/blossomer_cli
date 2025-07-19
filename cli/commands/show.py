@@ -198,15 +198,16 @@ def show_asset_summary(domain: str, step: str, title: str) -> None:
         job_title = demographics.get("job_title", "N/A")
         summary = f"{persona_name} | Role: {job_title}"
     elif step == "email":
-        # Check for different possible field names
-        email = step_data.get("email_content", step_data.get("email", {}))
-        if not email and "subject_line" in step_data:
-            email = step_data  # Data might be at root level
-        
-        # Check for subjects field which might have primary
+        # Use the correct schema fields
         subjects = step_data.get("subjects", {})
-        subject = email.get("subject_line", subjects.get("primary", "N/A"))
-        summary = f"Subject: {subject}"
+        primary_subject = subjects.get("primary", "N/A")
+        
+        # Check if follow-up email exists
+        follow_up = step_data.get("follow_up_email", {})
+        if follow_up:
+            summary = f"Subject: {primary_subject} | Follow-up: ✓"
+        else:
+            summary = f"Subject: {primary_subject}"
     elif step == "plan":
         summary = "30-day GTM execution plan"
     else:

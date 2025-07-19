@@ -943,6 +943,7 @@ class EmailFormatter(MarkdownFormatter):
         full_email_body = data.get('full_email_body', '')
         email_body_breakdown = data.get('email_body_breakdown', [])
         writing_process = data.get('writing_process', {})
+        follow_up_email = data.get('follow_up_email', {})
         
         if preview:
             # Preview mode: Show the email as it would appear using full_email_body
@@ -958,6 +959,17 @@ class EmailFormatter(MarkdownFormatter):
                 # Fallback to breakdown if full_email_body is not available
                 coherent_email = self._render_coherent_email(primary_subject, email_body_breakdown)
                 lines.append(coherent_email)
+            
+            # Add follow-up email preview if available
+            if follow_up_email:
+                lines.append("")
+                lines.append("---")
+                lines.append("")
+                lines.append(f"**Follow-up Email (Send after {follow_up_email.get('wait_days', 4)} days)**")
+                lines.append("")
+                lines.append(f"**Subject:** {follow_up_email.get('subject', 'Follow-up Subject')}")
+                lines.append("")
+                lines.append(follow_up_email.get('body', ''))
                 
         else:
             # Export mode: Complete formatting with analysis
@@ -988,6 +1000,19 @@ class EmailFormatter(MarkdownFormatter):
                 lines.append("")
                 for alt in alternative_subjects:
                     lines.append(f"- {alt.strip()}")
+                lines.append("")
+            
+            # Follow-up Email
+            if follow_up_email:
+                lines.append(self.config.get_header(self.config.SUB_SECTION, "Follow-up Email"))
+                lines.append("")
+                lines.append(f"**Timing**: Send {follow_up_email.get('wait_days', 4)} days after initial email")
+                lines.append("")
+                lines.append("```email")
+                lines.append(f"Subject: {follow_up_email.get('subject', 'Follow-up Subject')}")
+                lines.append("")
+                lines.append(follow_up_email.get('body', ''))
+                lines.append("```")
                 lines.append("")
             
             # Email Structure Breakdown

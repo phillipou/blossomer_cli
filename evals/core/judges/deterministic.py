@@ -442,18 +442,20 @@ class DeterministicJudge:
     def _check_email_word_count(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         """Email-specific D-4: Email body word count validation."""
         email_body = data.get("full_email_body", "")
+        follow_up_email = data.get("follow_up_email", {})
         
-        # Count words in email body
+        # Count words in main email body
         word_count = len(email_body.split())
         
         inputs_evaluated = [
             {"field": "full_email_body", "value": f"{word_count} words"}
         ]
         
+        # Check main email word count
         if word_count < 50:
             return {
                 "check_name": "word_count",
-                "description": "Validates email body is between 50-100 words",
+                "description": "Validates email body is between 50-100 words and follow-up is max 60 words",
                 "inputs_evaluated": inputs_evaluated,
                 "pass": False,
                 "rationale": f"Email body has {word_count} words, minimum is 50"
@@ -462,18 +464,33 @@ class DeterministicJudge:
         if word_count > 100:
             return {
                 "check_name": "word_count",
-                "description": "Validates email body is between 50-100 words",
+                "description": "Validates email body is between 50-100 words and follow-up is max 60 words",
                 "inputs_evaluated": inputs_evaluated,
                 "pass": False,
                 "rationale": f"Email body has {word_count} words, maximum is 100"
             }
         
+        # Check follow-up email word count if present
+        if follow_up_email:
+            follow_up_body = follow_up_email.get("body", "")
+            follow_up_word_count = len(follow_up_body.split())
+            inputs_evaluated.append({"field": "follow_up_email.body", "value": f"{follow_up_word_count} words"})
+            
+            if follow_up_word_count > 60:
+                return {
+                    "check_name": "word_count",
+                    "description": "Validates email body is between 50-100 words and follow-up is max 60 words",
+                    "inputs_evaluated": inputs_evaluated,
+                    "pass": False,
+                    "rationale": f"Follow-up email has {follow_up_word_count} words, maximum is 60"
+                }
+        
         return {
             "check_name": "word_count",
-            "description": "Validates email body is between 50-100 words",
+            "description": "Validates email body is between 50-100 words and follow-up is max 60 words",
             "inputs_evaluated": inputs_evaluated,
             "pass": True,
-            "rationale": f"Email body has {word_count} words, within the 50-100 word range"
+            "rationale": f"Email body has {word_count} words (50-100 range), follow-up within limits"
         }
     
     def _check_email_identity(self, data: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:

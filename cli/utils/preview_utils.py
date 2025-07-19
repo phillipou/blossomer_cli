@@ -140,45 +140,44 @@ def show_guided_email_preview(domain: str) -> None:
         
         console.print(create_preview_header("email"))
         
-        # Show main email content
-        emails = email_data.get("emails", [])
-        if emails:
-            first_email = emails[0]
-            subject = first_email.get("subject", "Your personalized subject line")
-            body = first_email.get("body", "Your personalized email content")
-            
-            console.print(f"Subject: {subject}")
+        # Show main email content using correct schema
+        subjects = email_data.get("subjects", {})
+        primary_subject = subjects.get("primary", "Your personalized subject line")
+        full_email_body = email_data.get("full_email_body", "Your personalized email content")
+        
+        console.print(f"Subject: {primary_subject}")
+        console.print()
+        
+        # Show a preview of the body (first few lines)
+        body_lines = full_email_body.split('\n')[:6]
+        preview_body = "\n".join(body_lines)
+        for line in body_lines:
+            console.print(line)
+        
+        if len(full_email_body.split('\n')) > 6:
+            console.print("...")
+        
+        # Show alternative subjects if available
+        alt_subjects = subjects.get("alternatives", [])
+        if alt_subjects:
             console.print()
-            console.print("Hi {{FirstName}},")
+            console.print("Alternative subjects:")
+            for alt in alt_subjects[:2]:
+                console.print(f'- "{alt}"')
+        
+        # Show follow-up email if available
+        follow_up_email = email_data.get("follow_up_email", {})
+        if follow_up_email:
             console.print()
+            console.print(f"[bold]Follow-up email[/bold] (send after {follow_up_email.get('wait_days', 3)} days):")
+            console.print(f"Subject: {follow_up_email.get('subject', '')}")
+            console.print(follow_up_email.get('body', '')[:100] + "..." if len(follow_up_email.get('body', '')) > 100 else follow_up_email.get('body', ''))
             
-            # Show a preview of the body (first few lines)
-            body_lines = body.split('\n')[:4]
-            preview_body = "\n".join(body_lines)
-            for line in body_lines:
-                console.print(line)
-            
-            if len(body.split('\n')) > 4:
-                console.print("...")
-            
-            console.print()
-            console.print("Best,")
-            console.print("{{Your name}}")
-            
-            # Show alternative subjects if available
-            alt_subjects = first_email.get("alternative_subjects", [])
-            if alt_subjects:
-                console.print()
-                console.print("Alternative subjects:")
-                for alt in alt_subjects[:2]:
-                    console.print(f'- "{alt}"')
-            
-            # Add character count indicator
-            full_body = body
-            total_chars = len(subject) + len(full_body) + 50  # Add some for template parts
-            preview_chars = len(subject) + len(preview_body) + 50
-            console.print()
-            console.print(f"[dim][Previewing {preview_chars:,} of {total_chars:,} characters][/dim]")
+        # Add character count indicator
+        total_chars = len(primary_subject) + len(full_email_body) + 50  # Add some for template parts
+        preview_chars = len(primary_subject) + len(preview_body) + 50
+        console.print()
+        console.print(f"[dim][Previewing {preview_chars:,} of {total_chars:,} characters][/dim]")
         
         console.print()
         
