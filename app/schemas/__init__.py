@@ -498,6 +498,13 @@ class FollowUpEmail(BaseModel):
     wait_days: int = Field(default=4, ge=3, le=7, description="Days to wait before sending follow-up")
 
 
+class EmailVariation(BaseModel):
+    """Alternative email variation targeting different use case."""
+    
+    subject: str = Field(..., description="Alternative subject line targeting different use case")
+    full_email_body: str = Field(..., description="Complete alternative email from greeting to sign-off")
+
+
 class EmailGenerationMetadata(BaseModel):
     """Metadata about the email generation process."""
 
@@ -531,10 +538,13 @@ class EmailGenerationResponse(BaseModel):
     )
     writing_process: Dict[str, str] = Field(
         ...,
-        description="Writing process breakdown with trigger, problem, help, and cta",
+        description="Writing process breakdown with trigger, problem, help, cta, variation, and followup",
     )
     follow_up_email: Optional[FollowUpEmail] = Field(
         None, description="Follow-up email to be sent 3-5 days after initial email"
+    )
+    email_variation: Optional[EmailVariation] = Field(
+        None, description="Alternative email targeting different persona use case"
     )
     metadata: EmailGenerationMetadata = Field(
         ..., description="Generation metadata and quality metrics"

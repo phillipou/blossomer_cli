@@ -292,7 +292,27 @@ We've helped 5 similar startups avoid the "team scaling bottleneck" completely.
 
 Here's the [playbook](website). Might save you months."
 
+## Email Variation for Testing
+
+Create ONE additional email variation to test different messaging based on the persona's use cases.
+
+### Variable Segments for Testing
+Focus on these segments when creating variations:
+- **Subject Line**: Test different angles (pain vs capability vs outcome)
+- **Pain Point Segment**: Test different persona use cases and pain points
+- **Emphasis Segment**: Test different capability emphasis or desired outcomes  
+- **Keep Constant**: Intro, company-intro, and CTA segments stay similar
+
+### Variation Requirements
+1. **Use a different persona use case**: Pick a different use case from the persona's list
+2. **Show what changes**: Identify which segments vary between baseline and test version
+3. **Keep structure consistent**: Same email flow, just different messaging focus
+
+**CRITICAL**: Base the variation on a different persona use case than the main email. Show exactly how the subject, pain-point, and emphasis segments change to test different messaging approaches.
+
 ## Required Output Format
+
+**CRITICAL**: Return actual JSON data, NOT schema definitions or references. Do not use $ref or schema syntax.
 
 ```json
 {
@@ -334,12 +354,18 @@ Here's the [playbook](website). Might save you months."
     "trigger": "[What specific thing you noticed about them]",
     "problem": "[What problem they likely have because of that]",
     "help": "[How you can help or what experience you shared]",
-    "cta": "[Your casual ask]"
+    "cta": "[Your casual ask]",
+    "variation": "[How you varied the email - what different use case/angle you took for the alternative email]",
+    "followup": "[How you wrote the follow-up - what different angle/value you provided in the follow-up email]"
   },
   "follow_up_email": {
     "subject": "3-4 word follow-up subject",
     "body": "[Complete follow-up email, 60 words max]",
     "wait_days": 3
+  },
+  "email_variation": {
+    "subject": "Alternative subject targeting different use case",
+    "full_email_body": "[Complete alternative email from greeting to sign-off targeting different persona use case]"
   },
   "metadata": {
     "generation_id": "unique-uuid",
@@ -367,6 +393,14 @@ Write an email FROM {{ company_context.company_name }} TO [Company Name]:
 ## TARGET COMPANY (The Recipient)
 **Sending to:** {{ target_persona.target_persona_name }} at [Company Name]
 **Use case:** {{ preferences.use_case }}
+
+**Persona Use Cases for A/B Testing:** (Use these to create email variations)
+{% for use_case in target_persona.use_cases %}
+- **{{ use_case.use_case }}**
+  - Pain: {{ use_case.pain_points }}
+  - Capability: {{ use_case.capability }}
+  - Outcome: {{ use_case.desired_outcome }}
+{% endfor %}
 
 **Preferences:**
 - Emphasis: {{ preferences.emphasis }}
@@ -453,3 +487,23 @@ After writing the initial email, you MUST also generate a follow-up email that:
 - Choose a DIFFERENT emphasis for the follow-up
 - Offer NEW information, not just rephrased content
 - Think: "What additional value can I provide that I didn't mention before?"
+
+**EMAIL VARIATION REQUIREMENT:**
+You MUST also generate ONE alternative email that targets a different persona use case from the main email. Write a complete alternative email with:
+1. **Different subject line** - Targeting a different use case
+2. **Complete alternative email body** - Full email from greeting to sign-off, targeting different persona use case from the list above
+
+**CRITICAL**: Pick a different use case than the main email and write a complete alternative email. Focus purely on writing great email content.
+
+**FINAL REMINDER - JSON OUTPUT FORMAT:**
+Return your response as valid JSON only. Do NOT include:
+- Schema definitions or $ref references
+- Markdown formatting around the JSON
+- Explanatory text before or after JSON
+- Comments within the JSON
+
+The email_variation field must contain actual data with:
+- subject (alternative subject line string)
+- full_email_body (complete alternative email string)
+
+Return ONLY the JSON object, nothing else.

@@ -970,6 +970,18 @@ class EmailFormatter(MarkdownFormatter):
                 lines.append(f"**Subject:** {follow_up_email.get('subject', 'Follow-up Subject')}")
                 lines.append("")
                 lines.append(follow_up_email.get('body', ''))
+            
+            # Add email variation preview if available
+            email_variation = data.get('email_variation', {})
+            if email_variation:
+                lines.append("")
+                lines.append("---")
+                lines.append("")
+                lines.append("**Email Variation Available**")
+                lines.append("")
+                lines.append(f"• **Alternative Subject**: {email_variation.get('subject', 'Alternative Email')}")
+                lines.append("")
+                lines.append("*Run with --export to see full alternative email*")
                 
         else:
             # Export mode: Complete formatting with analysis
@@ -1015,6 +1027,19 @@ class EmailFormatter(MarkdownFormatter):
                 lines.append("```")
                 lines.append("")
             
+            # Email Variation
+            email_variation = data.get('email_variation', {})
+            if email_variation:
+                lines.append(self.config.get_header(self.config.SUB_SECTION, "Alternative Email"))
+                lines.append("")
+                
+                lines.append("```email")
+                lines.append(f"Subject: {email_variation.get('subject', 'Alternative Subject')}")
+                lines.append("")
+                lines.append(email_variation.get('full_email_body', ''))
+                lines.append("```")
+                lines.append("")
+            
             # Email Structure Breakdown
             if email_body_breakdown:
                 lines.append(self.config.get_header(self.config.SUB_SECTION, "Email Structure Analysis"))
@@ -1041,6 +1066,8 @@ class EmailFormatter(MarkdownFormatter):
                 problem = writing_process.get('problem', '')
                 help_offered = writing_process.get('help', '')
                 cta = writing_process.get('cta', '')
+                variation = writing_process.get('variation', '')
+                followup = writing_process.get('followup', '')
                 
                 if trigger:
                     lines.append(f"**Trigger**: {trigger}")
@@ -1050,6 +1077,10 @@ class EmailFormatter(MarkdownFormatter):
                     lines.append(f"**Help Offered**: {help_offered}")
                 if cta:
                     lines.append(f"**Call to Action**: {cta}")
+                if variation:
+                    lines.append(f"**Variation Strategy**: {variation}")
+                if followup:
+                    lines.append(f"**Follow-up Strategy**: {followup}")
                 lines.append("")
             
             # Generation Metadata
@@ -1187,6 +1218,43 @@ class EmailFormatter(MarkdownFormatter):
                 lines.append(text)
                 lines.append("")
         
+        # Follow-up Email (with marker)
+        follow_up = data.get('follow_up_email', {})
+        if follow_up:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Follow-up Email", "follow_up_email"))
+            lines.append("")
+            
+            subject = follow_up.get('subject', '')
+            if subject:
+                lines.append(f"**Subject**: {subject}")
+                lines.append("")
+            
+            body = follow_up.get('body', '')
+            if body:
+                lines.append(f"**Body**: {body}")
+                lines.append("")
+            
+            wait_days = follow_up.get('wait_days', '')
+            if wait_days:
+                lines.append(f"**Wait Days**: {wait_days}")
+                lines.append("")
+        
+        # Email Variation (with marker)
+        email_variation = data.get('email_variation', {})
+        if email_variation:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Email Variation", "email_variation"))
+            lines.append("")
+            
+            var_subject = email_variation.get('subject', '')
+            if var_subject:
+                lines.append(f"**Subject**: {var_subject}")
+                lines.append("")
+            
+            var_body = email_variation.get('full_email_body', '')
+            if var_body:
+                lines.append(f"**Full Email Body**: {var_body}")
+                lines.append("")
+        
         # Writing Process (with marker)
         process = data.get('writing_process', {})
         if process:
@@ -1211,6 +1279,16 @@ class EmailFormatter(MarkdownFormatter):
             cta = process.get('cta', '')
             if cta:
                 lines.append(f"**CTA**: {cta}")
+                lines.append("")
+            
+            variation = process.get('variation', '')
+            if variation:
+                lines.append(f"**Variation**: {variation}")
+                lines.append("")
+            
+            followup = process.get('followup', '')
+            if followup:
+                lines.append(f"**Follow-up**: {followup}")
                 lines.append("")
         
         # Metadata (with marker)

@@ -202,10 +202,18 @@ def show_asset_summary(domain: str, step: str, title: str) -> None:
         subjects = step_data.get("subjects", {})
         primary_subject = subjects.get("primary", "N/A")
         
-        # Check if follow-up email exists
+        # Check extras
         follow_up = step_data.get("follow_up_email", {})
+        variation = step_data.get("email_variation", {})
+        
+        extras = []
         if follow_up:
-            summary = f"Subject: {primary_subject} | Follow-up: ✓"
+            extras.append("Follow-up: ✓")
+        if variation:
+            extras.append("Variation: ✓")
+        
+        if extras:
+            summary = f"Subject: {primary_subject} | {' | '.join(extras)}"
         else:
             summary = f"Subject: {primary_subject}"
     elif step == "plan":
