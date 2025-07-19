@@ -64,8 +64,12 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
-        file_size = (project_dir / step.file_name).stat().st_size / 1024
-        console.print(f"✓ Full {step.name.lower()} saved to: {step.file_name} ({file_size:.1f}KB)")
+        json_file_path = project_dir / "json_output" / step.file_name
+        if json_file_path.exists():
+            file_size = json_file_path.stat().st_size / 1024
+            console.print(f"✓ Full {step.name.lower()} saved to: json_output/{step.file_name} ({file_size:.1f}KB)")
+        else:
+            console.print(f"✓ {step.name.lower()} generated (file not yet saved)")
         
         console.print()
         console.print()
@@ -180,8 +184,12 @@ def show_guided_email_preview(domain: str) -> None:
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
-        file_size = (project_dir / step.file_name).stat().st_size / 1024
-        console.print(f"✓ Full campaign saved to: {step.file_name} ({file_size:.1f}KB)")
+        json_file_path = project_dir / "json_output" / step.file_name
+        if json_file_path.exists():
+            file_size = json_file_path.stat().st_size / 1024
+            console.print(f"✓ Full campaign saved to: json_output/{step.file_name} ({file_size:.1f}KB)")
+        else:
+            console.print(f"✓ Campaign generated (file not yet saved)")
         console.print()
         
         # Get user choice

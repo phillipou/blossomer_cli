@@ -179,6 +179,10 @@ def status() -> None:
 from cli.commands.eval import app as eval_app
 app.add_typer(eval_app, name="eval", help="🧪 Run evaluations on prompt templates")
 
+# Add plans subcommand  
+from cli.commands.plans import app as plans_app
+app.add_typer(plans_app, name="plans", help="📝 Manage editable markdown plans that sync with JSON data")
+
 
 # Demo function to test Rich formatting
 @app.command(hidden=True)

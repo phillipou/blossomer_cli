@@ -39,6 +39,7 @@ cli/commands/export.py
 cli/commands/generate.py
 cli/commands/init.py
 cli/commands/init_sync.py
+cli/commands/plans.py
 cli/commands/show.py
 cli/services/__init__.py
 cli/services/context_orchestrator_service.py
@@ -61,9 +62,11 @@ cli/utils/file_manager.py
 cli/utils/guided_email_builder.py
 cli/utils/logging.py
 cli/utils/markdown_formatter.py
+cli/utils/markdown_parser.py
 cli/utils/panel_utils.py
 cli/utils/preview_utils.py
 cli/utils/step_config.py
+cli/utils/sync_manager.py
 tests/test_auth_methods.py
 tests/test_cli_commands.py
 tests/test_correct_endpoint.py

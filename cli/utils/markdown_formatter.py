@@ -290,6 +290,35 @@ class MarkdownFormatter(ABC):
             lines.append(f"**Processing Time**: {metadata['processing_time_ms']}ms")
             
         return "\n".join(lines)
+    
+    def _add_sync_header(self, step_type: str) -> str:
+        """Generate sync notice header for structured markdown."""
+        from datetime import datetime
+        now = datetime.now().strftime("%Y-%m-%d %I:%M %p")
+        
+        return f"""<!-- 
+🔄 SYNC NOTICE: This file syncs with JSON data
+⚠️  DO NOT remove the {{#field_name}} markers - they enable syncing back to JSON
+✏️  Feel free to edit content, change headers, add sections - just keep the markers!
+📝 Generated: {now} from json_output/{step_type}.json
+-->
+
+"""
+    
+    def _get_header_with_marker(self, level: int, title: str, field_name: str = None) -> str:
+        """Get header with optional field marker for sync."""
+        if field_name:
+            return f"{'#' * level} {title} {{#{field_name}}}"
+        else:
+            return self.config.get_header(level, title)
+    
+    @abstractmethod
+    def format_with_markers(self, data: Dict[str, Any], step_type: str) -> str:
+        """
+        Format data as structured markdown with field markers for bidirectional sync.
+        This enables editing the markdown and syncing back to JSON.
+        """
+        pass
 
 
 # Individual formatter classes will be implemented here
@@ -405,6 +434,78 @@ class OverviewFormatter(MarkdownFormatter):
             content = self._truncate_content(content, max_chars)
             
         return content
+    
+    def format_with_markers(self, data: Dict[str, Any], step_type: str) -> str:
+        """Format overview data with field markers for bidirectional sync."""
+        lines = []
+        
+        # Add sync header
+        lines.append(self._add_sync_header(step_type))
+        
+        # Get company info
+        company_name = data.get('company_name', 'Company')
+        company_url = data.get('company_url', '')
+        description = data.get('description', '')
+        
+        # Document title
+        lines.append(self.config.get_header(self.config.DOCUMENT_TITLE, f"{company_name} - Company Analysis"))
+        lines.append("")
+        
+        # Company Description (with marker)
+        if description:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Company Description", "description"))
+            lines.append(description)
+            lines.append("")
+        
+        # Company URL (with marker)
+        if company_url:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Website", "company_url"))
+            lines.append(company_url)
+            lines.append("")
+        
+        # Business Profile Insights (with marker)
+        business_insights = data.get('business_profile_insights', [])
+        if business_insights:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Business Insights", "business_profile_insights"))
+            lines.append(self._format_list(business_insights))
+            lines.append("")
+        
+        # Capabilities (with marker)
+        capabilities = data.get('capabilities', [])
+        if capabilities:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Core Capabilities", "capabilities"))
+            lines.append(self._format_list(capabilities))
+            lines.append("")
+        
+        # Use Case Analysis (with marker)
+        use_cases = data.get('use_case_analysis_insights', [])
+        if use_cases:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Use Case Analysis", "use_case_analysis_insights"))
+            lines.append(self._format_list(use_cases))
+            lines.append("")
+        
+        # Positioning Insights (with marker)
+        positioning = data.get('positioning_insights', [])
+        if positioning:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Market Positioning", "positioning_insights"))
+            lines.append(self._format_list(positioning))
+            lines.append("")
+        
+        # Common Objections (with marker)
+        objections = data.get('objections', [])
+        if objections:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Common Objections", "objections"))
+            lines.append(self._format_list(objections))
+            lines.append("")
+        
+        # Target Customer Insights (with marker)
+        target_insights = data.get('target_customer_insights', [])
+        if target_insights:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Target Customer Insights", "target_customer_insights"))
+            lines.append(self._format_list(target_insights))
+            lines.append("")
+        
+        return "\n".join(lines).strip()
 
 
 class AccountFormatter(MarkdownFormatter):
@@ -528,6 +629,110 @@ class AccountFormatter(MarkdownFormatter):
             content = self._truncate_content(content, max_chars)
             
         return content
+    
+    def format_with_markers(self, data: Dict[str, Any], step_type: str) -> str:
+        """Format account data with field markers for bidirectional sync."""
+        lines = []
+        
+        # Add sync header
+        lines.append(self._add_sync_header(step_type))
+        
+        # Account name and description
+        account_name = data.get('target_account_name', 'Target Account')
+        account_description = data.get('target_account_description', '')
+        
+        # Document title
+        lines.append(self.config.get_header(self.config.DOCUMENT_TITLE, f"{account_name} - Target Account Profile"))
+        lines.append("")
+        
+        # Account Name (with marker)
+        lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Account Name", "target_account_name"))
+        lines.append(account_name)
+        lines.append("")
+        
+        # Account Description (with marker)
+        if account_description:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Account Description", "target_account_description"))
+            lines.append(account_description)
+            lines.append("")
+        
+        # Firmographics (with marker)
+        firmographics = data.get('firmographics', {})
+        if firmographics:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Firmographics", "firmographics"))
+            lines.append(self._format_table(firmographics))
+            lines.append("")
+        
+        # Buying Signals (with marker)
+        buying_signals = data.get('buying_signals', [])
+        if buying_signals:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Buying Signals", "buying_signals"))
+            lines.append("")
+            
+            for i, signal in enumerate(buying_signals, 1):
+                title = signal.get('title', f'Signal {i}')
+                priority = signal.get('priority', 'Medium')
+                signal_type = signal.get('type', 'Unknown')
+                description = signal.get('description', '')
+                detection = signal.get('detection_method', '')
+                
+                # Signal header with priority
+                lines.append(self.config.get_header(
+                    self.config.DETAIL_SECTION, 
+                    f"{title} ({priority} Priority)"
+                ))
+                
+                if description:
+                    lines.append(description)
+                    lines.append("")
+                
+                lines.append(f"**Type**: {signal_type}")
+                if detection:
+                    lines.append(f"**Detection**: {detection}")
+                lines.append("")
+        
+        # Targeting Rationale (with marker)
+        rationale = data.get('target_account_rationale', [])
+        if rationale:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Targeting Rationale", "target_account_rationale"))
+            lines.append(self._format_list(rationale))
+            lines.append("")
+        
+        # Buying Signals Rationale (with marker)
+        signals_rationale = data.get('buying_signals_rationale', [])
+        if signals_rationale:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Buying Signals Rationale", "buying_signals_rationale"))
+            lines.append(self._format_list(signals_rationale))
+            lines.append("")
+        
+        # Messaging (with marker)
+        messaging = data.get('messaging', {})
+        if messaging:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Messaging Guidelines", "messaging"))
+            lines.append("")
+            
+            # Value Propositions
+            value_props = messaging.get('value_propositions', [])
+            if value_props:
+                lines.append(self.config.get_header(self.config.DETAIL_SECTION, "Value Propositions"))
+                lines.append(self._format_list(value_props))
+                lines.append("")
+            
+            # Proof Points
+            proof_points = messaging.get('proof_points', [])
+            if proof_points:
+                lines.append(self.config.get_header(self.config.DETAIL_SECTION, "Proof Points"))
+                lines.append(self._format_list(proof_points))
+                lines.append("")
+            
+            # Positioning Statements
+            positioning = messaging.get('positioning_statements', [])
+            if positioning:
+                lines.append(self.config.get_header(self.config.DETAIL_SECTION, "Positioning Statements"))
+                lines.append(self._format_list(positioning))
+                lines.append("")
+        
+        return "\n".join(lines).strip()
 
 
 class PersonaFormatter(MarkdownFormatter):
@@ -691,6 +896,32 @@ class PersonaFormatter(MarkdownFormatter):
             content = self._truncate_content(content, max_chars)
             
         return content
+    
+    def format_with_markers(self, data: Dict[str, Any], step_type: str) -> str:
+        """Format persona data with field markers for bidirectional sync."""
+        lines = []
+        
+        # Add sync header
+        lines.append(self._add_sync_header(step_type))
+        
+        # Persona name and description
+        persona_name = data.get('target_persona_name', 'Target Persona')
+        persona_description = data.get('target_persona_description', '')
+        
+        # Document title
+        lines.append(self.config.get_header(self.config.DOCUMENT_TITLE, f"{persona_name} - Buyer Persona"))
+        lines.append("")
+        
+        # Persona Description (with marker)
+        if persona_description:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Persona Description", "target_persona_description"))
+            lines.append(persona_description)
+            lines.append("")
+        
+        # Placeholder for other fields - TODO: implement full persona formatting
+        lines.append("<!-- TODO: Implement full PersonaFormatter.format_with_markers -->")
+        
+        return "\n".join(lines).strip()
 
 
 class EmailFormatter(MarkdownFormatter):
@@ -883,6 +1114,106 @@ class EmailFormatter(MarkdownFormatter):
                 lines.append(cta_text)
         
         return "\n".join(lines).strip()
+    
+    def format_with_markers(self, data: Dict[str, Any], step_type: str) -> str:
+        """Format email data with field markers for bidirectional sync."""
+        lines = []
+        
+        # Add sync header
+        lines.append(self._add_sync_header(step_type))
+        
+        # Email subject and basic info
+        subjects = data.get('subjects', {})
+        primary_subject = subjects.get('primary', 'Email Campaign')
+        
+        # Document title
+        lines.append(self.config.get_header(self.config.DOCUMENT_TITLE, f"{primary_subject} - Email Campaign"))
+        lines.append("")
+        
+        # Primary Subject (with marker)
+        lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Primary Subject", "subjects.primary"))
+        lines.append(primary_subject)
+        lines.append("")
+        
+        # Alternative Subjects (with marker)
+        alternatives = subjects.get('alternatives', [])
+        if alternatives:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Alternative Subjects", "subjects.alternatives"))
+            for alt in alternatives:
+                lines.append(f"- {alt}")
+            lines.append("")
+        
+        # Full Email Body (with marker)
+        full_body = data.get('full_email_body', '')
+        if full_body:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Full Email Body", "full_email_body"))
+            lines.append(full_body)
+            lines.append("")
+        
+        # Email Body Breakdown (with marker)
+        breakdown = data.get('email_body_breakdown', [])
+        if breakdown:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Email Body Breakdown", "email_body_breakdown"))
+            lines.append("")
+            for section in breakdown:
+                section_type = section.get('type', 'unknown').title()
+                text = section.get('text', '')
+                lines.append(self.config.get_header(self.config.DETAIL_SECTION, f"{section_type}"))
+                lines.append(text)
+                lines.append("")
+        
+        # Writing Process (with marker)
+        process = data.get('writing_process', {})
+        if process:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Writing Process", "writing_process"))
+            lines.append("")
+            
+            trigger = process.get('trigger', '')
+            if trigger:
+                lines.append(f"**Trigger**: {trigger}")
+                lines.append("")
+            
+            problem = process.get('problem', '')
+            if problem:
+                lines.append(f"**Problem**: {problem}")
+                lines.append("")
+            
+            help_text = process.get('help', '')
+            if help_text:
+                lines.append(f"**Help**: {help_text}")
+                lines.append("")
+            
+            cta = process.get('cta', '')
+            if cta:
+                lines.append(f"**CTA**: {cta}")
+                lines.append("")
+        
+        # Metadata (with marker)
+        metadata = data.get('metadata', {})
+        if metadata:
+            lines.append(self._get_header_with_marker(self.config.SUB_SECTION, "Generation Metadata", "metadata"))
+            lines.append("")
+            
+            generation_id = metadata.get('generation_id', '')
+            if generation_id:
+                lines.append(f"**Generation ID**: {generation_id}")
+            
+            confidence = metadata.get('confidence', '')
+            if confidence:
+                lines.append(f"**Confidence**: {confidence.title()}")
+            
+            personalization = metadata.get('personalization_level', '')
+            if personalization:
+                lines.append(f"**Personalization**: {personalization.replace('-', ' ').title()}")
+            
+            processing_time = metadata.get('processing_time_ms', '')
+            if processing_time:
+                lines.append(f"**Processing Time**: {processing_time}ms")
+            
+            if generation_id or confidence or personalization or processing_time:
+                lines.append("")
+        
+        return "\n".join(lines).strip()
 
 
 def get_formatter(step_type: str) -> MarkdownFormatter:
@@ -909,6 +1240,14 @@ def get_formatter(step_type: str) -> MarkdownFormatter:
         raise ValueError(f"Unknown step type: {step_type}. Supported types: {list(formatters.keys())}")
         
     return formatters[step_type]()
+
+
+def get_formatter_with_markers(step_type: str) -> MarkdownFormatter:
+    """
+    Factory function to get formatter specifically for generating structured markdown with field markers.
+    This is a convenience function that returns the same formatter but clarifies intent.
+    """
+    return get_formatter(step_type)
 
 
 # Testing/Demo functionality

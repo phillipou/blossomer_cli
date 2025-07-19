@@ -38,7 +38,9 @@ class ProjectStorage:
         # Normalize domain for filesystem
         safe_domain = domain.replace("https://", "").replace("http://", "").replace("www.", "")
         safe_domain = safe_domain.replace("/", "_").replace(":", "_")
-        return self.base_dir / safe_domain
+        result_path = self.base_dir / safe_domain
+        logger.info(f"get_project_dir: {domain} -> {safe_domain} -> {result_path}")
+        return result_path
     
     def create_project(self, domain: str) -> Path:
         """Create a new project directory and metadata"""
@@ -90,6 +92,12 @@ class ProjectStorage:
         step_file = json_output_dir / f"{step}.json"
         with open(step_file, 'w', encoding='utf-8') as f:
             json.dump(data_dict, f, indent=2, ensure_ascii=False)
+        
+        # Auto-generate corresponding markdown file in plans/ directory
+        try:
+            self._auto_generate_plans_file(domain, step, data_dict)
+        except Exception as e:
+            logger.warning(f"Failed to auto-generate plans file for {step}: {e}")
         
         # Update metadata
         self._update_project_metadata(domain, step)
@@ -268,6 +276,32 @@ class ProjectStorage:
             metadata.completed_steps.append(completed_step)
         
         self.save_metadata(domain, metadata)
+    
+    def _auto_generate_plans_file(self, domain: str, step: str, data_dict: Dict[str, Any]) -> None:
+        """Auto-generate markdown file in plans/ directory when JSON is saved"""
+        try:
+            # Import here to avoid circular dependencies
+            from cli.utils.markdown_formatter import get_formatter
+            
+            # Create plans directory
+            project_dir = self.get_project_dir(domain)
+            plans_dir = project_dir / "plans"
+            plans_dir.mkdir(exist_ok=True)
+            
+            # Get formatter and generate structured markdown
+            formatter = get_formatter(step)
+            markdown_content = formatter.format_with_markers(data_dict, step)
+            
+            # Save markdown file
+            plans_file = plans_dir / f"{step}.md"
+            with open(plans_file, 'w', encoding='utf-8') as f:
+                f.write(markdown_content)
+            
+            logger.info(f"Auto-generated plans file: {plans_file}")
+            
+        except Exception as e:
+            logger.error(f"Failed to auto-generate plans file for {step}: {e}")
+            # Don't raise - this is a nice-to-have feature that shouldn't break JSON saving
 
 
 # Global instance

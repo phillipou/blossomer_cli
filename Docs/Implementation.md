@@ -74,7 +74,8 @@ python3 -m cli.main eval run all        # Run all evaluations
 
 #### High Priority (Next Features)
 - [ ] **Complete GTM Plan Generation** - Finish 5th step with proper schema/template
-- [ ] **Implement `export` command** - Markdown report generation with meaningful naming
+- [ ] **✅ Implement `export` command** - Markdown report generation with meaningful naming (COMPLETED)
+- [ ] **🧪 Bidirectional JSON ↔ Markdown Sync** - Enable editing markdown files that sync back to JSON ([Design Complete](Experiments/bidirectional_json_markdown_sync.md))
 - [ ] **Implement `edit` command** - File editing with dependency cascade handling
 - [ ] **Implement `list` command** - Project overview and management
 - [ ] **Add `status` command** - Quick project health check
@@ -824,18 +825,68 @@ def get_formatter(step_type: str) -> MarkdownFormatter
 5. ✅ Handles malformed data gracefully with clear error messages
 6. ✅ Maintains performance for large JSON files
 
+## 🧪 Bidirectional JSON ↔ Markdown Sync (Experimental)
+
+### Overview
+**Status:** 🚧 Design Complete - Ready for Implementation  
+**Detailed Design:** [Experiments/bidirectional_json_markdown_sync.md](Experiments/bidirectional_json_markdown_sync.md)
+
+An experimental system to enable users to edit human-readable markdown files that automatically sync back to JSON data, providing the best of both worlds: structured data for the CLI and user-friendly editing experience.
+
+### Core Concept
+```
+JSON (Source of Truth) ←→ Plans (Editable) → Export (Final)
+     ↑                        ↓                ↓
+     └── CLI generates ────── User edits ──── Reports
+```
+
+**Directory Structure:**
+```
+gtm_projects/{domain}/
+├── json_output/           # Canonical data (CLI source of truth)
+├── plans/                 # Human-editable markdown files  
+└── export/               # Final reports
+```
+
+### Key Features
+- **🔄 Bidirectional Sync** - Edit markdown, automatically updates JSON
+- **🛡️ Resilient Design** - Graceful handling of user edits and errors  
+- **⚡ Never Blocks Workflow** - CLI continues working even with sync issues
+- **🎯 Field Markers** - `{#field_name}` syntax enables reliable parsing
+- **✏️ User Freedom** - Edit headers, add custom sections, change structure
+
+### New CLI Commands
+```bash
+blossomer plans generate [step|all]    # json → plans  
+blossomer plans update [step|all]      # plans → json
+blossomer plans sync [step|all]        # auto-detect changes
+blossomer plans edit <step>            # edit with auto-sync
+blossomer plans status                 # show sync status
+```
+
+### Implementation Philosophy
+**"Fail Soft, Continue Forward"** - Sync enhances the workflow but never breaks it. Orphaned fields are handled gracefully with clear recovery options.
+
+See the [complete design document](Experiments/bidirectional_json_markdown_sync.md) for technical details, implementation classes, and usage examples.
+
 ## Key Implementation Patterns
 
-### Project Storage Structure (✅ Implemented)
+### Project Storage Structure (✅ Implemented + 🧪 Planned Enhancement)
 ```
 gtm_projects/
 ├── {domain}/
-│   ├── json_output/       # All JSON files stored here
+│   ├── json_output/       # All JSON files stored here (CLI source of truth)
 │   │   ├── overview.json      # Company analysis
 │   │   ├── account.json       # Target account profile  
 │   │   ├── persona.json       # Buyer persona
 │   │   ├── email.json         # Email campaign
 │   │   └── plan.json          # GTM execution plan
+│   ├── plans/             # 🧪 Human-editable markdown files (experimental)
+│   │   ├── overview.md        # Editable company analysis
+│   │   ├── account.md         # Editable target account
+│   │   ├── persona.md         # Editable buyer persona
+│   │   ├── email.md           # Editable email campaign
+│   │   └── .sync_state.json   # Bidirectional sync metadata
 │   ├── .metadata.json     # Generation metadata
 │   └── export/
 │       └── gtm-report-{date}.md
