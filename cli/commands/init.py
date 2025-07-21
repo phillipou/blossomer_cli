@@ -101,14 +101,55 @@ def capture_hypotheses() -> dict:
     return context if context else None
 
 
+def create_init_welcome_panel() -> Panel:
+    """Create a rich welcome panel for the init command"""
+    welcome_text = Text()
+    welcome_text.append("🚀 Welcome to ", style="bold")
+    welcome_text.append("Blossomer CLI", style="bold #01A0E4")
+    welcome_text.append("!\n\n", style="bold")
+    welcome_text.append("Generate a complete go-to-market plan using our internal AI workflow.\n\n", style="")
+    welcome_text.append("What you'll get:\n", style="bold")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("Company Overview", style="bold #01A0E4")
+    welcome_text.append(" - Deep business analysis\n", style="")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("Target Account Profile", style="bold #01A0E4")
+    welcome_text.append(" - Ideal customer identification\n", style="")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("Buyer Persona", style="bold #01A0E4")
+    welcome_text.append(" - Decision-maker profiles\n", style="")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("Email Campaign", style="bold #01A0E4")
+    welcome_text.append(" - Personalized outreach\n", style="")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("GTM Strategic Plan", style="bold #01A0E4")
+    welcome_text.append(" - Execution framework\n\n", style="")
+    welcome_text.append("Takes ~60 seconds. Let's get started!", style="dim italic")
+    
+    return Panel(
+        welcome_text,
+        title="[bold #01A0E4]GTM Intelligence Generator[/bold #01A0E4]",
+        border_style="#01A0E4",
+        padding=(1, 2),
+        expand=False
+    )
+
+
 def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool = False) -> None:
     """Run the interactive GTM generation flow"""
+    
+    # Show welcome panel first (unless domain is provided and we're going straight to generation)
+    if domain is None and not yolo:
+        enter_immersive_mode()
+        console.print()
+        console.print(create_init_welcome_panel())
+        console.print()
     
     # Prompt for domain if not provided
     if domain is None:
         domain = questionary.text(
-            "🔍 Enter the company domain you'd like to analyze for GTM intelligence:",
-            placeholder="e.g., acme.com, https://company.com, or www.startup.io",
+            "🔍 Enter your company's website to get started:",
+            placeholder="e.g.,  stripe.com",
             style=TEXT_INPUT_STYLE
         ).ask()
         
