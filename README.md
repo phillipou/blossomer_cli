@@ -4,11 +4,11 @@ This CLI tool is a **prototype of the internal AI workflows used at Blossomer**.
 
 **With Blossomer's CLI, you can generate:**
 
-• **Company Overview**: Automatically analyze any website to extract business model, value propositions, and competitive positioning
-• **Target Account Profile**: Generate detailed ICP definitions with firmographic criteria and buying signals  
-• **Buyer Persona**: Create comprehensive personas with pain points, goals, and purchase journey mapping
-• **Email Campaigns**: Build personalized outreach sequences using our proven "Lego Block" methodology
-• **Strategic Plan**: Generate complete execution roadmaps with tool recommendations and success metrics
+- **Company Overview**: Automatically analyze any website to extract business model, value propositions, and competitive positioning
+- **Target Account Profile**: Generate detailed ICP definitions with firmographic criteria and buying signals  
+- **Buyer Persona**: Create comprehensive personas with pain points, goals, and purchase journey mapping
+- **Email Campaigns**: Build personalized outreach sequences using our proven "Lego Block" methodology
+- **Strategic Plan**: Generate complete execution roadmaps with tool recommendations and success metrics
 
 ## Quick Start
 
