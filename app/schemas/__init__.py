@@ -480,7 +480,7 @@ def get_default_email_breakdown() -> EmailBreakdown:
         "company-intro": {
             "label": "Company Introduction",
             "description": "One-liner with social proof",
-            "color": "bg-cyan-100 border-cyan-200",
+            "color": "bg-purple-100 border-purple-200",
         },
         "emphasis": {
             "label": "Value Emphasis",

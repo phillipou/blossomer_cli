@@ -9,11 +9,11 @@ import sys
 
 # Import consistent styling
 MENU_STYLE = Style([
-    ('question', 'bold cyan'),
-    ('pointer', 'bold cyan'),
-    ('highlighted', 'bold cyan'),
-    ('selected', 'bold cyan'),
-    ('answer', 'bold cyan')
+    ('question', 'bold blue_violet'),
+    ('pointer', 'bold blue_violet'),
+    ('highlighted', 'bold blue_violet'),
+    ('selected', 'bold blue_violet'),
+    ('answer', 'bold blue_violet')
 ])
 
 def numbered_menu_with_keys(question: str, choices: List[str]) -> Optional[str]:
@@ -27,7 +27,7 @@ def numbered_menu_with_keys(question: str, choices: List[str]) -> Optional[str]:
     console = Console()
     
     # Display the question and choices
-    console.print(f"[bold cyan]? {question}[/bold cyan]")
+    console.print(f"[bold blue_violet]? {question}[/bold blue_violet]")
     for i, choice in enumerate(choices, 1):
         console.print(f"  [dim]{i}.[/dim] {choice}")
     console.print()

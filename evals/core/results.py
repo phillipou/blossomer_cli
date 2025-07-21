@@ -37,7 +37,7 @@ class ResultsManager:
         
         # Test cases summary table
         summary_table = Table(title="Test Cases Summary")
-        summary_table.add_column("Metric", style="cyan")
+        summary_table.add_column("Metric", style="blue_violet")
         summary_table.add_column("Value", style="magenta")
         summary_table.add_column("Rate", style="green")
         
@@ -64,7 +64,7 @@ class ResultsManager:
         self.console.print(f"\n🔍 Deterministic Checks")
         
         det_table = Table()
-        det_table.add_column("Check Type", style="cyan")
+        det_table.add_column("Check Type", style="blue_violet")
         det_table.add_column("Passed", style="green")
         det_table.add_column("Total", style="blue")
         det_table.add_column("Pass Rate", style="magenta")
@@ -86,7 +86,7 @@ class ResultsManager:
         self.console.print(f"\n🧠 LLM Judge Results")
         
         llm_table = Table()
-        llm_table.add_column("Judge Type", style="cyan")
+        llm_table.add_column("Judge Type", style="blue_violet")
         llm_table.add_column("Passed", style="green")
         llm_table.add_column("Eligible", style="blue")
         llm_table.add_column("Pass Rate", style="magenta")
@@ -226,7 +226,7 @@ class ResultsManager:
         self.console.print(f"\n📊 Check Summary")
         
         summary_table = Table()
-        summary_table.add_column("Check Type", style="cyan")
+        summary_table.add_column("Check Type", style="blue_violet")
         summary_table.add_column("Passed", style="green")
         summary_table.add_column("Total", style="blue")
         summary_table.add_column("Pass Rate", style="magenta")
@@ -304,7 +304,7 @@ class ResultsManager:
         self.console.print(f"\n⭐ LLM Judge Rating Distribution")
         
         rating_table = Table()
-        rating_table.add_column("Rating", style="cyan")
+        rating_table.add_column("Rating", style="blue_violet")
         rating_table.add_column("Count", style="blue")
         rating_table.add_column("Percentage", style="magenta")
         
@@ -374,7 +374,7 @@ class ResultsManager:
                         rationale = check_result.get('rationale', check_result.get('error', 'Unknown error'))
                         description = check_result.get('description', 'Deterministic check')
                         
-                        self.console.print(f"  🔍 {check_display_name}: {description}", style="cyan")
+                        self.console.print(f"  🔍 {check_display_name}: {description}", style="blue_violet")
                         self.console.print(f"    → {rationale}", style="red")
                         
                         # Show inputs evaluated if verbose
@@ -396,7 +396,7 @@ class ResultsManager:
                         rationale = judge_result.get('rationale', judge_result.get('error', 'Quality criteria not met'))
                         description = judge_result.get('description', 'LLM judge evaluation')
                         
-                        self.console.print(f"  🧠 {check_display_name}: {description}", style="cyan")
+                        self.console.print(f"  🧠 {check_display_name}: {description}", style="blue_violet")
                         self.console.print(f"    → {rationale}", style="yellow")
                         
                         # Show inputs evaluated if verbose
@@ -457,7 +457,7 @@ class ResultsManager:
         self.console.print(f"\n🔄 Comparing Results")
         
         comparison_table = Table()
-        comparison_table.add_column("Metric", style="cyan")
+        comparison_table.add_column("Metric", style="blue_violet")
         comparison_table.add_column("Result 1", style="green")
         comparison_table.add_column("Result 2", style="blue")
         comparison_table.add_column("Change", style="magenta")

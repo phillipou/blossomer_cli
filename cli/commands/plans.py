@@ -36,7 +36,7 @@ def generate(
         domain = _get_current_domain()
         if not domain:
             console.print("[red]No domain specified and no current project found.[/red]")
-            console.print("→ Use: [bold cyan]blossomer plans generate overview --domain example.com[/bold cyan]")
+            console.print("→ Use: [bold blue_violet]blossomer plans generate overview --domain example.com[/bold blue_violet]")
             return
     
     # Normalize domain
@@ -89,7 +89,7 @@ def update(
         domain = _get_current_domain()
         if not domain:
             console.print("[red]No domain specified and no current project found.[/red]")
-            console.print("→ Use: [bold cyan]blossomer plans update overview --domain example.com[/bold cyan]")
+            console.print("→ Use: [bold blue_violet]blossomer plans update overview --domain example.com[/bold blue_violet]")
             return
     
     # Normalize domain
@@ -167,7 +167,7 @@ def sync(
         domain = _get_current_domain()
         if not domain:
             console.print("[red]No domain specified and no current project found.[/red]")
-            console.print("→ Use: [bold cyan]blossomer plans sync --domain example.com[/bold cyan]")
+            console.print("→ Use: [bold blue_violet]blossomer plans sync --domain example.com[/bold blue_violet]")
             return
     
     # Normalize domain
@@ -239,7 +239,7 @@ def edit(
         domain = _get_current_domain()
         if not domain:
             console.print("[red]No domain specified and no current project found.[/red]")
-            console.print("→ Use: [bold cyan]blossomer plans edit overview --domain example.com[/bold cyan]")
+            console.print("→ Use: [bold blue_violet]blossomer plans edit overview --domain example.com[/bold blue_violet]")
             return
     
     # Normalize domain
@@ -305,7 +305,7 @@ def status(
         domain = _get_current_domain()
         if not domain:
             console.print("[red]No domain specified and no current project found.[/red]")
-            console.print("→ Use: [bold cyan]blossomer plans status --domain example.com[/bold cyan]")
+            console.print("→ Use: [bold blue_violet]blossomer plans status --domain example.com[/bold blue_violet]")
             return
     
     # Normalize domain
@@ -323,7 +323,7 @@ def status(
     
     # Create status table
     table = Table(show_header=True, header_style="bold magenta")
-    table.add_column("Step", style="cyan")
+    table.add_column("Step", style="blue_violet")
     table.add_column("JSON", justify="center")
     table.add_column("Plans", justify="center")
     table.add_column("Sync Needed", justify="center")
@@ -452,8 +452,8 @@ def _show_plans_summary(domain: str, steps: list):
             size = plans_file.stat().st_size
             console.print(f"  {step}.md ({size:,} bytes)")
     
-    console.print(f"\n💡 Edit with: [bold cyan]blossomer plans edit <step> --domain {domain}[/bold cyan]")
-    console.print(f"💡 Sync back: [bold cyan]blossomer plans sync --domain {domain}[/bold cyan]")
+    console.print(f"\n💡 Edit with: [bold blue_violet]blossomer plans edit <step> --domain {domain}[/bold blue_violet]")
+    console.print(f"💡 Sync back: [bold blue_violet]blossomer plans sync --domain {domain}[/bold blue_violet]")
 
 
 if __name__ == "__main__":

@@ -93,13 +93,13 @@ def run_test_suite(test_file: str, description: str) -> dict:
             
             # Display results
             if passed:
-                console.print(f"✅ [green]{description}[/green] ([cyan]{duration:.1f}s[/cyan])")
+                console.print(f"✅ [green]{description}[/green] ([blue_violet]{duration:.1f}s[/cyan])")
                 if parsed['tests']:
                     for test in parsed['tests']:
                         if test['status'] == 'PASSED':
                             console.print(f"   • [green]{test['name']}[/green]")
             else:
-                console.print(f"❌ [red]{description}[/red] ([cyan]{duration:.1f}s[/cyan])")
+                console.print(f"❌ [red]{description}[/red] ([blue_violet]{duration:.1f}s[/cyan])")
                 
                 # Show failed tests
                 for test in parsed['tests']:
@@ -121,7 +121,7 @@ def run_test_suite(test_file: str, description: str) -> dict:
         except Exception as e:
             progress.update(task, completed=100)
             duration = time.time() - start_time
-            console.print(f"💥 [red]{description} ERROR[/red] ([cyan]{duration:.1f}s[/cyan]): {e}")
+            console.print(f"💥 [red]{description} ERROR[/red] ([blue_violet]{duration:.1f}s[/cyan]): {e}")
             return {
                 "name": description,
                 "file": test_file,
@@ -165,10 +165,10 @@ def run_legacy_tests() -> list:
                 duration = time.time() - start_time
                 
                 if result.returncode == 0 and "🎉" in result.stdout:
-                    console.print(f"✅ [green]{description}[/green] ([cyan]{duration:.1f}s[/cyan])")
+                    console.print(f"✅ [green]{description}[/green] ([blue_violet]{duration:.1f}s[/cyan])")
                     passed = True
                 else:
-                    console.print(f"❌ [red]{description}[/red] ([cyan]{duration:.1f}s[/cyan])")
+                    console.print(f"❌ [red]{description}[/red] ([blue_violet]{duration:.1f}s[/cyan])")
                     passed = False
                     
                 results.append({
@@ -184,7 +184,7 @@ def run_legacy_tests() -> list:
             except Exception as e:
                 progress.update(task, completed=100)
                 duration = time.time() - start_time
-                console.print(f"💥 [red]{description} ERROR[/red] ([cyan]{duration:.1f}s[/cyan]): {e}")
+                console.print(f"💥 [red]{description} ERROR[/red] ([blue_violet]{duration:.1f}s[/cyan]): {e}")
                 results.append({
                     "name": description,
                     "file": test_file,
@@ -287,7 +287,7 @@ def main():
     
     # Create summary table
     table = Table(title="📊 Test Summary", title_style="bold blue")
-    table.add_column("Metric", style="cyan", width=20)
+    table.add_column("Metric", style="blue_violet", width=20)
     table.add_column("Value", style="green")
     
     table.add_row("Total Duration", f"{total_duration:.1f}s")

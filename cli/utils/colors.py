@@ -13,22 +13,22 @@ class Colors:
     Based on CLI UX best practices - use color with intention
     """
     
-    # Core semantic colors - unified bold cyan theme
+    # Core semantic colors - unified bold blue_violet theme
     SUCCESS = "green"           # ✓ Completed tasks, positive outcomes
     ERROR = "red"              # ✗ Failures, missing data, critical issues  
     WARNING = "yellow"         # ⚠ Stale data, non-critical issues
-    PRIMARY = "bold cyan"      # Section headers, current process - unified bold cyan
-    ACTION = "bold cyan"       # Commands, actionable items - same bold cyan
+    PRIMARY = "bold blue_violet"      # Section headers, current process - unified bold blue_violet
+    ACTION = "bold blue_violet"       # Commands, actionable items - same bold blue_violet
     META = "dim"               # Timestamps, file info, secondary details
     EMPHASIS = "bold"          # Important labels (use sparingly)
     
-    # Compound styles for common patterns - all using bold cyan
-    SECTION_HEADER = "bold cyan"      # Main section titles 
+    # Compound styles for common patterns - all using bold blue_violet
+    SECTION_HEADER = "bold blue_violet"      # Main section titles 
     SUCCESS_MESSAGE = "green"         # ✓ Success indicators
     ERROR_MESSAGE = "red"             # ✗ Error indicators  
     WARNING_MESSAGE = "yellow"        # ⚠ Warning indicators
-    COMMAND_SUGGESTION = "bold cyan"  # → Try: command
-    PROCESS_INDICATOR = "bold cyan"   # [1/4] Step name 
+    COMMAND_SUGGESTION = "bold blue_violet"  # → Try: command
+    PROCESS_INDICATOR = "bold blue_violet"   # [1/4] Step name 
     FILE_INFO = "dim"                 # Generated: timestamp
     
     @classmethod
