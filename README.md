@@ -231,6 +231,15 @@ export BLOSSOMER_QUIET=true          # Minimal output mode
 Add these to your `~/.bashrc`, `~/.zshrc`, or create a `.env` file in the project directory.
 
 
+## Next Steps
+
+This is of course just the tip of the iceberg! There's so much more to dive into including:
+- How to incorporate other channels (LinkedIn, inbound leads, paid advertising)?
+- How to analyze data and iterate on these campaigns?
+- How to integrate this into your CRM and workflows?
+
+If you need any additional help or want us to work with you hands-on, reach out to us at [blossomer.io](https://blossomer.io) or contact our founder Phil (phil@blossomer.io).
+
 ## License
 
 MIT License - feel free to fork, modify, and use this however works best for your team.

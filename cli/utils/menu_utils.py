@@ -103,7 +103,6 @@ def show_menu_with_numbers(question: str, choices: List[str], add_separator: boo
     if add_separator:
         console.print()
         console.print("─" * 60)
-        console.print()
     
     # Use the enhanced numbered menu with both arrow keys and number shortcuts
     result = numbered_menu(question, choices)

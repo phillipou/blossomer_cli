@@ -45,9 +45,7 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         clear_console()
         console.print()
         console.print(create_step_panel_by_key(step_key))
-        console.print()
         console.print(create_preview_header(step_key))
-        console.print()
         
         # Display preview content
         console.print(preview_markdown)
@@ -59,9 +57,6 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         console.print()
         console.print(f"[dim][Previewing {preview_chars:,} of {total_chars:,} characters][/dim]")
         
-        console.print()
-        console.print()
-        
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
         markdown_file_path = project_dir / "plans" / f"{step_key}.md"
@@ -69,10 +64,7 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
             console.print(f"[green]✓ Full {step.name.lower()} saved to: plans/{step_key}.md[/green]")
         else:
             console.print(f"✓ {step.name.lower()} generated (file not yet saved)")
-        
-        console.print()
-        console.print()
-        
+                
         # Show user choices
         if choices is None:
             # Map step keys to actual filenames

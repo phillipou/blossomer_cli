@@ -42,7 +42,7 @@ class LoadingAnimator:
         "email": [
             "→ Crafting personalized messaging",
             "→ Optimizing email structure",
-            "→ Adding social proof",
+            "→ Incorporating talking poitns",
             "→ Refining call-to-action",
             "→ Finalizing email campaign"
         ],

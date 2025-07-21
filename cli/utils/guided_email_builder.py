@@ -136,7 +136,6 @@ class GuidedEmailBuilder:
         console.print(f"[bold]Step 2: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
         console.print()
         console.print(f"Based on your persona analysis, here are their key {emphasis_type.replace('_', ' ')}s:")
-        console.print()
         
         # Extract content options based on emphasis type
         content_options = self._extract_content_by_type(emphasis_type)

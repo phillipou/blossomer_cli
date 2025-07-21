@@ -26,7 +26,7 @@ async def generate_step(
     """Generate or regenerate a specific GTM step"""
     
     # Validate step
-    valid_steps = ["overview", "account", "persona", "email", "plan", "advisor"]
+    valid_steps = ["overview", "account", "persona", "email", "plan"]
     if step not in valid_steps:
         console.print(f"[red]Invalid step: {step}[/red]")
         console.print(f"Valid steps: {', '.join(valid_steps)}")
@@ -150,10 +150,6 @@ async def generate_step(
                         timeout=40.0
                     )
                 elif step == "plan":
-                    # TODO: Implement GTM plan generation
-                    console.print("[yellow]GTM plan generation coming soon...[/yellow]")
-                    return
-                elif step == "advisor":
                     from cli.services.llm_service import LLMClient
                     from app.services.gtm_advisor_service import GTMAdvisorService
                     
@@ -162,7 +158,7 @@ async def generate_step(
                     
                     result = await asyncio.wait_for(
                         advisor_service.generate_strategic_plan(normalized_domain),
-                        timeout=40.0
+                        timeout=90.0
                     )
                     
             except asyncio.TimeoutError:

@@ -20,7 +20,7 @@ app = typer.Typer(
     name="blossomer",
     help="🚀 Blossomer CLI - Generate complete GTM assets from domain analysis",
     rich_markup_mode="rich",
-    no_args_is_help=True,
+    no_args_is_help=False,
 )
 
 console = Console()
@@ -33,8 +33,46 @@ def version_callback(value: bool) -> None:
         raise typer.Exit()
 
 
-@app.callback()
+def create_main_welcome_panel() -> Panel:
+    """Create a rich welcome panel for the main blossomer command"""
+    welcome_text = Text()
+    welcome_text.append("🚀 Welcome to ", style="bold")
+    welcome_text.append("Blossomer CLI", style="bold #01A0E4")
+    welcome_text.append("!\n\n", style="bold")
+    welcome_text.append("Generate complete go-to-market packages from domain analysis.\n\n", style="")
+    welcome_text.append("Available Commands:\n", style="bold")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("init [domain]", style="bold #01A0E4")
+    welcome_text.append(" - Start new GTM project\n", style="")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("show [step]", style="bold #01A0E4")
+    welcome_text.append(" - Display generated content\n", style="")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("edit [step]", style="bold #01A0E4")
+    welcome_text.append(" - Open content in editor\n", style="")
+    welcome_text.append("  • ", style="dim")
+    welcome_text.append("list", style="bold #01A0E4")
+    welcome_text.append(" - Show all GTM projects\n\n", style="")
+    welcome_text.append("Quick Start:\n", style="bold")
+    welcome_text.append("  ", style="dim")
+    welcome_text.append("blossomer init acme.com", style="cyan")
+    welcome_text.append("\n\n", style="")
+    welcome_text.append("Use ", style="dim italic")
+    welcome_text.append("--help", style="cyan")
+    welcome_text.append(" with any command for more details.", style="dim italic")
+    
+    return Panel(
+        welcome_text,
+        title="[bold #01A0E4]Blossomer Command Line Tool[/bold #01A0E4]",
+        border_style="#01A0E4",
+        padding=(1, 2),
+        expand=False
+    )
+
+
+@app.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     version: Optional[bool] = typer.Option(
         None, 
         "--version", 
@@ -99,6 +137,12 @@ def main(
     # Configure console for no-color mode
     if no_color:
         console._color_system = None
+    
+    # If no command was invoked, show the welcome panel
+    if ctx.invoked_subcommand is None:
+        console.print()
+        console.print(create_main_welcome_panel())
+        console.print()
 
 
 @app.command()

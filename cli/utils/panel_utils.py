@@ -79,7 +79,8 @@ def create_completion_panel() -> Panel:
         "\n"
         "[bold]Your go-to-market package is ready:[/bold]\n"
         f"• View results: {Colors.format_command('blossomer show plan')}\n"
-        f"• Edit content: {Colors.format_command('blossomer edit [overview|account|persona|email|plan]')}"
+        f"• Edit content: {Colors.format_command('blossomer edit [overview|account|persona|email|plan]')}\n"
+        f"• Press Enter to finish and exit"
     )
     
     return Panel(

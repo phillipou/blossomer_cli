@@ -6,6 +6,7 @@ import os
 import sys
 from rich.console import Console
 
+
 def clear_console() -> None:
     """Clear the console for an immersive experience"""
     # For Windows
@@ -14,6 +15,7 @@ def clear_console() -> None:
     # For Unix/Linux/MacOS
     else:
         os.system('clear')
+
 
 def enter_immersive_mode() -> None:
     """Clear console and enter immersive mode like Claude Code"""

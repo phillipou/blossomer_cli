@@ -3,6 +3,7 @@ Init command implementation - Interactive GTM project creation
 """
 
 import asyncio
+import os
 import time
 import warnings
 from typing import Optional
@@ -65,7 +66,6 @@ def capture_hypotheses() -> dict:
     """Capture optional user hypotheses for target account and persona"""
     console.print()
     console.print("🎯 [bold #01A0E4]Optional Context (press Enter to skip)[/bold #01A0E4]")
-    console.print()
     
     account_hypothesis = questionary.text(
         "💡 Target Account Hypothesis (optional - helps focus our analysis):",
@@ -128,8 +128,66 @@ def create_init_welcome_panel() -> Panel:
     
     return Panel(
         welcome_text,
-        title="[bold #01A0E4]GTM Intelligence Generator[/bold #01A0E4]",
+        title="[bold #01A0E4]Blossomer Command Line Tool[/bold #01A0E4]",
         border_style="#01A0E4",
+        padding=(1, 2),
+        expand=False
+    )
+
+
+def check_api_keys() -> tuple[bool, list[str]]:
+    """Check if required API keys are configured.
+    
+    Returns:
+        tuple: (all_keys_present: bool, missing_keys: list[str])
+    """
+    missing_keys = []
+    
+    # Check FIRECRAWL_API_KEY
+    if not os.getenv("FIRECRAWL_API_KEY"):
+        missing_keys.append("FIRECRAWL_API_KEY")
+    
+    # Check FORGE_API_KEY
+    if not os.getenv("FORGE_API_KEY"):
+        missing_keys.append("FORGE_API_KEY")
+    
+    return len(missing_keys) == 0, missing_keys
+
+
+def create_api_key_setup_panel(missing_keys: list[str]) -> Panel:
+    """Create a panel showing how to set up missing API keys"""
+    setup_text = Text()
+    setup_text.append("🔑 API Keys Required\n\n", style="bold red")
+    setup_text.append("To use Blossomer CLI, you'll need the following API keys:\n\n", style="")
+    
+    for key in missing_keys:
+        if key == "FIRECRAWL_API_KEY":
+            setup_text.append("• ", style="dim")
+            setup_text.append("FIRECRAWL_API_KEY", style="bold yellow")
+            setup_text.append(" - For website analysis\n", style="")
+            setup_text.append("  Get it from: ", style="dim")
+            setup_text.append("https://firecrawl.dev\n\n", style="cyan underline")
+        elif key == "FORGE_API_KEY":
+            setup_text.append("• ", style="dim")
+            setup_text.append("FORGE_API_KEY", style="bold yellow")
+            setup_text.append(" - For AI processing\n", style="")
+            setup_text.append("  Get it from: ", style="dim")
+            setup_text.append("https://tensorblock.co\n\n", style="cyan underline")
+    
+    setup_text.append("Set them up:\n", style="bold")
+    setup_text.append("1. Add to your shell profile (~/.bashrc or ~/.zshrc):\n", style="")
+    for key in missing_keys:
+        setup_text.append(f"   export {key}=your_key_here\n", style="cyan")
+    setup_text.append("\n2. Then reload your shell:\n", style="")
+    setup_text.append("   source ~/.bashrc  # or ~/.zshrc\n", style="cyan")
+    setup_text.append("\n3. Or set temporarily for this session:\n", style="")
+    for key in missing_keys:
+        setup_text.append(f"   export {key}=your_key_here\n", style="cyan")
+    
+    return Panel(
+        setup_text,
+        title="[bold red]⚠️  Setup Required[/bold red]",
+        border_style="red",
         padding=(1, 2),
         expand=False
     )
@@ -138,12 +196,21 @@ def create_init_welcome_panel() -> Panel:
 def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool = False) -> None:
     """Run the interactive GTM generation flow"""
     
+    # Check API keys first
+    keys_present, missing_keys = check_api_keys()
+    
+    if not keys_present:
+        # Show API key setup instructions
+        console.print()
+        console.print(create_api_key_setup_panel(missing_keys))
+        console.print("[yellow]Please set up the required API keys and try again.[/yellow]")
+        raise typer.Exit(1)
+    
     # Show welcome panel first (unless domain is provided and we're going straight to generation)
     if domain is None and not yolo:
         enter_immersive_mode()
         console.print()
         console.print(create_init_welcome_panel())
-        console.print()
     
     # Prompt for domain if not provided
     if domain is None:
@@ -206,7 +273,6 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
     
     console.print()
     console.print("[dim]⏱️  Analyzing your website and generating insights - this takes about 30-60 seconds[/dim]")
-    console.print()
     
     try:
         # Step 1: Company Overview
@@ -279,19 +345,47 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
         )
         
         # Step 5: GTM Strategic Plan
-        run_generation_step(
-            step_name="GTM Strategic Plan",
-            step_number=5,
-            explanation="Synthesizing comprehensive go-to-market strategy from your analysis",
-            generate_func=lambda: run_async_generation(run_async_advisor_generation(normalized_domain)),
-            domain=normalized_domain,
-            step_key="advisor",
-            yolo=yolo
-        )
+        advisor_success = True
+        try:
+            run_generation_step(
+                step_name="GTM Strategic Plan",
+                step_number=5,
+                explanation="Synthesizing comprehensive go-to-market strategy from your analysis",
+                generate_func=lambda: run_async_generation(run_async_advisor_generation(normalized_domain)),
+                domain=normalized_domain,
+                step_key="advisor",
+                yolo=yolo
+            )
+        except Exception:
+            advisor_success = False
+            # Don't re-raise - let the user see partial results
         
-        # Success message
+        # Success message - only if all steps succeeded
         console.print()
         console.print(create_completion_panel())
+        
+        # Next steps message - only show if advisor step succeeded
+        if advisor_success:
+            console.print()
+            console.print("[bold #01A0E4]Next Steps[/bold #01A0E4]")
+            console.print("This is of course just the tip of the iceberg! There's so much more to dive into including:")
+            console.print("• How to incorporate other channels (LinkedIn, inbound leads, paid advertising)?")
+            console.print("• How to analyze data and iterate on these campaigns?")
+            console.print("• How to integrate this into your CRM and workflows?")
+            console.print()
+            console.print("If you need any additional help or want us to work with you hands-on, reach out to us at")
+            console.print("[cyan]blossomer.io[/cyan] or contact our founder Phil ([cyan]phil@blossomer.io[/cyan]).")
+        
+        # Interactive completion - wait for user to press Enter
+        console.print()
+        try:
+            input("Press Enter to finish and return to your terminal...")
+        except KeyboardInterrupt:
+            # Handle Ctrl+C gracefully
+            console.print(f"\n{Colors.format_meta('Goodbye! 👋')}")
+        
+        # Exit immersive mode
+        exit_immersive_mode()
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_warning('Operation Stopped. Progress saved 💾')}")
@@ -416,8 +510,9 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             step_counter += 1
         
         # Step 5: GTM Strategic Plan
+        advisor_success = True
         if "advisor" in steps_to_run:
-            run_advisor_generation_step(
+            advisor_success = run_advisor_generation_step(
                 domain=domain,
                 yolo=yolo,
                 step_counter=5  # Always show as step 5/5
@@ -427,6 +522,29 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         # Success message
         console.print()
         console.print(create_completion_panel())
+        
+        # Next steps message - only show if advisor step succeeded
+        if advisor_success:
+            console.print()
+            console.print("[bold #01A0E4]Next Steps[/bold #01A0E4]")
+            console.print("This is of course just the tip of the iceberg! There's so much more to dive into including:")
+            console.print("• How to incorporate other channels (LinkedIn, inbound leads, paid advertising)?")
+            console.print("• How to analyze data and iterate on these campaigns?")
+            console.print("• How to integrate this into your CRM and workflows?")
+            console.print()
+            console.print("If you need any additional help or want us to work with you hands-on, reach out to us at")
+            console.print("[cyan]blossomer.io[/cyan] or contact our founder Phil ([cyan]phil@blossomer.io[/cyan]).")
+        
+        # Interactive completion - wait for user to press Enter
+        console.print()
+        try:
+            input("Press Enter to finish and return to your terminal...")
+        except KeyboardInterrupt:
+            # Handle Ctrl+C gracefully
+            console.print(f"\n{Colors.format_meta('Goodbye! 👋')}")
+        
+        # Exit immersive mode
+        exit_immersive_mode()
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_meta('Operation Stopped. Progress saved 💾')}")
@@ -600,8 +718,12 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
 # edit_step_content moved to preview_utils.py
 
 
-def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: int = 5) -> None:
-    """Run the GTM Strategic Plan generation step"""
+def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: int = 5) -> bool:
+    """Run the GTM Strategic Plan generation step
+    
+    Returns:
+        bool: True if generation succeeded, False if it failed
+    """
     
     # Clear screen before showing step panel for clean UX (unless in YOLO mode)
     if not yolo:
@@ -624,7 +746,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
             console.print()
             console.print("[yellow]Skipping strategic plan generation.[/yellow]")
             console.print("→ You can generate it later with: [bold #01A0E4]blossomer advisor {domain}[/bold #01A0E4]")
-            return
+            return False  # Return False when skipped
     
     console.print()
     
@@ -689,10 +811,12 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
         
         console.print()
         console.print(f"[green]✓[/green] {step_name} completed!")
+        return True  # Return True on success
         
     except Exception as e:
         console.print(f"[red]Failed to generate strategic plan:[/red] {e}")
         console.print("→ You can try again later with: [bold #01A0E4]blossomer advisor {domain}[/bold #01A0E4]")
+        return False  # Return False on failure
 
 
 async def run_async_advisor_generation(domain: str):
