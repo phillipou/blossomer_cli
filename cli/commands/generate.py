@@ -26,7 +26,7 @@ async def generate_step(
     """Generate or regenerate a specific GTM step"""
     
     # Validate step
-    valid_steps = ["overview", "account", "persona", "email", "plan"]
+    valid_steps = ["overview", "account", "persona", "email", "plan", "advisor"]
     if step not in valid_steps:
         console.print(f"[red]Invalid step: {step}[/red]")
         console.print(f"Valid steps: {', '.join(valid_steps)}")
@@ -93,16 +93,16 @@ async def generate_step(
             border_style="yellow"
         ))
         
-        action = questionary.select(
+        from cli.utils.menu_utils import show_menu_with_numbers
+        action = show_menu_with_numbers(
             f"What would you like to do?",
             choices=[
                 "Regenerate anyway",
                 "View current content",
                 "Abort"
-            ]
-        ).ask()
-        
-        ensure_breathing_room(console)
+            ],
+            add_separator=False
+        )
         
         if action == "Abort":
             return
@@ -148,6 +148,14 @@ async def generate_step(
                 # TODO: Implement GTM plan generation
                 console.print("[yellow]GTM plan generation coming soon...[/yellow]")
                 return
+            elif step == "advisor":
+                from cli.services.llm_service import LLMClient
+                from app.services.gtm_advisor_service import GTMAdvisorService
+                
+                llm_client = LLMClient()
+                advisor_service = GTMAdvisorService(llm_client)
+                
+                result = await advisor_service.generate_strategic_plan(normalized_domain)
             
             elapsed = time.time() - start_time
             progress.update(task, description=f"→ done ({elapsed:.1f}s)")
@@ -165,7 +173,7 @@ async def generate_step(
             
             regen_deps = questionary.confirm(
                 "🔄 Regenerate dependent steps? (These use data from the step you just updated)",
-                default=None
+                default=True
             ).ask()
             
             ensure_breathing_room(console)

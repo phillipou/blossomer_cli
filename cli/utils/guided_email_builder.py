@@ -37,8 +37,8 @@ class GuidedEmailBuilder:
             "• [green]3/5[/green] Add social proof (optional)\n"
             "• [green]4/5[/green] How should we personalize this email?\n"
             "• [green]5/5[/green] What should the call-to-action be?",
-            title="[bold]Guided Email Builder[/bold]",
-            border_style="blue"
+            title="[bold blue_violet]Guided Email Builder[/bold blue_violet]",
+            border_style="blue_violet"
         ))
         
         # Step 1: Point of Emphasis
@@ -80,12 +80,20 @@ class GuidedEmailBuilder:
             "4. Desired Outcome: Focus on the results they want"
         ]
         
-        choice = questionary.select(
+        from cli.utils.menu_utils import show_menu_with_numbers
+        choice = show_menu_with_numbers(
             "💡 What should be the main focus of your email? (This shapes the entire message):",
-            choices=choices
-        ).ask()
-        
-        ensure_breathing_room(console)
+            choices=[
+                "General Introduction - Company/product overview",
+                "Value Proposition - Focus on specific benefits",
+                "Pain Point - Address specific challenges",
+                "Product Feature - Highlight specific capabilities",
+                "Customer Success - Share proof/testimonials",
+                "Educational Content - Share insights/resources",
+                "Request/Ask - Meeting, demo, or trial"
+            ],
+            add_separator=False
+        )
         
         # Map choice to value
         emphasis_type = choice.split(".")[0].strip()
@@ -127,27 +135,27 @@ class GuidedEmailBuilder:
         content_options = self._extract_content_by_type(emphasis_type)
         
         choices = []
-        for i, option in enumerate(content_options, 1):
+        for option in content_options:
             # For step 2: show only the text after the colon (if there is one)
             display_text = option['value']
             if ':' in display_text:
                 display_text = display_text.split(':', 1)[1].strip()
-            choices.append(f"{i}. {display_text}")
+            choices.append(display_text)
         
-        # Add "Other" option with dynamic numbering
-        other_num = len(content_options) + 1
-        choices.append(f"{other_num}. Other (specify custom instructions to the LLM)")
+        # Add "Other" option
+        choices.append("Other (specify custom instructions to the LLM)")
         
-        choice = questionary.select(
-            f"Select {emphasis_type.replace('_', ' ')} [1-{other_num}]:",
-            choices=choices
-        ).ask()
+        from cli.utils.menu_utils import show_menu_with_numbers
+        choice = show_menu_with_numbers(
+            f"Select {emphasis_type.replace('_', ' ')}:",
+            choices=choices,
+            add_separator=False
+        )
         
-        ensure_breathing_room(console)
+        # Find which option was selected
+        choice_idx = choices.index(choice) if choice in choices else len(choices) - 1
         
-        choice_num = int(choice.split(".")[0])
-        
-        if choice_num == other_num:  # "Other" option selected
+        if choice_idx == len(content_options):  # "Other" option selected
             custom_instructions = questionary.text(
                 "🎯 Describe what you want the AI to focus on:",
                 placeholder="e.g., Emphasize cost savings, mention recent industry trends, focus on security benefits"
@@ -161,7 +169,7 @@ class GuidedEmailBuilder:
                 "custom": True
             }
         else:
-            selected_content = content_options[choice_num - 1]
+            selected_content = content_options[choice_idx]
             selected_content["custom"] = False
         
         console.print(f"✓ Selected: {selected_content['value']}")
@@ -235,36 +243,37 @@ class GuidedEmailBuilder:
         personalization_options = self._extract_buying_signals_for_personalization()
         
         choices = []
-        for i, option in enumerate(personalization_options, 1):
+        # Add "No Personalization" first
+        choices.append("No Personalization (generic outreach)")
+        
+        for option in personalization_options:
             # For step 3: show only the text before the colon (if there is one)
             display_text = option['title']
             if ':' in display_text:
                 display_text = display_text.split(':', 1)[0].strip()
-            choices.append(f"{i}. {display_text}")
+            choices.append(display_text)
         
-        # Add "No Personalization" and "Other" options
-        no_personalization_num = len(personalization_options) + 1
-        other_num = len(personalization_options) + 2
-        choices.append(f"{no_personalization_num}. No Personalization (generic outreach)")
-        choices.append(f"{other_num}. Other (specify custom instructions to the LLM)")
+        # Add "Other" option
+        choices.append("Other (specify custom instructions to the LLM)")
         
-        choice = questionary.select(
-            f"Select personalization [1-{other_num}]:",
-            choices=choices
-        ).ask()
+        from cli.utils.menu_utils import show_menu_with_numbers
+        choice = show_menu_with_numbers(
+            f"Select personalization:",
+            choices=choices,
+            add_separator=False
+        )
         
-        ensure_breathing_room(console)
+        # Find which option was selected
+        choice_idx = choices.index(choice) if choice in choices else len(choices) - 1
         
-        choice_num = int(choice.split(".")[0])
-        
-        if choice_num == no_personalization_num:  # "No Personalization" option selected
+        if choice_idx == 0:  # "No Personalization" option selected
             selected_personalization = {
                 "type": "not-personalized",
                 "value": "No Personalization",
                 "title": "No Personalization",
                 "custom": False
             }
-        elif choice_num == other_num:  # "Other" option selected
+        elif choice_idx == len(choices) - 1:  # "Other" option selected
             custom_instructions = questionary.text(
                 "Enter custom personalization instructions for the LLM:",
                 placeholder="e.g., Reference their recent product launch..."
@@ -279,7 +288,7 @@ class GuidedEmailBuilder:
                 "custom": True
             }
         else:
-            selected_personalization = personalization_options[choice_num - 1]
+            selected_personalization = personalization_options[choice_idx - 1]  # -1 because "No Personalization" is first
             selected_personalization["custom"] = False
         
         console.print(f"✓ Will reference: {selected_personalization.get('title', 'custom approach')}")
@@ -337,23 +346,23 @@ class GuidedEmailBuilder:
         ]
         
         choices = []
-        for i, option in enumerate(cta_options, 1):
-            choices.append(f"{i}. {option['label']} (e.g. {option['text']})")
+        for option in cta_options:
+            choices.append(f"{option['label']} (e.g. {option['text']})")
         
-        # Add "Other" option with dynamic numbering
-        other_num = len(cta_options) + 1
-        choices.append(f"{other_num}. Other (write your own custom CTA)")
+        # Add "Other" option
+        choices.append("Other (write your own custom CTA)")
         
-        choice = questionary.select(
-            f"Select CTA [1-{other_num}]:",
-            choices=choices
-        ).ask()
+        from cli.utils.menu_utils import show_menu_with_numbers
+        choice = show_menu_with_numbers(
+            f"Select CTA:",
+            choices=choices,
+            add_separator=False
+        )
         
-        ensure_breathing_room(console)
+        # Find which option was selected
+        choice_idx = choices.index(choice) if choice in choices else len(choices) - 1
         
-        choice_num = int(choice.split(".")[0])
-        
-        if choice_num == other_num:  # "Other" option selected
+        if choice_idx == len(cta_options):  # "Other" option selected
             custom_cta = questionary.text(
                 "Enter your custom call-to-action:",
                 placeholder="e.g., Would you like to see how this works in action?"
@@ -366,7 +375,7 @@ class GuidedEmailBuilder:
                 "custom": True
             }
         else:
-            selected_cta = cta_options[choice_num - 1]
+            selected_cta = cta_options[choice_idx]
             selected_cta["custom"] = False
         
         console.print(f"✓ Will {selected_cta['intent'].replace('_', ' ')}")

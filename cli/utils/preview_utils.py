@@ -64,10 +64,10 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
-        json_file_path = project_dir / "json_output" / step.file_name
-        if json_file_path.exists():
-            file_size = json_file_path.stat().st_size / 1024
-            console.print(f"✓ Full {step.name.lower()} saved to: json_output/{step.file_name} ({file_size:.1f}KB)")
+        markdown_file_path = project_dir / "plans" / f"{step_key}.md"
+        if markdown_file_path.exists():
+            file_size = markdown_file_path.stat().st_size / 1024
+            console.print(f"✓ Full {step.name.lower()} saved to: plans/{step_key}.md ({file_size:.1f}KB)")
         else:
             console.print(f"✓ {step.name.lower()} generated (file not yet saved)")
         
@@ -101,7 +101,7 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
             edit_step_content(domain, step_key, step.name)
             # After editing, show continuation choice
             console.print()
-            continue_choice = typer.confirm("Continue to next step?", default=None)
+            continue_choice = typer.confirm("Continue to next step?", default=True)
             ensure_breathing_room(console)
             if continue_choice is None or not continue_choice:
                 raise KeyboardInterrupt()
@@ -183,25 +183,26 @@ def show_guided_email_preview(domain: str) -> None:
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
-        json_file_path = project_dir / "json_output" / step.file_name
-        if json_file_path.exists():
-            file_size = json_file_path.stat().st_size / 1024
-            console.print(f"✓ Full campaign saved to: json_output/{step.file_name} ({file_size:.1f}KB)")
+        markdown_file_path = project_dir / "plans" / f"{step_key}.md"
+        if markdown_file_path.exists():
+            file_size = markdown_file_path.stat().st_size / 1024
+            console.print(f"✓ Full campaign saved to: plans/{step_key}.md ({file_size:.1f}KB)")
         else:
             console.print(f"✓ Campaign generated (file not yet saved)")
         console.print()
         
-        # Get user choice
-        choice = questionary.select(
+        # Get user choice with numbered menu
+        from cli.utils.menu_utils import show_menu_with_numbers
+        
+        choice = show_menu_with_numbers(
             "What would you like to do?",
             choices=[
                 "Continue to GTM plan",
                 "Edit full campaign in editor",
                 "Abort"
-            ]
-        ).ask()
-        
-        ensure_breathing_room(console)
+            ],
+            add_separator=False
+        )
         
         if choice == "Abort":
             raise KeyboardInterrupt()
@@ -209,7 +210,7 @@ def show_guided_email_preview(domain: str) -> None:
             edit_step_content(domain, "email", step.name)
             # After editing, show options again
             console.print()
-            continue_choice = typer.confirm("Continue to next step?", default=None)
+            continue_choice = typer.confirm("Continue to next step?", default=True)
             ensure_breathing_room(console)
             if continue_choice is None or not continue_choice:
                 raise KeyboardInterrupt()
@@ -220,35 +221,9 @@ def show_guided_email_preview(domain: str) -> None:
 
 def show_menu_with_separator(question: str, choices: List[str], add_separator: bool = True) -> str:
     """Show a questionary menu with visual separator and consistent styling"""
-    import questionary
+    from cli.utils.menu_utils import show_menu_with_numbers
     
-    # Import menu style
-    MENU_STYLE = questionary.Style([
-        ('question', 'bold cyan'),
-        ('pointer', 'bold cyan'),
-        ('highlighted', 'bold cyan'),
-        ('selected', 'bold cyan'),
-        ('answer', 'bold cyan')
-    ])
-    
-    if add_separator:
-        console.print()
-        console.print("─" * 60)
-        console.print()
-    
-    result = questionary.select(
-        question,
-        choices=choices,
-        style=MENU_STYLE
-    ).ask()
-    
-    ensure_breathing_room(console)
-    
-    # Handle CTRL+C (questionary returns None when interrupted)
-    if result is None:
-        raise KeyboardInterrupt()
-    
-    return result
+    return show_menu_with_numbers(question, choices, add_separator)
 
 def edit_step_content(domain: str, step_key: str, step_name: str) -> None:
     """Open step content in system editor"""
@@ -261,10 +236,12 @@ def edit_step_content(domain: str, step_key: str, step_name: str) -> None:
             return
         
         project_dir = gtm_service.storage.get_project_dir(domain)
-        step_file = project_dir / step.file_name
+        # Look for markdown file in plans/ directory
+        step_file = project_dir / "plans" / f"{step_key}.md"
         
         if not step_file.exists():
-            console.print(f"[red]Error:[/red] {step_name} file not found")
+            console.print(f"[red]Error:[/red] {step_name} file not found at {step_file}")
+            console.print(f"[yellow]→ Try regenerating this step to create the markdown file[/yellow]")
             return
         
         editor = detect_editor()

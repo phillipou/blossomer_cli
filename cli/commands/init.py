@@ -63,13 +63,13 @@ async def init_interactive_flow(
             try:
                 update_project = questionary.confirm(
                     f"Project '{normalized_domain}' already exists. Would you like to update it with fresh data?",
-                    default=None
+                    default=True
                 ).ask()
                 ensure_breathing_room(console)
             except Exception as e:
                 # Fallback to simple input when questionary fails
                 console.print(f"Project '{normalized_domain}' already exists.")
-                response = typer.confirm("Would you like to update it with fresh data?", default=None)
+                response = typer.confirm("Would you like to update it with fresh data?", default=True)
                 update_project = response
             
             if not update_project:
@@ -176,16 +176,17 @@ async def run_step_with_choices(
         console.print(f"\n[{step_number}/4] [blue]{step_name}[/blue] - [green]Already exists[/green]")
         
         try:
-            action = questionary.select(
+            from cli.utils.menu_utils import show_menu_with_numbers
+            action = show_menu_with_numbers(
                 f"What would you like to do with existing {step_name.lower()}?",
                 choices=[
                     "Continue (use existing)",
                     "Edit in system editor", 
                     "Regenerate",
                     "Abort"
-                ]
-            ).ask()
-            ensure_breathing_room(console)
+                ],
+                add_separator=False
+            )
         except Exception as e:
             console.print(f"[red]Error: {e}[/red]")
             raise typer.Exit(1)
@@ -236,7 +237,7 @@ async def run_step_with_choices(
             console.print(f"   {Colors.format_error(f'Failed to generate {step_name}: {e}')}")
             
             if not yolo:
-                retry = questionary.confirm("Would you like to retry this step?", default=None).ask()
+                retry = questionary.confirm("Would you like to retry this step?", default=True).ask()
                 ensure_breathing_room(console)
                 if retry:
                     await run_step_with_choices(
@@ -250,16 +251,17 @@ async def run_step_with_choices(
     # Post-generation choices (if not in YOLO mode)
     if not yolo:
         try:
-            action = questionary.select(
+            from cli.utils.menu_utils import show_menu_with_numbers
+            action = show_menu_with_numbers(
                 f"What would you like to do with the generated {step_name.lower()}?",
                 choices=[
                     "Continue to next step",
                     "Edit in system editor",
                     "Regenerate this step", 
                     "Abort"
-                ]
-            ).ask()
-            ensure_breathing_room(console)
+                ],
+                add_separator=False
+            )
         except Exception as e:
             console.print(f"[red]Error: {e}[/red]")
             raise typer.Exit(1)

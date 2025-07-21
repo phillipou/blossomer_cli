@@ -42,23 +42,13 @@ MENU_STYLE = questionary.Style([
 
 def show_menu_with_separator(question: str, choices: list, add_separator: bool = True):
     """Show a questionary menu with visual separator and consistent styling"""
-    if add_separator:
-        console.print()
-        console.print("─" * 60)
-        console.print()
+    from cli.utils.menu_utils import show_menu_with_numbers
     
-    result = questionary.select(
+    result = show_menu_with_numbers(
         question,
         choices=choices,
-        style=MENU_STYLE
-    ).ask()
-    
-    # Add bottom padding after questionary prompt to prevent cramped feeling
-    ensure_breathing_room(console)
-    
-    # Handle CTRL+C (questionary returns None when interrupted)
-    if result is None:
-        raise KeyboardInterrupt()
+        add_separator=add_separator
+    )
     
     return result
 
@@ -155,7 +145,7 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         hypothesis_context = {"general_context": context}
     
     if not yolo:
-        ready = typer.confirm("🚀 Ready to start? (This will analyze your website and generate 4 GTM assets in ~60 seconds)", default=None)
+        ready = typer.confirm("🚀 Ready to start? (This will analyze your website and generate 4 GTM assets in ~60 seconds)", default=True)
         ensure_breathing_room(console)
         # Handle CTRL+C (typer.confirm returns None when interrupted)
         if ready is None:

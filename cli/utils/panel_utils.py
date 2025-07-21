@@ -78,9 +78,8 @@ def create_completion_panel() -> Panel:
         "[bold green]✅ GTM Generation Complete![/bold green]\n"
         "\n"
         "[bold]Your go-to-market package is ready:[/bold]\n"
-        f"• View results: {Colors.format_command('blossomer show all')}\n"
-        f"• Edit content: {Colors.format_command('blossomer edit <step>')}\n"
-        f"• Export report: {Colors.format_command('blossomer export')}"
+        f"• View results: {Colors.format_command('blossomer show plan')}\n"
+        f"• Edit content: {Colors.format_command('blossomer edit [overview|account|persona|email|plan]')}"
     )
     
     return Panel(

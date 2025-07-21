@@ -116,72 +116,41 @@ def init(
 
 @app.command()
 def show(
-    asset: str = typer.Argument("all", help="Asset to display: all, overview, account, persona, email, plan"),
+    step: str = typer.Argument("plan", help="Step to display: overview, account, persona, email, plan"),
     json_output: bool = typer.Option(False, "--json", help="Output raw JSON"),
     domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
 ) -> None:
-    """📊 Display generated assets with formatting."""
+    """📊 Display generated step with formatting."""
     from cli.commands.show import show_assets
     
-    show_assets(asset, json_output, domain)
+    show_assets(step, json_output, domain)
 
 
-@app.command()
-def export(
-    step: str = typer.Argument("all", help="Step to export: all, overview, account, persona, email"),
-    output: Optional[str] = typer.Option(None, "--output", help="Custom output file path"),
-    domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
-) -> None:
-    """📄 Export GTM assets as formatted markdown reports."""
-    from cli.commands.export import export_assets
-    
-    export_assets(step, output, domain)
-
-
-@app.command()
-def generate(
-    step: str = typer.Argument(..., help="Step to generate: overview, account, persona, email, plan"),
-    domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
-    force: bool = typer.Option(False, "--force", help="Force regeneration even if data exists"),
-) -> None:
-    """⚙️ Manually run or re-run a specific step."""
-    from cli.commands.generate import generate_step
-    
-    try:
-        asyncio.run(generate_step(step, domain, force))
-    except KeyboardInterrupt:
-        console.print("\n[yellow]Operation cancelled by user.[/yellow]")
-        raise typer.Exit(130)
 
 
 @app.command()
 def edit(
-    file: str = typer.Argument(..., help="File to edit: overview, account, persona, email, plan"),
+    step: str = typer.Argument(..., help="Step to edit: overview, account, persona, email, plan"),
+    domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
 ) -> None:
-    """✏️ Open generated file in system editor."""
-    console.print("[red]Command not yet implemented[/red]")
-    console.print(f"Would edit: {file}")
+    """✏️ Open generated markdown file in system editor."""
+    from cli.commands.edit_step import edit_step_command
+    
+    edit_step_command(step, domain)
 
 
 @app.command()
-def list() -> None:
-    """📁 Show all GTM projects."""
-    console.print("[red]Command not yet implemented[/red]")
+def list(
+    domain: Optional[str] = typer.Option(None, "--domain", help="Show files for specific domain only")
+) -> None:
+    """📁 Show all GTM projects and their files."""
+    from cli.commands.list_projects import list_projects
+    
+    list_projects(domain)
 
 
-@app.command()
-def status() -> None:
-    """📈 Quick overview of all projects."""
-    console.print("[red]Command not yet implemented[/red]")
 
 
-# Add eval subcommand
-from cli.commands.eval import app as eval_app
-app.add_typer(eval_app, name="eval", help="🧪 Run evaluations on prompt templates")
-
-# Add plans subcommand  
-from cli.commands.plans import app as plans_app
-app.add_typer(plans_app, name="plans", help="📝 Manage editable markdown plans that sync with JSON data")
 
 
 # Demo function to test Rich formatting
