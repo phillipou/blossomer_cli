@@ -66,11 +66,11 @@ def is_target_account_context_sufficient(context: Any) -> bool:
     missing = [f for f in required_fields if not is_present(ctx.get(f))]
     result = not missing
     if not result:
-        print(
+        debug_print(
             f"[Sufficiency] Target account context insufficient: missing fields: {missing}"
         )
     else:
-        print(
+        debug_print(
             "[Sufficiency] Target account context is sufficient (all required fields present)."
         )
     return result
