@@ -17,8 +17,16 @@ console = Console()
 def edit_step_command(step: str, domain: Optional[str] = None) -> None:
     """Edit a specific step's markdown file"""
     
+    # Map user-friendly step names to internal step keys
+    step_mapping = {
+        "plan": "advisor"  # 'plan' maps to 'advisor' step
+    }
+    
+    # Use mapped step name if available
+    actual_step = step_mapping.get(step, step)
+    
     # Validate step
-    step_config = step_manager.get_step(step)
+    step_config = step_manager.get_step(actual_step)
     if not step_config:
         console.print(f"[red]Error:[/red] Unknown step '{step}'")
         console.print(f"→ Valid steps: {', '.join([s.key for s in step_manager.steps])}")
@@ -38,17 +46,17 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
         raise typer.Exit(1)
     
     # Check if markdown file exists
-    markdown_file = project_dir / "plans" / f"{step}.md"
+    markdown_file = project_dir / "plans" / f"{actual_step}.md"
     
     if not markdown_file.exists():
         # Try to generate markdown from JSON data
-        json_data = project_storage.load_step_data(domain, step)
+        json_data = project_storage.load_step_data(domain, actual_step)
         if json_data:
             console.print(f"[blue]→[/blue] Generating markdown file from data...")
             try:
                 from cli.utils.markdown_formatter import get_formatter
-                formatter = get_formatter(step)
-                markdown_content = formatter.format_with_markers(json_data, step)
+                formatter = get_formatter(actual_step)
+                markdown_content = formatter.format_with_markers(json_data, actual_step)
                 
                 # Ensure plans directory exists
                 plans_dir = project_dir / "plans"
@@ -58,13 +66,13 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
                 with open(markdown_file, 'w', encoding='utf-8') as f:
                     f.write(markdown_content)
                     
-                console.print(f"[green]✓[/green] Created {step}.md from existing data")
+                console.print(f"[green]✓[/green] Created {actual_step}.md from existing data")
             except Exception as e:
                 console.print(f"[red]Error:[/red] Could not generate markdown file: {e}")
                 raise typer.Exit(1)
         else:
             console.print(f"[red]Error:[/red] No data found for {step_config.name}")
-            console.print(f"→ Generate step first: {Colors.format_command(f'blossomer generate {step} --domain {domain}')}")
+            console.print(f"→ Generate step first: {Colors.format_command(f'blossomer generate {actual_step} --domain {domain}')}")
             raise typer.Exit(1)
     
     # Open in editor
@@ -78,7 +86,7 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
         
         # Mark dependent steps as stale if they exist
         try:
-            stale_steps = project_storage.mark_steps_stale(domain, step)
+            stale_steps = project_storage.mark_steps_stale(domain, actual_step)
             if stale_steps:
                 console.print(f"[yellow]⚠️[/yellow] Dependent steps marked as stale: {', '.join(stale_steps)}")
                 console.print(f"→ Regenerate: {Colors.format_command(f'blossomer generate {stale_steps[0]} --domain {domain}')}")

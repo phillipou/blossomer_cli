@@ -38,7 +38,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
     # Normalize domain
     try:
         normalized = normalize_domain(domain)
-        normalized_domain = normalized.url
+        normalized_domain = normalized.domain  # Use clean domain name, not full URL
     except Exception as e:
         console.print(f"[red]Error:[/red] Invalid domain format: {e}")
         return
@@ -86,7 +86,8 @@ def show_all_assets(domain: str, json_output: bool = False) -> None:
         "account": "🎯 Target Account Profile", 
         "persona": "👤 Buyer Persona",
         "email": "📧 Email Campaign",
-        "plan": "📋 GTM Plan"
+        "plan": "📋 GTM Plan",
+        "strategic_plan": "🎯 Strategic Plan"
     }
     
     for step in available_steps:
@@ -115,14 +116,22 @@ def show_all_assets(domain: str, json_output: bool = False) -> None:
 def show_single_asset(domain: str, step: str, json_output: bool = False) -> None:
     """Show detailed view of a single asset"""
     
-    # Load step data
-    step_data = gtm_service.storage.load_step_data(domain, step)
-    if not step_data:
-        console.print(f"[red]{step.title()} not found for {domain}[/red]")
-        console.print(f"→ Generate with: [bold cyan]blossomer generate {step}[/bold cyan]")
-        return
+    # Map user-friendly step names to internal step keys
+    step_mapping = {
+        "plan": "advisor"  # 'plan' maps to 'advisor' step
+    }
+    
+    # Use mapped step name if available
+    actual_step = step_mapping.get(step, step)
+    
+    # Load step data for JSON output and metadata
+    step_data = gtm_service.storage.load_step_data(domain, actual_step)
     
     if json_output:
+        if not step_data:
+            console.print(f"[red]{step.title()} not found for {domain}[/red]")
+            console.print(f"→ Generate with: [bold cyan]blossomer generate {step}[/bold cyan]")
+            return
         # Output raw JSON
         syntax = Syntax(
             json.dumps(step_data, indent=2), 
@@ -139,7 +148,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
         "account": "🎯 Target Account Profile",
         "persona": "👤 Buyer Persona", 
         "email": "📧 Email Campaign",
-        "plan": "📋 GTM Plan"
+        "plan": "📋 GTM Strategic Plan"
     }
     
     title = step_titles.get(step, step.title())
@@ -148,7 +157,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
     console.print()
     
     # Check if data is stale
-    if step_data.get("_stale"):
+    if step_data and step_data.get("_stale"):
         console.print(Panel.fit(
             f"[yellow]⚠️  This data may be outdated[/yellow]\n\n"
             f"Reason: {step_data.get('_stale_reason', 'Unknown')}\n"
@@ -157,21 +166,15 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
         ))
         console.print()
     
-    # Format based on step type
-    if step == "overview":
-        show_company_overview(step_data)
-    elif step == "account":
-        show_target_account(step_data)
-    elif step == "persona":
-        show_buyer_persona(step_data)
-    elif step == "email":
-        show_email_campaign(step_data)
-    elif step == "plan":
-        show_gtm_plan(step_data)
+    # Display markdown file for the step
+    show_markdown_file(domain, actual_step, step)
     
     # Metadata
     console.print()
-    console.print(f"[dim]Generated: {step_data.get('_generated_at', 'Unknown')}[/dim]")
+    if step_data:
+        console.print(f"[dim]Generated: {step_data.get('_generated_at', 'Unknown')}[/dim]")
+    else:
+        console.print("[dim]Generated: Unknown (JSON data not found)[/dim]")
 
 
 def show_asset_summary(domain: str, step: str, title: str) -> None:
@@ -361,6 +364,52 @@ def show_gtm_plan(data: dict) -> None:
     for key, value in data.items():
         if not key.startswith("_"):
             console.print(f"[bold]{key.replace('_', ' ').title()}:[/bold] {value}")
+
+
+def show_markdown_file(domain: str, actual_step: str, original_step: str) -> None:
+    """Display the markdown file for any step"""
+    from pathlib import Path
+    
+    project_dir = Path("gtm_projects") / domain
+    
+    # Map actual step to markdown filename
+    step_to_filename = {
+        "overview": "overview.md",
+        "account": "account.md", 
+        "persona": "persona.md",
+        "email": "email.md",
+        "advisor": "strategic_plan.md"  # advisor step maps to strategic_plan.md
+    }
+    
+    filename = step_to_filename.get(actual_step, f"{actual_step}.md")
+    markdown_path = project_dir / "plans" / filename
+    
+    if not markdown_path.exists():
+        console.print(f"[red]{original_step.title()} markdown file not found[/red]")
+        console.print(f"→ Generate with: [bold cyan]blossomer generate {original_step} --domain {domain}[/bold cyan]")
+        return
+    
+    try:
+        with open(markdown_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Display the markdown content with syntax highlighting
+        syntax = Syntax(
+            content,
+            "markdown",
+            theme="monokai",
+            line_numbers=False,
+            word_wrap=True
+        )
+        console.print(syntax)
+        
+    except Exception as e:
+        console.print(f"[red]Error reading {original_step} file: {e}[/red]")
+
+
+def show_strategic_plan(domain: str) -> None:
+    """Display the strategic plan markdown file (legacy function)"""
+    show_markdown_file(domain, "advisor", "strategic plan")
 
 
 def show_all_json(domain: str) -> None:

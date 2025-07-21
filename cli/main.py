@@ -77,8 +77,11 @@ def main(
     Examples:
       blossomer init acme.com
       blossomer init acme.com --context "Series A startup"
-      blossomer show all
-      blossomer export
+      blossomer show plan
+      blossomer show overview --domain acme.com
+      blossomer show --step email --domain acme.com
+      blossomer edit plan
+      blossomer edit overview --domain acme.com
     """
     # Store global options in app state for access by commands
     app.state = {
@@ -116,21 +119,24 @@ def init(
 
 @app.command()
 def show(
-    step: str = typer.Argument("plan", help="Step to display: overview, account, persona, email, plan"),
+    step: Optional[str] = typer.Argument("plan", help="Step to display: overview, account, persona, email, plan"),
     json_output: bool = typer.Option(False, "--json", help="Output raw JSON"),
     domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
+    step_option: Optional[str] = typer.Option(None, "--step", help="Step to display: overview, account, persona, email, plan"),
 ) -> None:
     """📊 Display generated step with formatting."""
     from cli.commands.show import show_assets
     
-    show_assets(step, json_output, domain)
+    # Use --step option if provided, otherwise use argument
+    actual_step = step_option if step_option is not None else step
+    show_assets(actual_step, json_output, domain)
 
 
 
 
 @app.command()
 def edit(
-    step: str = typer.Argument(..., help="Step to edit: overview, account, persona, email, plan"),
+    step: str = typer.Argument("plan", help="Step to edit: overview, account, persona, email, plan (default: plan)"),
     domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
 ) -> None:
     """✏️ Open generated markdown file in system editor."""
