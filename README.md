@@ -22,8 +22,8 @@ This CLI tool is a **prototype of the internal AI workflows used at Blossomer**.
 
 ```bash
 # Clone and install
-git clone https://github.com/your-org/blossomer-cli.git
-cd blossomer-cli
+git clone https://github.com/phillipou/blossomer_cli.git
+cd blossomer_cli
 make install
 
 # Set up your API keys
