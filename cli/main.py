@@ -108,10 +108,10 @@ def init(
     yolo: bool = typer.Option(False, "--yolo", help="Skip all interactions (one-shot mode)"),
 ) -> None:
     """🚀 Start new GTM project (interactive by default)."""
-    from cli.commands.init_sync import init_sync_flow
+    from cli.commands.init import init_flow
     
     try:
-        init_sync_flow(domain, context, yolo)
+        init_flow(domain, context, yolo)
     except KeyboardInterrupt:
         console.print("\n[yellow]Operation cancelled by user.[/yellow]")
         raise typer.Exit(130)  # Standard exit code for Ctrl+C

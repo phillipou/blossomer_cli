@@ -43,7 +43,6 @@ cli/commands/eval.py
 cli/commands/export.py
 cli/commands/generate.py
 cli/commands/init.py
-cli/commands/init_sync.py
 cli/commands/list_projects.py
 cli/commands/plans.py
 cli/commands/show.py

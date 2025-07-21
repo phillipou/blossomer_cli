@@ -86,7 +86,7 @@ class TestCLICommands:
         """Test init command in YOLO mode (non-interactive)"""
         print(f"🚀 Testing init command YOLO mode for {test_domain}")
         
-        with patch('cli.commands.init_sync.run_init_flow') as mock_init:
+        with patch('cli.commands.init.init_flow') as mock_init:
             mock_init.return_value = True
             
             result = runner.invoke(app, ["init", test_domain, "--yolo"])
@@ -99,7 +99,7 @@ class TestCLICommands:
         """Test init command with additional context"""
         print(f"📝 Testing init command with context for {test_domain}")
         
-        with patch('cli.commands.init_sync.run_init_flow') as mock_init:
+        with patch('cli.commands.init.init_flow') as mock_init:
             mock_init.return_value = True
             
             context = "Series A startup building AI tools"
