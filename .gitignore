@@ -8,8 +8,22 @@ dev_cache/
 gtm_projects/
 blogs/
 
-# Internal Files
+# Internal Files  
 LLMs.txt
+CLAUDE.md
+
+# Development/Internal directories that shouldn't be public
+archive/                # Old/unused code
+Docs/                   # Internal development docs
+MANUAL_TESTING.md       # Internal testing notes
+bug_tracking.md         # Internal bug tracking
+scripts/                # Development scripts
+evals/                  # Evaluation framework (internal)
+
+# User data directories (already listed but adding comment)
+dev_cache/              # Development cache
+gtm_projects/           # User project data
+blogs/                  # Internal blog posts
 
 # Python
 __pycache__/

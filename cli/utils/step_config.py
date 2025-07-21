@@ -55,7 +55,7 @@ GTM_STEPS = [
         file_name="email.json"
     ),
     StepConfig(
-        key="advisor",
+        key="plan",
         name="GTM Strategic Plan",
         explanation="Creating comprehensive go-to-market execution plan with scoring frameworks and tool recommendations",
         icon="🎯",

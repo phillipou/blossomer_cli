@@ -46,7 +46,7 @@ class LoadingAnimator:
             "→ Refining call-to-action",
             "→ Finalizing email campaign"
         ],
-        "advisor": [
+        "plan": [
             "→ Synthesizing GTM strategy",
             "→ Building scoring frameworks",
             "→ Recommending tool stack",

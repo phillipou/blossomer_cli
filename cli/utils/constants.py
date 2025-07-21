@@ -24,7 +24,7 @@ class MenuChoices:
     START_FROM_ACCOUNT = "🏢 Start from Target Account Profile"
     START_FROM_PERSONA = "👤 Start from Buyer Persona"
     START_FROM_EMAIL = "📧 Start from Email Campaign"
-    START_FROM_ADVISOR = "🎯 Start from GTM Strategic Plan"
+    START_FROM_PLAN = "🎯 Start from GTM Strategic Plan"
     CANCEL = "❌ Cancel (view existing results)"
     
     @classmethod
@@ -46,6 +46,6 @@ class MenuChoices:
             cls.START_FROM_ACCOUNT: "account",
             cls.START_FROM_PERSONA: "persona",
             cls.START_FROM_EMAIL: "email",
-            cls.START_FROM_ADVISOR: "advisor",
+            cls.START_FROM_PLAN: "plan",
         }
         return mapping.get(choice, "")

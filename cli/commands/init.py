@@ -345,7 +345,7 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
         )
         
         # Step 5: GTM Strategic Plan
-        advisor_success = True
+        plan_success = True
         try:
             run_generation_step(
                 step_name="GTM Strategic Plan",
@@ -353,19 +353,19 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
                 explanation="Synthesizing comprehensive go-to-market strategy from your analysis",
                 generate_func=lambda: run_async_generation(run_async_advisor_generation(normalized_domain)),
                 domain=normalized_domain,
-                step_key="advisor",
+                step_key="plan",
                 yolo=yolo
             )
         except Exception:
-            advisor_success = False
+            plan_success = False
             # Don't re-raise - let the user see partial results
         
         # Success message - only if all steps succeeded
         console.print()
         console.print(create_completion_panel())
         
-        # Next steps message - only show if advisor step succeeded
-        if advisor_success:
+        # Next steps message - only show if plan step succeeded
+        if plan_success:
             console.print()
             console.print("[bold #01A0E4]Next Steps[/bold #01A0E4]")
             console.print("This is of course just the tip of the iceberg! There's so much more to dive into including:")
@@ -427,7 +427,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             MenuChoices.START_FROM_ACCOUNT,
             MenuChoices.START_FROM_PERSONA,
             MenuChoices.START_FROM_EMAIL,
-            MenuChoices.START_FROM_ADVISOR,
+            MenuChoices.START_FROM_PLAN,
             MenuChoices.CANCEL
         ]
         
@@ -510,9 +510,9 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             step_counter += 1
         
         # Step 5: GTM Strategic Plan
-        advisor_success = True
-        if "advisor" in steps_to_run:
-            advisor_success = run_advisor_generation_step(
+        plan_success = True
+        if "plan" in steps_to_run:
+            plan_success = run_plan_generation_step(
                 domain=domain,
                 yolo=yolo,
                 step_counter=5  # Always show as step 5/5
@@ -523,8 +523,8 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         console.print()
         console.print(create_completion_panel())
         
-        # Next steps message - only show if advisor step succeeded
-        if advisor_success:
+        # Next steps message - only show if plan step succeeded
+        if plan_success:
             console.print()
             console.print("[bold #01A0E4]Next Steps[/bold #01A0E4]")
             console.print("This is of course just the tip of the iceberg! There's so much more to dive into including:")
@@ -718,7 +718,7 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
 # edit_step_content moved to preview_utils.py
 
 
-def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: int = 5) -> bool:
+def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int = 5) -> bool:
     """Run the GTM Strategic Plan generation step
     
     Returns:
@@ -730,7 +730,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
         clear_console()
     
     console.print()
-    console.print(create_step_panel_by_key("advisor"))
+    console.print(create_step_panel_by_key("plan"))
     
     # In YOLO mode, skip the prompt and generate automatically
     if not yolo:
@@ -764,7 +764,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
         
         # Show animated loading for strategic plan generation
         animator = LoadingAnimator(console)
-        animator.start_animation("advisor")
+        animator.start_animation("plan")
         
         start_time = time.time()
         
