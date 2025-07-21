@@ -132,8 +132,13 @@ def run_evaluation(
                 console.print(f"❌ Evaluation failed: {e}", style="red")
                 return False
     
-    # Run the async function
-    success = asyncio.run(run_async())
+    # Run the async function with 40s timeout
+    try:
+        success = asyncio.run(asyncio.wait_for(run_async(), timeout=40.0))
+    except asyncio.TimeoutError:
+        console.print("❌ Evaluation timed out after 40 seconds.", style="red")
+        console.print("💡 This may be due to high API load or network issues.")
+        raise typer.Exit(1)
     
     if not success:
         raise typer.Exit(1)

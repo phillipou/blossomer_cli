@@ -11,6 +11,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 from app.services.gtm_advisor_service import GTMAdvisorService
+from cli.utils.colors import Colors
 
 app = typer.Typer()
 console = Console()
@@ -24,7 +25,13 @@ def advisor(
 ) -> None:
     """Generate comprehensive GTM strategic plan from previous analysis."""
     
-    asyncio.run(_advisor_async(domain, regenerate, show_preview))
+    try:
+        asyncio.run(asyncio.wait_for(_advisor_async(domain, regenerate, show_preview), timeout=40.0))
+    except asyncio.TimeoutError:
+        console.print(f"\n{Colors.format_error('Operation timed out after 40 seconds.')}")
+        console.print("💡 This may be due to high API load or network issues.")
+        console.print(f"→ Try again: {Colors.format_command('blossomer advisor ' + domain)}")
+        raise typer.Exit(1)
 
 
 async def _advisor_async(domain: str, regenerate: bool, show_preview: bool) -> None:

@@ -66,6 +66,7 @@ cli/utils/domain.py
 cli/utils/editor.py
 cli/utils/file_manager.py
 cli/utils/guided_email_builder.py
+cli/utils/loading_animation.py
 cli/utils/logging.py
 cli/utils/markdown_formatter.py
 cli/utils/markdown_parser.py

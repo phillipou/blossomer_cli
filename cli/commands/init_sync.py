@@ -27,6 +27,7 @@ from cli.utils.constants import MenuChoices, EmailGenerationMode
 from cli.utils.step_config import step_manager
 from cli.utils.panel_utils import create_step_panel_by_key, create_welcome_panel, create_status_panel, create_completion_panel
 from cli.utils.preview_utils import show_step_preview, show_guided_email_preview
+from cli.utils.loading_animation import LoadingAnimator
 from rich.markdown import Markdown
 
 console = Console()
@@ -252,7 +253,7 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         console.print(create_completion_panel())
         
     except KeyboardInterrupt:
-        console.print(f"\n{Colors.format_warning('🛑 Stopped. Progress saved 💾')}")
+        console.print(f"\n{Colors.format_warning('Operation Stopped. Progress saved 💾')}")
         console.print(f"→ Resume with: [bold #01A0E4]blossomer init {normalized_domain}[/bold #01A0E4]")
         console.print(f"→ Or view progress: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
     except Exception as e:
@@ -387,7 +388,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         console.print(create_completion_panel())
         
     except KeyboardInterrupt:
-        console.print(f"\n{Colors.format_warning('🛑 Stopped. Progress saved 💾')}")
+        console.print(f"\n{Colors.format_meta('Operation Stopped. Progress saved 💾')}")
         console.print(f"→ Resume with: [bold #01A0E4]blossomer init {domain}[/bold #01A0E4]")
         console.print(f"→ Or view progress: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
     except Exception as e:
@@ -433,35 +434,24 @@ def run_generation_step(
             padding=(1, 2)
         ))
     
-    # Show loading animation during generation
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        TimeElapsedColumn(),
-        console=console,
-        transient=False
-    ) as progress:
+    # Show animated loading messages during generation
+    animator = LoadingAnimator(console)
+    animator.start_animation(step_key)
+    
+    start_time = time.time()
+    
+    try:
+        result = generate_func()
+        elapsed = time.time() - start_time
         
-        # Different phases of generation
-        task = progress.add_task("→ Fetching website content...", total=None)
-        time.sleep(0.5)  # Brief pause to show step
+        # Stop animation and show completion
+        animator.stop()
+        console.print(f"   {Colors.format_success(f'{step_name} generated successfully')} ({elapsed:.1f}s)")
         
-        progress.update(task, description="→ Analyzing with AI...")
-        start_time = time.time()
-        
-        try:
-            result = generate_func()
-            elapsed = time.time() - start_time
-            
-            progress.update(task, description=f"→ completed in {elapsed:.1f}s")
-            progress.stop()
-            
-            console.print(f"   {Colors.format_success(f'{step_name} generated successfully')}")
-            
-        except Exception as e:
-            progress.stop()
-            console.print(f"   {Colors.format_error(f'Failed to generate {step_name}: {e}')}")
-            raise
+    except Exception as e:
+        animator.stop()
+        console.print(f"   {Colors.format_error(f'Failed to generate {step_name}: {e}')}")
+        raise
     
     console.print()
     
@@ -517,36 +507,30 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
         console.print()
         console.print("Generating your personalized email campaign... ", end="")
         
-        # Generate email with guided preferences
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            TimeElapsedColumn(),
-            console=console,
-            transient=False
-        ) as progress:
-            task = progress.add_task("→ Processing guided choices...", total=None)
-            start_time = time.time()
+        # Generate email with guided preferences using animated loading
+        animator = LoadingAnimator(console)
+        animator.start_animation("email")
+        
+        start_time = time.time()
+        
+        try:
+            result = run_async_generation(
+                gtm_service.generate_email_campaign(domain, preferences=guided_preferences, force_regenerate=True)
+            )
+            elapsed = time.time() - start_time
             
-            try:
-                result = run_async_generation(
-                    gtm_service.generate_email_campaign(domain, preferences=guided_preferences, force_regenerate=True)
-                )
-                elapsed = time.time() - start_time
-                
-                progress.update(task, description=f"→ completed in {elapsed:.1f}s")
-                progress.stop()
-                
-                console.print(f"   [green]✓[/green] Email Campaign generated successfully")
-                
-                # Show preview after guided generation
-                if not yolo:
-                    show_step_preview(domain, "email")
-                
-            except Exception as e:
-                progress.stop()
-                console.print(f"   [red]✗[/red] Failed to generate Email Campaign: {e}")
-                raise
+            # Stop animation and show completion
+            animator.stop()
+            console.print(f"   {Colors.format_success('Email Campaign generated successfully')} ({elapsed:.1f}s)")
+            
+            # Show preview after guided generation
+            if not yolo:
+                show_step_preview(domain, "email")
+            
+        except Exception as e:
+            animator.stop()
+            console.print(f"   {Colors.format_error(f'Failed to generate Email Campaign: {e}')}")
+            raise
         
         return  # Important: return here to avoid running automatic generation
     else:
@@ -615,31 +599,24 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
         console.print("Creating comprehensive go-to-market execution plan with scoring frameworks and tool recommendations")
         console.print()
         
-        # Show progress
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            TimeElapsedColumn(),
-            console=console,
-            transient=False
-        ) as progress:
+        # Show animated loading for strategic plan generation
+        animator = LoadingAnimator(console)
+        animator.start_animation("advisor")
+        
+        start_time = time.time()
+        
+        try:
+            strategic_plan_content = run_async_generation(run_async_advisor_generation(domain))
+            elapsed = time.time() - start_time
             
-            task = progress.add_task("→ Synthesizing strategic plan...", total=None)
-            start_time = time.time()
+            # Stop animation and show completion
+            animator.stop()
+            console.print(f"   {Colors.format_success('GTM Strategic Plan generated successfully')} ({elapsed:.1f}s)")
             
-            try:
-                strategic_plan_content = run_async_generation(run_async_advisor_generation(domain))
-                elapsed = time.time() - start_time
-                
-                progress.update(task, description=f"→ completed in {elapsed:.1f}s")
-                progress.stop()
-                
-                console.print(f"   {Colors.format_success('GTM Strategic Plan generated successfully')}")
-                
-            except Exception as e:
-                progress.stop()
-                console.print(f"   {Colors.format_error(f'Failed to generate GTM Strategic Plan: {e}')}")
-                raise
+        except Exception as e:
+            animator.stop()
+            console.print(f"   {Colors.format_error(f'Failed to generate GTM Strategic Plan: {e}')}")
+            raise
         
         # Show strategic plan summary and preview (unless in YOLO mode)
         if not yolo:
@@ -693,11 +670,14 @@ async def run_async_advisor_generation(domain: str):
 
 
 def run_async_generation(coro):
-    """Run async generation function synchronously"""
+    """Run async generation function synchronously with 40s timeout"""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        return loop.run_until_complete(coro)
+        # Add 40-second timeout to all generation operations
+        return loop.run_until_complete(asyncio.wait_for(coro, timeout=40.0))
+    except asyncio.TimeoutError:
+        raise TimeoutError("Operation timed out after 40 seconds. This may be due to high API load or network issues.")
     finally:
         loop.close()
 

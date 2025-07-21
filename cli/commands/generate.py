@@ -127,35 +127,50 @@ async def generate_step(
             task = progress.add_task("→ Processing with AI...", total=None)
             start_time = time.time()
             
-            # Generate based on step type
-            if step == "overview":
-                result = await gtm_service.generate_company_overview(
-                    normalized_domain, force_regenerate=True
-                )
-            elif step == "account":
-                result = await gtm_service.generate_target_account(
-                    normalized_domain, force_regenerate=True
-                )
-            elif step == "persona":
-                result = await gtm_service.generate_target_persona(
-                    normalized_domain, force_regenerate=True
-                )
-            elif step == "email":
-                result = await gtm_service.generate_email_campaign(
-                    normalized_domain, force_regenerate=True
-                )
-            elif step == "plan":
-                # TODO: Implement GTM plan generation
-                console.print("[yellow]GTM plan generation coming soon...[/yellow]")
+            # Generate based on step type with 40s timeout
+            try:
+                if step == "overview":
+                    result = await asyncio.wait_for(
+                        gtm_service.generate_company_overview(normalized_domain, force_regenerate=True),
+                        timeout=40.0
+                    )
+                elif step == "account":
+                    result = await asyncio.wait_for(
+                        gtm_service.generate_target_account(normalized_domain, force_regenerate=True),
+                        timeout=40.0
+                    )
+                elif step == "persona":
+                    result = await asyncio.wait_for(
+                        gtm_service.generate_target_persona(normalized_domain, force_regenerate=True),
+                        timeout=40.0
+                    )
+                elif step == "email":
+                    result = await asyncio.wait_for(
+                        gtm_service.generate_email_campaign(normalized_domain, force_regenerate=True),
+                        timeout=40.0
+                    )
+                elif step == "plan":
+                    # TODO: Implement GTM plan generation
+                    console.print("[yellow]GTM plan generation coming soon...[/yellow]")
+                    return
+                elif step == "advisor":
+                    from cli.services.llm_service import LLMClient
+                    from app.services.gtm_advisor_service import GTMAdvisorService
+                    
+                    llm_client = LLMClient()
+                    advisor_service = GTMAdvisorService(llm_client)
+                    
+                    result = await asyncio.wait_for(
+                        advisor_service.generate_strategic_plan(normalized_domain),
+                        timeout=40.0
+                    )
+                    
+            except asyncio.TimeoutError:
+                progress.stop()
+                console.print(f"   [red]✗[/red] {step.title()} generation timed out after 40 seconds")
+                console.print("💡 This may be due to high API load or network issues.")
+                console.print(f"→ Try again later or check your network connection")
                 return
-            elif step == "advisor":
-                from cli.services.llm_service import LLMClient
-                from app.services.gtm_advisor_service import GTMAdvisorService
-                
-                llm_client = LLMClient()
-                advisor_service = GTMAdvisorService(llm_client)
-                
-                result = await advisor_service.generate_strategic_plan(normalized_domain)
             
             elapsed = time.time() - start_time
             progress.update(task, description=f"→ done ({elapsed:.1f}s)")
@@ -217,18 +232,35 @@ async def generate_step_internal(domain: str, step: str) -> None:
         
         try:
             if step == "overview":
-                await gtm_service.generate_company_overview(domain, force_regenerate=True)
+                await asyncio.wait_for(
+                    gtm_service.generate_company_overview(domain, force_regenerate=True),
+                    timeout=40.0
+                )
             elif step == "account":
-                await gtm_service.generate_target_account(domain, force_regenerate=True)
+                await asyncio.wait_for(
+                    gtm_service.generate_target_account(domain, force_regenerate=True),
+                    timeout=40.0
+                )
             elif step == "persona":
-                await gtm_service.generate_target_persona(domain, force_regenerate=True)
+                await asyncio.wait_for(
+                    gtm_service.generate_target_persona(domain, force_regenerate=True),
+                    timeout=40.0
+                )
             elif step == "email":
-                await gtm_service.generate_email_campaign(domain, force_regenerate=True)
+                await asyncio.wait_for(
+                    gtm_service.generate_email_campaign(domain, force_regenerate=True),
+                    timeout=40.0
+                )
             
             elapsed = time.time() - start_time
             progress.update(task, description=f"→ done ({elapsed:.1f}s)")
             console.print(f"   [green]✓[/green] {step.title()} regenerated")
             
+        except asyncio.TimeoutError:
+            progress.stop()
+            console.print(f"   [red]✗[/red] {step.title()} regeneration timed out after 40 seconds")
+            console.print("💡 This may be due to high API load or network issues.")
+            raise
         except Exception as e:
             progress.stop()
             console.print(f"   [red]✗[/red] Failed to regenerate {step}: {e}")
