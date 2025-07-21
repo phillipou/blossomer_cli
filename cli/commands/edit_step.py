@@ -34,7 +34,8 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
     
     # Auto-detect domain if not provided
     if not domain:
-        domain = auto_detect_domain()
+        from cli.commands.show import auto_detect_current_project
+        domain = auto_detect_current_project()
         if not domain:
             return
     
@@ -46,7 +47,17 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
         raise typer.Exit(1)
     
     # Check if markdown file exists
-    markdown_file = project_dir / "plans" / f"{actual_step}.md"
+    # Map actual step to correct markdown filename
+    step_to_filename = {
+        "overview": "overview.md",
+        "account": "account.md", 
+        "persona": "persona.md",
+        "email": "email.md",
+        "advisor": "strategic_plan.md"  # advisor step maps to strategic_plan.md
+    }
+    
+    filename = step_to_filename.get(actual_step, f"{actual_step}.md")
+    markdown_file = project_dir / "plans" / filename
     
     if not markdown_file.exists():
         # Try to generate markdown from JSON data
@@ -95,29 +106,3 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
     else:
         console.print(f"[yellow]⚠️[/yellow] Editor closed without changes")
 
-def auto_detect_domain() -> Optional[str]:
-    """Auto-detect domain if only one project exists"""
-    
-    gtm_projects_dir = Path("gtm_projects")
-    if not gtm_projects_dir.exists():
-        console.print(f"[red]Error:[/red] No GTM projects found")
-        console.print(f"→ Create project: {Colors.format_command('blossomer init company.com')}")
-        return None
-    
-    project_dirs = [d for d in gtm_projects_dir.iterdir() if d.is_dir()]
-    
-    if len(project_dirs) == 0:
-        console.print(f"[red]Error:[/red] No GTM projects found")
-        console.print(f"→ Create project: {Colors.format_command('blossomer init company.com')}")
-        return None
-    elif len(project_dirs) == 1:
-        domain = project_dirs[0].name
-        console.print(f"[blue]→[/blue] Auto-detected domain: {domain}")
-        return domain
-    else:
-        console.print(f"[red]Error:[/red] Multiple projects found. Please specify domain:")
-        for project_dir in project_dirs:
-            console.print(f"  • {project_dir.name}")
-        console.print()
-        console.print(f"→ Example: {Colors.format_command(f'blossomer edit overview --domain {project_dirs[0].name}')}")
-        return None

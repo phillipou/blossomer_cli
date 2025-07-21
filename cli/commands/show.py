@@ -21,18 +21,8 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
     
     # If no domain specified, try to detect from current project
     if not domain:
-        projects = gtm_service.storage.list_projects()
-        if not projects:
-            console.print("[red]No GTM projects found.[/red]")
-            console.print("→ Create one with: [bold cyan]blossomer init[/bold cyan]")
-            return
-        elif len(projects) == 1:
-            domain = projects[0]["domain"]
-        else:
-            console.print("[red]Multiple projects found. Please specify domain:[/red]")
-            for project in projects[:5]:  # Show first 5
-                console.print(f"  • {project['domain']}")
-            console.print("→ Use: [bold cyan]blossomer show <asset> --domain <domain>[/bold cyan]")
+        domain = auto_detect_current_project()
+        if not domain:
             return
     
     # Normalize domain
@@ -424,3 +414,74 @@ def show_all_json(domain: str) -> None:
             all_data[step] = step_data
     
     console.print(json.dumps(all_data, indent=2))
+
+
+def auto_detect_current_project() -> Optional[str]:
+    """Auto-detect current project domain with smart fallbacks"""
+    from pathlib import Path
+    import os
+    
+    # Method 1: Check if we're inside a project directory
+    current_path = Path.cwd()
+    gtm_projects_path = Path("gtm_projects")
+    
+    # Check if current directory is inside gtm_projects
+    try:
+        if "gtm_projects" in current_path.parts:
+            # Find the gtm_projects part and get the next part (domain)
+            parts = current_path.parts
+            gtm_index = parts.index("gtm_projects")
+            if gtm_index + 1 < len(parts):
+                potential_domain = parts[gtm_index + 1]
+                project_dir = gtm_projects_path / potential_domain
+                if project_dir.exists():
+                    console.print(f"[blue]→[/blue] Auto-detected domain from current directory: {potential_domain}")
+                    return potential_domain
+    except (ValueError, IndexError):
+        pass
+    
+    # Method 2: Check if gtm_projects exists and has projects
+    if not gtm_projects_path.exists():
+        console.print("[red]No GTM projects found.[/red]")
+        console.print("→ Create one with: [bold cyan]blossomer init[/bold cyan]")
+        return None
+    
+    # Method 3: Check for single project (auto-detect)
+    projects = gtm_service.storage.list_projects()
+    if not projects:
+        console.print("[red]No GTM projects found.[/red]")
+        console.print("→ Create one with: [bold cyan]blossomer init[/bold cyan]")
+        return None
+    elif len(projects) == 1:
+        domain = projects[0]["domain"]
+        console.print(f"[blue]→[/blue] Auto-detected domain: {domain}")
+        return domain
+    
+    # Method 4: Check for most recently updated project
+    try:
+        # Sort projects by last modification time of their metadata
+        projects_with_mtime = []
+        for project in projects:
+            project_path = gtm_projects_path / project["domain"]
+            metadata_path = project_path / ".metadata.json"
+            if metadata_path.exists():
+                mtime = metadata_path.stat().st_mtime
+                projects_with_mtime.append((project["domain"], mtime))
+        
+        if projects_with_mtime:
+            # Sort by modification time (most recent first)
+            projects_with_mtime.sort(key=lambda x: x[1], reverse=True)
+            most_recent_domain = projects_with_mtime[0][0]
+            console.print(f"[blue]→[/blue] Auto-detected most recent project: {most_recent_domain}")
+            console.print("[dim]Tip: Use --domain to specify a different project[/dim]")
+            return most_recent_domain
+    except Exception:
+        pass  # Fall through to manual selection
+    
+    # Method 5: Manual selection required
+    console.print("[red]Multiple projects found. Please specify domain:[/red]")
+    for project in projects[:10]:  # Show up to 10 projects
+        console.print(f"  • {project['domain']}")
+    console.print()
+    console.print("→ Use: [bold cyan]blossomer show plan --domain <domain>[/bold cyan]")
+    return None
