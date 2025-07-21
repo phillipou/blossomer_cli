@@ -368,7 +368,7 @@ def show_markdown_file(domain: str, actual_step: str, original_step: str) -> Non
         "account": "account.md", 
         "persona": "persona.md",
         "email": "email.md",
-        "advisor": "strategic_plan.md"  # advisor step maps to strategic_plan.md
+        "advisor": "gtm_plan.md"  # advisor step maps to gtm_plan.md
     }
     
     filename = step_to_filename.get(actual_step, f"{actual_step}.md")

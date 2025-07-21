@@ -75,16 +75,23 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         
         # Show user choices
         if choices is None:
+            # Map step keys to actual filenames
+            edit_filename_map = {
+                "advisor": "gtm_plan.md"
+            }
+            edit_filename = edit_filename_map.get(step_key, f"{step_key}.md")
+            
             if step_manager.is_last_step(step_key):
                 choices = [
                     "Complete generation",
-                    f"Edit full {step.name.lower()} in editor",
+                    f"Edit {edit_filename}",
                     "Abort"
                 ]
             else:
+                next_step_name = step_manager.get_next_step_name(step_key)
                 choices = [
-                    "Continue to next step",
-                    f"Edit full {step.name.lower()} in editor",
+                    f"Next: {next_step_name}",
+                    f"Edit {edit_filename}",
                     "Abort"
                 ]
         
@@ -195,8 +202,8 @@ def show_guided_email_preview(domain: str) -> None:
         choice = show_menu_with_numbers(
             "What would you like to do?",
             choices=[
-                "Continue to GTM plan",
-                "Edit full campaign in editor",
+                "Next: Create GTM plan",
+                "Edit email.md",
                 "Abort"
             ],
             add_separator=False
@@ -204,7 +211,7 @@ def show_guided_email_preview(domain: str) -> None:
         
         if choice == "Abort":
             raise KeyboardInterrupt()
-        elif choice == "Edit full campaign in editor":
+        elif choice == "Edit email.md":
             edit_step_content(domain, "email", step.name)
             # After editing, show options again
             console.print()

@@ -74,7 +74,7 @@ gtm_projects/
 │   │   ├── account.md         # Editable target account
 │   │   ├── persona.md         # Editable buyer persona
 │   │   ├── email.md           # Editable email campaign
-│   │   └── strategic_plan.md  # Editable strategic plan
+│   │   └── gtm_plan.md  # Editable strategic plan
 │   ├── .metadata.json         # Generation metadata
 │   └── export/
 │       └── gtm-report-{date}.md

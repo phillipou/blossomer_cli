@@ -184,7 +184,7 @@ class GTMAdvisorService:
         plans_dir = project_dir / "plans"
         plans_dir.mkdir(parents=True, exist_ok=True)
         
-        output_path = plans_dir / "strategic_plan.md"
+        output_path = plans_dir / "gtm_plan.md"
         
         try:
             with open(output_path, 'w', encoding='utf-8') as f:
@@ -218,7 +218,7 @@ class GTMAdvisorService:
         if project_dir is None:
             project_dir = Path("gtm_projects") / domain
         
-        strategic_plan_path = project_dir / "plans" / "strategic_plan.md"
+        strategic_plan_path = project_dir / "plans" / "gtm_plan.md"
         metadata_path = project_dir / "json_output" / "strategic_plan.json"
         
         if not strategic_plan_path.exists():

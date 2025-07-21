@@ -108,6 +108,31 @@ class StepManager:
     def is_last_step(self, key: str) -> bool:
         """Check if a step is the last step in the pipeline"""
         return key == self.steps[-1].key if self.steps else False
+    
+    def get_next_step(self, key: str) -> Optional[StepConfig]:
+        """Get the next step after the given key"""
+        try:
+            current_index = self.get_step_keys().index(key)
+            if current_index + 1 < len(self.steps):
+                return self.steps[current_index + 1]
+            return None
+        except ValueError:
+            return None
+    
+    def get_next_step_name(self, key: str) -> str:
+        """Get the display name for the next step"""
+        next_step = self.get_next_step(key)
+        if next_step:
+            # Map to user-friendly names
+            name_mapping = {
+                "overview": "Target Accounts",
+                "account": "Target Personas", 
+                "persona": "Email Campaign",
+                "email": "Create GTM plan",
+                "advisor": ""
+            }
+            return name_mapping.get(key, next_step.name)
+        return ""
 
 # Global step manager instance
 step_manager = StepManager()

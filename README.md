@@ -69,12 +69,14 @@ Generated projects are organized like this:
 ```
 gtm_projects/
 ├── stripe.com/
-│   ├── .metadata.json    # Project metadata
-│   ├── overview.json     # Company analysis
-│   ├── account.json      # Target account profile
-│   ├── persona.json      # Buyer persona
-│   ├── email.json        # Email campaigns
-│   └── plan.json         # Strategic execution plan
+│   ├── .metadata.json        # Project metadata
+│   ├── plans/                # Human-readable markdown files
+│   │   ├── overview.md       # Company analysis
+│   │   ├── account.md        # Target account profile
+│   │   ├── persona.md        # Buyer persona
+│   │   ├── email.md          # Email campaigns
+│   │   └── gtm_plan.md       # Strategic execution plan
+│   └── json_output/          # Raw data (for integrations)
 └── acme.com/
     └── ...
 ```

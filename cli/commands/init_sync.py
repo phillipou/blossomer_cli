@@ -644,8 +644,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
                 console.print("─" * 40)
                 console.print()
             
-            console.print(f"→ View full plan: Open gtm_projects/{domain}/plans/strategic_plan.md")
-            console.print(f"→ Edit plan: gtm_projects/{domain}/plans/strategic_plan.md")
+            console.print("→ View your full plan in plans/gtm_plan.md")
         
         console.print()
         console.print(f"[green]✓[/green] {step_name} completed!")

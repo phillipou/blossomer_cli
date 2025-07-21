@@ -163,7 +163,7 @@ def show_project_files(domain: str, project_dirs: list[Path]) -> None:
                 "account.md": "Target Account",
                 "persona.md": "Buyer Persona", 
                 "email.md": "Email Campaign",
-                "strategic_plan.md": "Strategic Plan"
+                "gtm_plan.md": "Strategic Plan"
             }
             
             for md_file in sorted(md_files):

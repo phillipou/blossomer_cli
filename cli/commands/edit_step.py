@@ -53,7 +53,7 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
         "account": "account.md", 
         "persona": "persona.md",
         "email": "email.md",
-        "advisor": "strategic_plan.md"  # advisor step maps to strategic_plan.md
+        "advisor": "gtm_plan.md"  # advisor step maps to gtm_plan.md
     }
     
     filename = step_to_filename.get(actual_step, f"{actual_step}.md")

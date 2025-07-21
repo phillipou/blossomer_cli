@@ -17,6 +17,7 @@ from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
 from cli.utils.console import enter_immersive_mode, exit_immersive_mode, ensure_breathing_room
 from cli.utils.colors import Colors, format_project_status, format_step_flow
+from cli.utils.step_config import step_manager
 
 console = Console()
 
@@ -252,11 +253,24 @@ async def run_step_with_choices(
     if not yolo:
         try:
             from cli.utils.menu_utils import show_menu_with_numbers
+            # Create step-specific menu choices
+            # Map step keys to actual filenames
+            edit_filename_map = {
+                "advisor": "gtm_plan.md"
+            }
+            edit_filename = edit_filename_map.get(step_key, f"{step_key}.md")
+            
+            if step_manager.is_last_step(step_key):
+                next_choice = "Complete generation"
+            else:
+                next_step_name = step_manager.get_next_step_name(step_key)
+                next_choice = f"Next: {next_step_name}"
+            
             action = show_menu_with_numbers(
                 f"What would you like to do with the generated {step_name.lower()}?",
                 choices=[
-                    "Continue to next step",
-                    "Edit in system editor",
+                    next_choice,
+                    f"Edit {edit_filename}",
                     "Regenerate this step", 
                     "Abort"
                 ],
@@ -268,7 +282,7 @@ async def run_step_with_choices(
         
         if action == "Abort":
             raise KeyboardInterrupt()
-        elif action == "Edit in system editor":
+        elif "Edit" in action:  # Handles "Edit {step_key}.md"
             await edit_step_data(domain, step_key, step_name)
         elif action == "Regenerate this step":
             await run_step_with_choices(

@@ -101,7 +101,7 @@ async def _advisor_async(domain: str, regenerate: bool, show_preview: bool) -> N
         # Success message
         console.print("[green]Strategic plan generated successfully![/green]")
         
-        plan_path = project_dir / "plans" / "strategic_plan.md"
+        plan_path = project_dir / "plans" / "gtm_plan.md"
         console.print(f"📄 Saved to: [bold]{plan_path}[/bold]")
         
         # Show plan summary
