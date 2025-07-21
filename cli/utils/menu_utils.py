@@ -9,11 +9,11 @@ import sys
 
 # Import consistent styling
 MENU_STYLE = Style([
-    ('question', 'bold blue_violet'),
-    ('pointer', 'bold blue_violet'),
-    ('highlighted', 'bold blue_violet'),
-    ('selected', 'bold blue_violet'),
-    ('answer', 'bold blue_violet')
+    ('question', 'bold #9370DB'),
+    ('pointer', 'bold #9370DB'),
+    ('highlighted', 'bold #9370DB'),
+    ('selected', 'bold #9370DB'),
+    ('answer', 'bold #9370DB')
 ])
 
 def numbered_menu_with_keys(question: str, choices: List[str]) -> Optional[str]:
