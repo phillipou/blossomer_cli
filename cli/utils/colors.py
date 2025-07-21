@@ -13,23 +13,24 @@ class Colors:
     Based on CLI UX best practices - use color with intention
     """
     
-    # Core semantic colors - unified bold blue_violet theme
+    # Core semantic colors - unified brand theme
     SUCCESS = "green"           # ✓ Completed tasks, positive outcomes
-    ERROR = "red"              # ✗ Failures, missing data, critical issues  
-    WARNING = "yellow"         # ⚠ Stale data, non-critical issues
-    PRIMARY = "bold blue_violet"      # Section headers, current process - unified bold blue_violet
-    ACTION = "bold blue_violet"       # Commands, actionable items - same bold blue_violet
-    META = "dim"               # Timestamps, file info, secondary details
-    EMPHASIS = "bold"          # Important labels (use sparingly)
+    ERROR = "#DB2D20"           # ✗ Failures, missing data, critical issues  
+    WARNING = "#FDED02"         # ⚠ Stale data, non-critical issues
+    PRIMARY = "bold #01A0E4"    # Section headers, current process - brand blue
+    ACTION = "bold #01A0E4"     # Commands, actionable items - brand blue
+    META = "#A5A2A2"            # Timestamps, file info, secondary details
+    EMPHASIS = "bold"           # Important labels (use sparingly)
+    USER_INPUT = "#00BFFF"      # User input, interactive elements - cyan for contrast
     
-    # Compound styles for common patterns - all using bold blue_violet
-    SECTION_HEADER = "bold blue_violet"      # Main section titles 
-    SUCCESS_MESSAGE = "green"         # ✓ Success indicators
-    ERROR_MESSAGE = "red"             # ✗ Error indicators  
-    WARNING_MESSAGE = "yellow"        # ⚠ Warning indicators
-    COMMAND_SUGGESTION = "bold blue_violet"  # → Try: command
-    PROCESS_INDICATOR = "bold blue_violet"   # [1/4] Step name 
-    FILE_INFO = "dim"                 # Generated: timestamp
+    # Compound styles for common patterns - all using brand blue
+    SECTION_HEADER = "bold #01A0E4"    # Main section titles 
+    SUCCESS_MESSAGE = "green"          # ✓ Success indicators
+    ERROR_MESSAGE = "#DB2D20"          # ✗ Error indicators  
+    WARNING_MESSAGE = "#FDED02"        # ⚠ Warning indicators
+    COMMAND_SUGGESTION = "bold #01A0E4"  # → Try: command
+    PROCESS_INDICATOR = "bold #01A0E4"   # [1/4] Step name 
+    FILE_INFO = "#A5A2A2"             # Generated: timestamp
     
     @classmethod
     def should_use_color(cls) -> bool:

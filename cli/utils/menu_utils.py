@@ -7,13 +7,13 @@ import questionary
 from questionary import Style
 import sys
 
-# Import consistent styling
+# Import consistent styling - brand blue theme
 MENU_STYLE = Style([
-    ('question', 'bold #9370DB'),
-    ('pointer', 'bold #9370DB'),
-    ('highlighted', 'bold #9370DB'),
-    ('selected', 'bold #9370DB'),
-    ('answer', 'bold #9370DB')
+    ('question', 'bold #01A0E4'),
+    ('pointer', 'bold #01A0E4'),
+    ('highlighted', 'bold #01A0E4'),
+    ('selected', 'bold #01A0E4'),
+    ('answer', 'bold #01A0E4')
 ])
 
 def numbered_menu_with_keys(question: str, choices: List[str]) -> Optional[str]:
@@ -27,7 +27,7 @@ def numbered_menu_with_keys(question: str, choices: List[str]) -> Optional[str]:
     console = Console()
     
     # Display the question and choices
-    console.print(f"[bold blue_violet]? {question}[/bold blue_violet]")
+    console.print(f"[bold #01A0E4]? {question}[/bold #01A0E4]")
     for i, choice in enumerate(choices, 1):
         console.print(f"  [dim]{i}.[/dim] {choice}")
     console.print()

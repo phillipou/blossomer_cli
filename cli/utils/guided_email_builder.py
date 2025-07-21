@@ -10,6 +10,13 @@ from cli.utils.console import ensure_breathing_room, clear_console
 
 console = Console()
 
+# Custom style for text inputs to use cyan color
+TEXT_INPUT_STYLE = questionary.Style([
+    ('question', 'bold #01A0E4'),           # Question text - brand blue
+    ('text', '#00BFFF'),                    # Text input - cyan
+    ('answer', '#00BFFF')                   # Answer display - cyan
+])
+
 
 class GuidedEmailBuilder:
     """Interactive guided email builder with 5 steps matching PRD specifications"""
@@ -30,15 +37,15 @@ class GuidedEmailBuilder:
         
         console.print()
         console.print(Panel.fit(
-            "[bold blue]📧 Email Campaign Builder - Guided Mode[/bold blue]\n\n"
+            "[bold #01A0E4]📧 Email Campaign Builder - Guided Mode[/bold #01A0E4]\n\n"
             "We'll walk you through 5 steps to create the perfect email:\n"
-            "• [green]1/5[/green] What should your email emphasize?\n"
-            "• [green]2/5[/green] Which specific content to focus on?\n" 
-            "• [green]3/5[/green] Add social proof (optional)\n"
-            "• [green]4/5[/green] How should we personalize this email?\n"
-            "• [green]5/5[/green] What should the call-to-action be?",
-            title="[bold blue_violet]Guided Email Builder[/bold blue_violet]",
-            border_style="blue_violet"
+            "• 1 What should your email emphasize?\n"
+            "• 2 Which specific content to focus on?\n" 
+            "• 3 Add social proof (optional)\n"
+            "• 4 How should we personalize this email?\n"
+            "• 5 What should the call-to-action be?",
+            title="[bold #01A0E4]Guided Email Builder[/bold #01A0E4]",
+            border_style="#01A0E4"
         ))
         
         # Step 1: Point of Emphasis
@@ -70,7 +77,7 @@ class GuidedEmailBuilder:
     def _step_1_emphasis(self) -> Dict[str, Any]:
         """Step 1: Select point of emphasis"""
         console.print()
-        console.print("[bold]Step 1/5: What should your email emphasize?[/bold]")
+        console.print("[bold]Step 1: What should your email emphasize?[/bold]")
         console.print()
         
         choices = [
@@ -112,7 +119,7 @@ class GuidedEmailBuilder:
         # Track completed step with Q&A
         self.completed_steps.append(f"Step 1: Focusing on {emphasis_value.replace('_', ' ')}")
         self.qa_history.append({
-            "question": "Step 1/5: What should your email emphasize?",
+            "question": "Step 1: What should your email emphasize?",
             "answer": choice
         })
         
@@ -126,7 +133,7 @@ class GuidedEmailBuilder:
         clear_console()
         self._show_previous_steps()
         
-        console.print(f"[bold]Step 2/5: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
+        console.print(f"[bold]Step 2: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
         console.print()
         console.print(f"Based on your persona analysis, here are their key {emphasis_type.replace('_', ' ')}s:")
         console.print()
@@ -158,7 +165,8 @@ class GuidedEmailBuilder:
         if choice_idx == len(content_options):  # "Other" option selected
             custom_instructions = questionary.text(
                 "🎯 Describe what you want the AI to focus on:",
-                placeholder="e.g., Emphasize cost savings, mention recent industry trends, focus on security benefits"
+                placeholder="e.g., Emphasize cost savings, mention recent industry trends, focus on security benefits",
+                style=TEXT_INPUT_STYLE
             ).ask()
             ensure_breathing_room(console)
             selected_content = {
@@ -178,7 +186,7 @@ class GuidedEmailBuilder:
         # Track completed step with Q&A
         self.completed_steps.append(f"Step 2: Selected {selected_content['value']}")
         self.qa_history.append({
-            "question": f"Step 2/5: Which {emphasis_type.replace('_', ' ')} should we focus on?",
+            "question": f"Step 2: Which {emphasis_type.replace('_', ' ')} should we focus on?",
             "answer": choice
         })
         
@@ -190,7 +198,7 @@ class GuidedEmailBuilder:
         clear_console()
         self._show_previous_steps()
         
-        console.print("[bold]Step 3/5: Add Social Proof (Optional)[/bold]")
+        console.print("[bold]Step 3: Add Social Proof (Optional)[/bold]")
         console.print()
         console.print("💪 Social proof adds credibility to your outreach")
         console.print("Examples: client wins, case studies, impressive metrics, or notable partnerships")
@@ -198,7 +206,8 @@ class GuidedEmailBuilder:
         
         social_proof = questionary.text(
             "Add social proof (optional):",
-            placeholder="e.g., We helped 50+ companies reduce churn by 25% | Recently worked with Stripe on scaling | Featured in TechCrunch"
+            placeholder="e.g., We helped 50+ companies reduce churn by 25% | Recently worked with Stripe on scaling | Featured in TechCrunch",
+            style=TEXT_INPUT_STYLE
         ).ask()
         
         ensure_breathing_room(console)
@@ -210,7 +219,7 @@ class GuidedEmailBuilder:
             # Track completed step with Q&A
             self.completed_steps.append("Step 3: Social proof added")
             self.qa_history.append({
-                "question": "Step 3/5: Add Social Proof (Optional)",
+                "question": "Step 3: Add Social Proof (Optional)",
                 "answer": f"Added: {social_proof.strip()}"
             })
             
@@ -222,7 +231,7 @@ class GuidedEmailBuilder:
             # Track completed step with Q&A
             self.completed_steps.append("Step 3: Skipping social proof")
             self.qa_history.append({
-                "question": "Step 3/5: Add Social Proof (Optional)",
+                "question": "Step 3: Add Social Proof (Optional)",
                 "answer": "Skipped - no social proof added"
             })
             
@@ -234,7 +243,7 @@ class GuidedEmailBuilder:
         clear_console()
         self._show_previous_steps()
         
-        console.print("[bold]Step 4/5: How should we personalize this email?[/bold]")
+        console.print("[bold]Step 4: How should we personalize this email?[/bold]")
         console.print()
         console.print("Based on your target account analysis:")
         console.print()
@@ -276,7 +285,8 @@ class GuidedEmailBuilder:
         elif choice_idx == len(choices) - 1:  # "Other" option selected
             custom_instructions = questionary.text(
                 "Enter custom personalization instructions for the LLM:",
-                placeholder="e.g., Reference their recent product launch..."
+                placeholder="e.g., Reference their recent product launch...",
+                style=TEXT_INPUT_STYLE
             ).ask()
             ensure_breathing_room(console)
             
@@ -297,7 +307,7 @@ class GuidedEmailBuilder:
         # Track completed step with Q&A
         self.completed_steps.append(f"Step 4: Will reference {selected_personalization.get('title', 'custom approach')}")
         self.qa_history.append({
-            "question": "Step 4/5: How should we personalize this email?",
+            "question": "Step 4: How should we personalize this email?",
             "answer": choice
         })
         
@@ -309,7 +319,7 @@ class GuidedEmailBuilder:
         clear_console()
         self._show_previous_steps()
         
-        console.print("[bold]Step 5/5: What should the call-to-action be?[/bold]")
+        console.print("[bold]Step 5: What should the call-to-action be?[/bold]")
         console.print()
         
         cta_options = [
@@ -365,7 +375,8 @@ class GuidedEmailBuilder:
         if choice_idx == len(cta_options):  # "Other" option selected
             custom_cta = questionary.text(
                 "Enter your custom call-to-action:",
-                placeholder="e.g., Would you like to see how this works in action?"
+                placeholder="e.g., Would you like to see how this works in action?",
+                style=TEXT_INPUT_STYLE
             ).ask()
             ensure_breathing_room(console)
             selected_cta = {
@@ -384,7 +395,7 @@ class GuidedEmailBuilder:
         # Track completed step with Q&A
         self.completed_steps.append(f"Step 5: Will {selected_cta['intent'].replace('_', ' ')}")
         self.qa_history.append({
-            "question": "Step 5/5: What should the call-to-action be?",
+            "question": "Step 5: What should the call-to-action be?",
             "answer": choice
         })
         

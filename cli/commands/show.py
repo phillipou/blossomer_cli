@@ -37,7 +37,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [bold blue_violet]blossomer init[/bold blue_violet]")
+        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
         return
     
     if asset == "all":
@@ -46,7 +46,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
         show_single_asset(normalized_domain, asset, json_output)
     else:
         console.print(f"[red]Unknown asset: {asset}[/red]")
-        console.print("Available assets: [bold blue_violet]all, overview, account, persona, email, plan[/bold blue_violet]")
+        console.print("Available assets: [bold #01A0E4]all, overview, account, persona, email, plan[/bold #01A0E4]")
 
 
 def show_all_assets(domain: str, json_output: bool = False) -> None:
@@ -98,9 +98,9 @@ def show_all_assets(domain: str, json_output: bool = False) -> None:
     # Next steps
     console.print()
     console.print("[bold]Commands:[/bold]")
-    console.print(f"  • View details: [bold blue_violet]blossomer show <asset>[/bold blue_violet]")
-    console.print(f"  • Edit content: [bold blue_violet]blossomer edit <asset>[/bold blue_violet]")
-    console.print(f"  • Export report: [bold blue_violet]blossomer export[/bold blue_violet]")
+    console.print(f"  • View details: [bold #01A0E4]blossomer show <asset>[/bold #01A0E4]")
+    console.print(f"  • Edit content: [bold #01A0E4]blossomer edit <asset>[/bold #01A0E4]")
+    console.print(f"  • Export report: [bold #01A0E4]blossomer export[/bold #01A0E4]")
 
 
 def show_single_asset(domain: str, step: str, json_output: bool = False) -> None:
@@ -120,7 +120,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
     if json_output:
         if not step_data:
             console.print(f"[red]{step.title()} not found for {domain}[/red]")
-            console.print(f"→ Generate with: [bold blue_violet]blossomer generate {step}[/bold blue_violet]")
+            console.print(f"→ Generate with: [bold #01A0E4]blossomer generate {step}[/bold #01A0E4]")
             return
         # Output raw JSON
         syntax = Syntax(
@@ -376,7 +376,7 @@ def show_markdown_file(domain: str, actual_step: str, original_step: str) -> Non
     
     if not markdown_path.exists():
         console.print(f"[red]{original_step.title()} markdown file not found[/red]")
-        console.print(f"→ Generate with: [bold blue_violet]blossomer generate {original_step} --domain {domain}[/bold blue_violet]")
+        console.print(f"→ Generate with: [bold #01A0E4]blossomer generate {original_step} --domain {domain}[/bold #01A0E4]")
         return
     
     try:
@@ -443,14 +443,14 @@ def auto_detect_current_project() -> Optional[str]:
     # Method 2: Check if gtm_projects exists and has projects
     if not gtm_projects_path.exists():
         console.print("[red]No GTM projects found.[/red]")
-        console.print("→ Create one with: [bold blue_violet]blossomer init[/bold blue_violet]")
+        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
         return None
     
     # Method 3: Check for single project (auto-detect)
     projects = gtm_service.storage.list_projects()
     if not projects:
         console.print("[red]No GTM projects found.[/red]")
-        console.print("→ Create one with: [bold blue_violet]blossomer init[/bold blue_violet]")
+        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
         return None
     elif len(projects) == 1:
         domain = projects[0]["domain"]
@@ -483,5 +483,5 @@ def auto_detect_current_project() -> Optional[str]:
     for project in projects[:10]:  # Show up to 10 projects
         console.print(f"  • {project['domain']}")
     console.print()
-    console.print("→ Use: [bold blue_violet]blossomer show plan --domain <domain>[/bold blue_violet]")
+    console.print("→ Use: [bold #01A0E4]blossomer show plan --domain <domain>[/bold #01A0E4]")
     return None

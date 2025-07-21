@@ -38,8 +38,8 @@ async def generate_step(
         if not projects:
             console.print("[red]No GTM projects found.[/red]")
             console.print("📝 Projects store your company analysis and GTM assets")
-            console.print("→ Create your first project: [bold blue_violet]blossomer init company.com[/bold blue_violet]")
-            console.print("→ Or get help: [bold blue_violet]blossomer --help[/bold blue_violet]")
+            console.print("→ Create your first project: [bold #01A0E4]blossomer init company.com[/bold #01A0E4]")
+            console.print("→ Or get help: [bold #01A0E4]blossomer --help[/bold #01A0E4]")
             raise typer.Exit(1)
         elif len(projects) == 1:
             domain = projects[0]["domain"]
@@ -47,7 +47,7 @@ async def generate_step(
             console.print("[red]Multiple projects found. Please specify domain:[/red]")
             for project in projects[:5]:
                 console.print(f"  • {project['domain']}")
-            console.print("→ Use: [bold blue_violet]blossomer generate {step} --domain <domain>[/bold blue_violet]")
+            console.print("→ Use: [bold #01A0E4]blossomer generate {step} --domain <domain>[/bold #01A0E4]")
             raise typer.Exit(1)
     
     # Normalize domain
@@ -62,7 +62,7 @@ async def generate_step(
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [bold blue_violet]blossomer init[/bold blue_violet]")
+        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
         raise typer.Exit(1)
     
     # Check dependencies
@@ -73,7 +73,7 @@ async def generate_step(
     missing_deps = [dep for dep in required_deps if dep not in available_steps]
     if missing_deps:
         console.print(f"[red]Missing dependencies for {step}:[/red] {', '.join(missing_deps)}")
-        console.print("→ Generate dependencies first or run full flow with: [bold blue_violet]blossomer init[/bold blue_violet]")
+        console.print("→ Generate dependencies first or run full flow with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
         raise typer.Exit(1)
     
     # Check if step already exists
@@ -107,7 +107,7 @@ async def generate_step(
         if action == "Abort":
             return
         elif action == "View current content":
-            console.print(f"→ Use: [bold blue_violet]blossomer show {step}[/bold blue_violet]")
+            console.print(f"→ Use: [bold #01A0E4]blossomer show {step}[/bold #01A0E4]")
             return
         # If "Regenerate anyway", continue
     
@@ -188,16 +188,16 @@ async def generate_step(
         console.print(Panel.fit(
             f"[bold green]✓ {step.title()} Generation Complete![/bold green]\n\n"
             "[bold]Next steps:[/bold]\n"
-            f"• View result: [bold blue_violet]blossomer show {step}[/bold blue_violet]\n"
-            f"• Edit content: [bold blue_violet]blossomer edit {step}[/bold blue_violet]\n"
-            f"• View all: [bold blue_violet]blossomer show all[/bold blue_violet]",
+            f"• View result: [bold #01A0E4]blossomer show {step}[/bold #01A0E4]\n"
+            f"• Edit content: [bold #01A0E4]blossomer edit {step}[/bold #01A0E4]\n"
+            f"• View all: [bold #01A0E4]blossomer show all[/bold #01A0E4]",
             title="[bold]Success[/bold]",
             border_style="green"
         ))
         
     except Exception as e:
         console.print(f"\n[red]Generation failed:[/red] {e}")
-        console.print(f"→ Try again: [bold blue_violet]blossomer generate {step}[/bold blue_violet]")
+        console.print(f"→ Try again: [bold #01A0E4]blossomer generate {step}[/bold #01A0E4]")
         raise typer.Exit(1)
 
 

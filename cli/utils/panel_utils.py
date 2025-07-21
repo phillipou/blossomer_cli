@@ -14,7 +14,7 @@ def create_step_panel(step: StepConfig, step_number: int, total_steps: int) -> P
         f"{step.get_step_panel_title(step_number, total_steps)}\n"
         f"\n"
         f"{step.explanation}",
-        border_style="blue_violet",
+        border_style="#01A0E4",
         expand=False,
         padding=(1, 2)
     )
@@ -36,14 +36,14 @@ def create_welcome_panel(domain: str) -> Panel:
     steps_text = " → ".join([f"[green]{name}[/green]" for name in step_names])
     
     content = (
-        f"🚀 [bold blue_violet]Starting GTM Generation for {domain}[/bold blue_violet]\n"
+        f"🚀 [bold #01A0E4]Starting GTM Generation for {domain}[/bold #01A0E4]\n"
         f"\n"
         f"[bold]Creating:[/bold] {steps_text}"
     )
     
     return Panel(
         content,
-        border_style="blue_violet",
+        border_style="#01A0E4",
         expand=False,
         padding=(1, 2)
     )
@@ -53,11 +53,11 @@ def create_status_panel(domain: str, status: dict) -> Panel:
     from cli.utils.colors import Colors
     
     content = (
-        f"[bold blue_violet]Project: {domain}[/bold blue_violet]\n"
+        f"[bold #01A0E4]Project: {domain}[/bold #01A0E4]\n"
         f"\n"
         f"[bold]Status:[/bold] {Colors.format_success(', '.join(status['available_steps']))} | "
-        f"[bold blue_violet]{status['progress_percentage']:.0f}%[/bold blue_violet] complete\n"
-        f"[dim]Last updated: {status.get('last_updated', 'Unknown')}[/dim]"
+        f"[bold #01A0E4]{status['progress_percentage']:.0f}%[/bold #01A0E4] complete\n"
+        f"[#A5A2A2]Last updated: {status.get('last_updated', 'Unknown')}[/#A5A2A2]"
     )
     
     if status.get('has_stale_data'):
@@ -65,7 +65,7 @@ def create_status_panel(domain: str, status: dict) -> Panel:
     
     return Panel(
         content,
-        border_style="blue_violet",
+        border_style="#01A0E4",
         expand=False,
         padding=(1, 2)
     )

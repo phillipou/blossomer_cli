@@ -151,7 +151,7 @@ async def init_interactive_flow(
         console.print(f"→ Next: {' | '.join(next_commands)}")
         
     except KeyboardInterrupt:
-        console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
+        console.print(f"\n{Colors.format_warning('🛑 Stopped. Progress saved 💾')}")
         console.print(f"→ Resume with: {Colors.format_command('blossomer init ' + domain)}")
     except Exception as e:
         console.print(f"\n{Colors.format_error(f'Error during generation: {e}')}")

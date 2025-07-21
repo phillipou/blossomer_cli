@@ -66,8 +66,7 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         project_dir = gtm_service.storage.get_project_dir(domain)
         markdown_file_path = project_dir / "plans" / f"{step_key}.md"
         if markdown_file_path.exists():
-            file_size = markdown_file_path.stat().st_size / 1024
-            console.print(f"✓ Full {step.name.lower()} saved to: plans/{step_key}.md ({file_size:.1f}KB)")
+            console.print(f"[green]✓ Full {step.name.lower()} saved to: plans/{step_key}.md[/green]")
         else:
             console.print(f"✓ {step.name.lower()} generated (file not yet saved)")
         
@@ -185,8 +184,7 @@ def show_guided_email_preview(domain: str) -> None:
         project_dir = gtm_service.storage.get_project_dir(domain)
         markdown_file_path = project_dir / "plans" / f"{step_key}.md"
         if markdown_file_path.exists():
-            file_size = markdown_file_path.stat().st_size / 1024
-            console.print(f"✓ Full campaign saved to: plans/{step_key}.md ({file_size:.1f}KB)")
+            console.print(f"[green]✓ Full campaign saved to: plans/{step_key}.md[/green]")
         else:
             console.print(f"✓ Campaign generated (file not yet saved)")
         console.print()

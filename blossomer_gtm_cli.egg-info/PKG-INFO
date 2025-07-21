@@ -31,44 +31,38 @@ Requires-Dist: mypy>=1.0.0; extra == "dev"
 
 # Blossomer GTM CLI
 
-🚀 A lightweight CLI tool that demonstrates Blossomer's GTM intelligence by analyzing company domains and generating complete go-to-market packages.
+This CLI tool is a **prototype of the internal AI workflows used at Blossomer**. We've open-sourced it so you can tweak the prompts and systems to work perfectly for your specific needs. Think of it as a peek behind the curtain of how modern GTM intelligence actually works.
 
-## Features
+**With Blossomer's CLI, you can generate:**
 
-- **Domain Analysis**: Automatically scrape and analyze company websites
-- **4-Step GTM Package Generation**:
-  - Company Overview & Product Analysis
-  - Target Account Profile
-  - Buyer Persona Development
-  - Email Campaign Creation
-- **Interactive Workflow**: Guided process with review and editing options
-- **Rich Terminal Experience**: Beautiful formatting with progress indicators
-- **Guided Email Builder**: 5-step interactive email creation with social proof collection
-- **Professional Export**: Generate markdown reports for sharing and documentation
-- **Flexible Output**: JSON export, formatted display, and markdown reports
+• **Company Overview**: Automatically analyze any website to extract business model, value propositions, and competitive positioning
+• **Target Account Profile**: Generate detailed ICP definitions with firmographic criteria and buying signals  
+• **Buyer Persona**: Create comprehensive personas with pain points, goals, and purchase journey mapping
+• **Email Campaigns**: Build personalized outreach sequences using our proven "Lego Block" methodology
+• **Strategic Plan**: Generate complete execution roadmaps with tool recommendations and success metrics
 
-## Installation
+## Quick Start
 
 ### Prerequisites
 
 - Python 3.8 or higher
-- **TensorBlock Forge API key** (recommended) or OpenAI API key
-  - Forge provides access to 19+ models across OpenAI, Anthropic, Gemini, xAI, and Deepseek
-  - Cost-optimized with GPT-4.1-nano (~10x cheaper than GPT-4o-mini)
+- **Firecrawl API key** - Get one at [firecrawl.dev](https://firecrawl.dev) for website scraping
+- **TensorBlock API key** - Get one at [tensorblock.co](https://tensorblock.co) for AI model access (supports 19+ models including GPT-4, Claude, Gemini)
 
-### Install from Source
+### Installation
 
 ```bash
-git clone <repository-url>
+# Clone and install
+git clone https://github.com/your-org/blossomer-cli.git
 cd blossomer-cli
-
-# Clean installation (recommended) 
 make install
 
-# Alternative options:
-./install.sh                     # Install script with tips
-make install-verbose             # Full pip output if needed
-pip install -e . --quiet         # Manual clean install
+# Set up your API keys
+export FIRECRAWL_API_KEY="your-firecrawl-key-here"
+export FORGE_API_KEY="your-tensorblock-key-here"
+
+# Generate your first GTM package
+blossomer init <your-company-website>
 ```
 
 **What you'll see:**
@@ -77,68 +71,124 @@ pip install -e . --quiet         # Manual clean install
 ✅ Installation complete!
 
 🎯 Try it out:
-   blossomer --help
-   blossomer init example.com
+   blossomer init stripe.com
 ```
 
-**Development commands:**
-```bash
-make help      # Show all available commands
-make status    # Check installation status
-make clean     # Clean build artifacts
-make dev       # Install + run example
+## Concepts
+
+### Project Organization
+Projects are **named after the domain of the company's website**. When you run `blossomer init stripe.com`, it creates a project folder called `stripe.com` that contains all the generated GTM assets for that company.
+
+```
+gtm_projects/
+├── stripe.com/          # Project for Stripe
+├── shopify.com/         # Project for Shopify  
+├── notion.so/           # Project for Notion
+└── your-company.com/    # Project for your company
 ```
 
-## Quick Start
+This makes it easy to:
+- **Work on multiple companies** simultaneously
+- **Switch between projects** using `--domain` flags
+- **Organize your GTM research** by company
+- **Share specific company analyses** as needed
 
-### 1. Initialize a New GTM Project
+### Project Structure
+
+Generated projects are organized like this:
+
+```
+gtm_projects/
+├── stripe.com/
+│   ├── .metadata.json    # Project metadata
+│   ├── overview.json     # Company analysis
+│   ├── account.json      # Target account profile
+│   ├── persona.json      # Buyer persona
+│   ├── email.json        # Email campaigns
+│   └── plan.json         # Strategic execution plan
+└── acme.com/
+    └── ...
+```
+
+### The 5-Step GTM Generation Process
+1. **Company Overview**: Scrapes and analyzes the website to understand business model and positioning
+2. **Target Account Profile**: Defines ideal customer profile with buying signals and firmographic criteria
+3. **Buyer Persona**: Creates detailed personas with pain points, goals, and decision-making process
+4. **Email Campaigns**: Generates personalized outreach using proven messaging frameworks
+5. **Strategic Plan**: Builds complete execution roadmap with tools, metrics, and prioritization
+
+Each step builds on the previous ones, creating a comprehensive GTM package that's immediately actionable.
+
+## Examples
+
+### Generate Complete GTM Package
 
 ```bash
 # Interactive mode (recommended)
 blossomer init acme.com
 
-# Prompt for domain if not provided
-blossomer init
+# Skip prompts and generate everything
+blossomer init acme.com --yolo
 
 # With additional context
 blossomer init acme.com --context "Series A SaaS startup"
-
-# One-shot mode (skip all interactions)
-blossomer init acme.com --yolo
 ```
 
-### 2. View Generated Assets
+### View Your Generated Assets
 
 ```bash
-# Show all assets
+# Show all generated content
 blossomer show all
 
-# Show specific asset
-blossomer show overview
-blossomer show account
-blossomer show persona
-blossomer show email
+# View specific components
+blossomer show overview     # Company analysis
+blossomer show account      # Target account profile  
+blossomer show persona      # Buyer persona
+blossomer show email        # Email campaigns
+blossomer show plan         # Strategic execution plan
 
-# JSON output
-blossomer show all --json
+# Export as markdown report
+blossomer export all
 ```
 
-### 3. Regenerate Specific Steps
+### Regenerate Specific Components
 
 ```bash
-# Regenerate company overview
-blossomer generate overview
+# Regenerate email campaign
+blossomer generate email
 
-# Force regeneration even if data exists
-blossomer generate persona --force
+# Force regenerate company overview
+blossomer generate overview --force
+
+# Regenerate with specific domain
+blossomer generate persona --domain acme.com
 ```
 
-## Usage Examples
-
-### Complete Workflow
+### Manage Multiple Projects
 
 ```bash
-# Start new project
+# List all your GTM projects
+blossomer list
+
+# View specific project files
+blossomer list --domain acme.com
+
+# Switch between projects
+blossomer show overview --domain stripe.com
+```
+
+### Edit and Customize
+
+```bash
+# Open generated content in your default editor
+blossomer edit overview
+blossomer edit persona
+blossomer edit email
+```
+
+## Example Workflow
+
+```bash
 $ blossomer init stripe.com
 🔍 Analyzing stripe.com...
    → Fetching website content... ✓
@@ -159,360 +209,61 @@ $ blossomer init stripe.com
    → Crafting personalized messaging... ✓
    → Email campaign generated (5s)
 
-✅ Complete GTM package generated for stripe.com (4/4 steps)
+📊 Strategic Plan Generation...
+   → Building execution roadmap... ✓
+   → Strategic plan generated (10s)
+
+✅ Complete GTM package generated for stripe.com (5/5 steps)
+
+$ blossomer show all
+# Displays beautifully formatted GTM package...
+
+$ blossomer export all
+✅ Complete GTM package exported: REPORT-stripe-2025-01-21.md (127.3KB)
 ```
 
-### Guided Email Builder
+## Global Options
 
 ```bash
-$ blossomer init acme.com
-# ... after persona step ...
-
-📧 Email Campaign Builder - Guided Mode
-
-Step 1/5: What should your email emphasize?
-1. Use Case: Focus on specific workflows
-2. Pain Point: Focus on challenges they're experiencing  
-3. Capability: Focus on what your solution can do
-4. Desired Outcome: Focus on results they want
-
-Select emphasis [1-4]: 2
-✓ Focusing on pain points
-
-Step 2/5: Which pain point should we focus on?
-1. Maintaining support quality during rapid scaling
-2. Long agent onboarding times
-3. Lack of visibility into knowledge gaps
-
-Select pain point [1-3]: 1
-✓ Selected: Quality challenges during scaling
-
-Step 3/5: Add Social Proof (Optional)
-Social proof examples: "We worked with Deel recently and doubled their QA coverage"
-Leave blank to skip, or enter your social proof:
-
-[Enter social proof or press Enter to skip]: We helped TechCorp reduce support response time by 40% in 30 days
-✓ Social proof added
-
-# ... continues through personalization and CTA selection ...
+--verbose          # Enable detailed timing and progress info
+--debug           # Show cache hits and debugging details
+--quiet, -q       # Minimal output mode
+--no-color        # Disable colored output
+--version, -v     # Show version information
+--help           # Display help for any command
 ```
 
-### Review and Display
+## Uninstall
 
 ```bash
-# Quick overview
-$ blossomer show overview
-═══════════════════════════════════════════════════════
-                    COMPANY OVERVIEW
-═══════════════════════════════════════════════════════
+# Remove the package
+pip uninstall blossomer-gtm-cli
 
-Company: Stripe
-Industry: Financial Technology (FinTech)
-Business Model: B2B SaaS - Payment Processing Platform
-
-Core Value Proposition:
-Stripe provides developer-friendly payment infrastructure...
+# Clean up project data (optional)
+rm -rf gtm_projects/
 ```
-
-## CLI Reference
-
-### Global Options
-
-- `--verbose` - Enable verbose output with detailed timing
-- `--debug` - Enable debug output (cache hits, timing details)
-- `--quiet, -q` - Minimal output mode
-- `--no-color` - Disable colored output
-- `--version, -v` - Show version and exit
-
-### Commands
-
-#### `init [DOMAIN]`
-Start new GTM project (interactive by default)
-
-**Arguments:**
-- `DOMAIN` - Company domain to analyze (optional, will prompt if not provided)
-
-**Options:**
-- `--context TEXT` - Additional context about the company
-- `--yolo` - Skip all interactions (one-shot mode)
-
-**Examples:**
-```bash
-blossomer init                    # Interactive domain input
-blossomer init acme.com           # Direct domain input
-blossomer init acme.com --yolo    # No prompts, generate everything
-```
-
-#### `show [ASSET]`
-Display generated assets with formatting
-
-**Arguments:**
-- `ASSET` - Asset to display: `all`, `overview`, `account`, `persona`, `email` (default: `all`)
-
-**Options:**
-- `--json` - Output raw JSON
-- `--domain TEXT` - Specify domain (auto-detected if only one project)
-
-**Examples:**
-```bash
-blossomer show all               # Show all assets
-blossomer show persona           # Show only persona
-blossomer show all --json        # JSON output
-```
-
-#### `generate STEP`
-Manually run or re-run a specific step
-
-**Arguments:**
-- `STEP` - Step to generate: `overview`, `account`, `persona`, `email`
-
-**Options:**
-- `--domain TEXT` - Specify domain
-- `--force` - Force regeneration even if data exists
-
-**Examples:**
-```bash
-blossomer generate email         # Regenerate email campaign
-blossomer generate overview --force  # Force regenerate overview
-```
-
-#### `export [STEP]`
-Export GTM assets as formatted markdown reports
-
-**Arguments:**
-- `STEP` - Step to export: `overview`, `account`, `persona`, `email`, `all` (default: `all`)
-
-**Options:**
-- `--output PATH` - Custom output file path
-- `--domain TEXT` - Specify domain (auto-detected if only one project)
-
-**Examples:**
-```bash
-blossomer export                     # Export all steps as complete report
-blossomer export overview            # Export only company overview
-blossomer export all --output my-report.md  # Custom filename
-blossomer export persona --domain acme.com  # Specific domain
-```
-
-**Output Features:**
-- **Professional formatting**: Headers, tables, lists, code blocks
-- **Smart filenames**: `REPORT-domain-2025-01-15.md`, `OVERVIEW-domain-2025-01-15.md`
-- **Complete documentation**: All analysis, insights, and metadata
-- **Shareable reports**: Perfect for stakeholder presentations
-
-#### `eval COMMAND`
-Run quality assurance evaluations on prompt templates
-
-**Commands:**
-- `eval list` - List all available prompt evaluations
-- `eval run PROMPT` - Run evaluation on a specific prompt
-- `eval validate PROMPT` - Validate prompt configuration and dataset
-- `eval create PROMPT` - Create new prompt evaluation
-
-**Options:**
-- `--sample-size N` - Number of test cases to sample (default: 5)
-- `--output PATH` - Save results to JSON file
-- `--verbose` - Enable detailed output with debugging info
-
-**Examples:**
-```bash
-# List available evaluations
-blossomer eval list
-
-# Run evaluation on product overview prompt
-blossomer eval run product_overview --sample-size 10
-
-# Validate prompt configuration
-blossomer eval validate product_overview
-
-# Run all evaluations with verbose output
-blossomer eval run all --verbose --sample-size 3
-
-# Save results to file
-blossomer eval run product_overview --output results.json
-```
-
-**Evaluation Features:**
-- **Deterministic checks**: JSON validation, schema compliance, format rules
-- **LLM judges**: Traceability, actionability, redundancy, context steering
-- **Cost-effective**: Uses GPT-4.1-nano for ultra-low cost evaluation
-- **Rich output**: Progress bars, detailed failure analysis, pass/fail rates
-- **Quality assurance**: Ensures consistent prompt template performance
-- **Simplified structure**: Each check shows description, inputs evaluated, pass/fail, and clear rationale
-
-**Evaluation Output Structure:**
-Each evaluation check follows a standardized format:
-
-```json
-{
-  "check_name": "traceability",
-  "description": "Verifies that business claims are supported by website evidence or marked as assumptions",
-  "inputs_evaluated": [
-    {"field": "business_profile_insights", "value": ["Category: Financial Technology", "Market: Enterprise payments"]},
-    {"field": "website_content", "value": "Stripe powers online payments for millions..."}
-  ],
-  "pass": false,
-  "rationale": "Only 2 out of 5 sampled claims could be verified against website content. Claims about Series B funding and enterprise focus lack supporting evidence from the scraped content."
-}
-```
-
-**Structure Fields:**
-- **check_name**: Unique identifier for the evaluation check
-- **description**: Brief explanation of what the check evaluates (1-2 sentences)
-- **inputs_evaluated**: Array of {field: field_name, value: field_value} pairs showing what data was examined
-- **pass**: Boolean indicating if the check passed or failed
-- **rationale**: Clear 2-3 sentence explanation of why it passed or failed
-
-### Not Yet Implemented
-
-These commands show "Command not yet implemented":
-- `blossomer edit <file>` - Open generated file in system editor
-- `blossomer list` - Show all GTM projects
-- `blossomer status` - Quick overview of all projects
 
 ## Configuration
 
-### Environment Variables
+Set up your environment variables:
 
 ```bash
-# Recommended: TensorBlock Forge (unified access to all providers)
-export FORGE_API_KEY="forge-your-api-key-here"
+# Required API keys
+export FIRECRAWL_API_KEY="your-firecrawl-key"
+export FORGE_API_KEY="your-tensorblock-key"
 
-# Optional
-export BLOSSOMER_DEBUG=true        # Enable debug output
+# Optional settings
+export BLOSSOMER_DEBUG=true           # Enable debug output
+export BLOSSOMER_QUIET=true          # Minimal output mode
 ```
 
-#### Setting up TensorBlock Forge (Recommended)
+Add these to your `~/.bashrc`, `~/.zshrc`, or create a `.env` file in the project directory.
 
-1. **Sign up** at [TensorBlock Forge](https://tensorblock.co/)
-2. **Get your API key** from the dashboard
-3. **Add to your environment**:
-   ```bash
-   # Add to your ~/.bashrc, ~/.zshrc, or .env file
-   export FORGE_API_KEY="forge-your-api-key-here"
-   ```
-
-**Available providers through Forge:**
-- OpenAI (GPT-4, GPT-4.1-nano, GPT-4o-mini, etc.)
-- Anthropic (Claude 3.5 Sonnet, Claude 3.5 Haiku)
-- Google (Gemini 1.5 Pro, Gemini 1.5 Flash)
-- xAI (Grok models)
-- Deepseek (Deepseek V3)
-
-### Project Structure
-
-Generated projects are stored in `gtm_projects/`, evaluations in `evals/`:
-
-```
-gtm_projects/
-├── example.com/
-│   ├── .metadata.json    # Project metadata
-│   ├── overview.json     # Company analysis
-│   ├── account.json      # Target account profile
-│   ├── persona.json      # Buyer persona
-│   ├── email.json        # Email campaign
-│   └── export/           # Future: exported assets
-
-evals/
-├── core/                 # Evaluation framework
-│   ├── config.py        # Configuration management
-│   ├── dataset.py       # Test case handling
-│   ├── results.py       # Results display
-│   ├── runner.py        # Main evaluation runner
-│   └── judges/          # Evaluation logic
-└── prompts/             # Per-prompt configurations
-    └── product_overview/
-        ├── config.yaml  # Evaluation configuration
-        ├── data.csv     # Test cases
-        └── schema.json  # Expected output schema
-```
-
-## Development
-
-### Setup Development Environment
-
-```bash
-# Clone repository
-git clone <repository-url>
-cd blossomer-cli
-
-# Quick setup with clean output
-make install
-
-# Or install with verbose output
-make install-verbose
-
-# Development workflow
-make dev          # Install + run example
-make test         # Run tests (when available)
-make lint         # Code formatting (when available)
-make clean        # Clean build artifacts
-make status       # Show installation status
-```
-
-### Project Structure
-
-```
-blossomer-cli/
-├── cli/                  # CLI application
-│   ├── commands/         # Command implementations
-│   ├── services/         # CLI-specific services
-│   └── utils/           # CLI utilities
-├── app/                 # Core business logic
-│   ├── services/        # GTM generation services
-│   ├── prompts/         # LLM prompt templates
-│   └── schemas/         # Data models
-├── tests/               # Test suite
-└── gtm_projects/        # Generated project data
-```
-
-## Current Implementation Status
-
-### ✅ Fully Working
-- **4-step GTM generation**: Company → Account → Persona → Email
-- **Interactive guided workflow** with continue/edit/abort options
-- **Guided email builder** with 5-step customization including social proof collection
-- **Rich terminal formatting** with progress indicators
-- **Project storage** and retrieval
-- **Domain normalization** and validation
-- **Existing project handling** with update options
-- **Evaluation system**: Quality assurance for prompt templates with deterministic and LLM judges
-
-### ⚠️ Planned Features
-- **GTM Plan generation** (step 5) - roadmap and execution plan
-- **Export command** - markdown report generation
-- **Edit command** - system editor integration  
-- **List/Status commands** - project management utilities
-
-## Dependencies
-
-Built with modern Python CLI tools:
-- **typer** - Modern CLI framework with type hints
-- **rich** - Beautiful terminal formatting
-- **questionary** - Interactive prompts
-- **pydantic** - Data validation
-- **TensorBlock Forge** - Unified LLM provider access (19+ models)
-- **openai** - API compatibility layer
-- **firecrawl-py** - Website scraping
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License.
-
-## Support
-
-- 📖 Documentation: See `/Docs` directory for detailed implementation guides
-- 🐛 Issues: Report bugs and request features via GitHub Issues
-- 💬 Questions: Reach out to phil@blossomer.io
+MIT License - feel free to fork, modify, and use this however works best for your team.
 
 ---
 
-*Built with ❤️ by the Blossomer team to demonstrate AI-driven GTM intelligence*
+*Built by the Blossomer team to democratize AI-driven GTM intelligence. Now go build something amazing!* 🚀

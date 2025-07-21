@@ -5,11 +5,13 @@ app/core/__init__.py
 app/core/forge_client.py
 app/core/forge_llm_service.py
 app/core/llm_singleton.py
+app/data/tools_loader.py
 app/prompts/base.py
 app/prompts/models.py
 app/prompts/registry.py
 app/prompts/runner.py
 app/schemas/__init__.py
+app/schemas/gtm_advisor.py
 app/services/__init__.py
 app/services/circuit_breaker.py
 app/services/content_preprocessing.py
@@ -17,6 +19,7 @@ app/services/context_orchestrator_agent.py
 app/services/context_orchestrator_service.py
 app/services/dev_file_cache.py
 app/services/email_generation_service.py
+app/services/gtm_advisor_service.py
 app/services/llm_service.py
 app/services/product_overview_service.py
 app/services/target_account_service.py
@@ -34,11 +37,14 @@ cli/config.py
 cli/main.py
 cli/schemas.py
 cli/commands/__init__.py
+cli/commands/advisor.py
+cli/commands/edit_step.py
 cli/commands/eval.py
 cli/commands/export.py
 cli/commands/generate.py
 cli/commands/init.py
 cli/commands/init_sync.py
+cli/commands/list_projects.py
 cli/commands/plans.py
 cli/commands/show.py
 cli/services/__init__.py
@@ -63,6 +69,7 @@ cli/utils/guided_email_builder.py
 cli/utils/logging.py
 cli/utils/markdown_formatter.py
 cli/utils/markdown_parser.py
+cli/utils/menu_utils.py
 cli/utils/panel_utils.py
 cli/utils/preview_utils.py
 cli/utils/step_config.py

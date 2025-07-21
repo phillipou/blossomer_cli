@@ -51,7 +51,7 @@ def show_all_projects(project_dirs: list[Path]) -> None:
     ))
     console.print()
     
-    table = Table(show_header=True, header_style="bold blue_violet")
+    table = Table(show_header=True, header_style="bold #01A0E4")
     table.add_column("Domain", style="bold white", min_width=20)
     table.add_column("Status", min_width=12)
     table.add_column("Files", min_width=8, justify="center")
@@ -151,7 +151,7 @@ def show_project_files(domain: str, project_dirs: list[Path]) -> None:
         md_files = list(plans_dir.glob("*.md"))
         
         if md_files:
-            table = Table(show_header=True, header_style="bold blue_violet")
+            table = Table(show_header=True, header_style="bold #01A0E4")
             table.add_column("File", style="bold white", min_width=20)
             table.add_column("Step", min_width=15)
             table.add_column("Size", min_width=8, justify="right")

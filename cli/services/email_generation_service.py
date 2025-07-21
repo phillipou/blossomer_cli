@@ -180,32 +180,37 @@ def assign_breakdown_colors(breakdown: Dict[str, Any]) -> Dict[str, Any]:
     Note: This function is kept for backward compatibility but may not be used
     with the new API structure that uses 'writing_process' instead of 'breakdown'.
     """
-    # Default color mapping for common segment types
+    # Simplified color mapping using brand colors
     COLOR_MAPPING = {
-        "subject": "bg-purple-50 border-purple-200",
-        "greeting": "bg-purple-50 border-purple-200",
+        # Primary elements use brand blue
+        "subject": "bg-blue-50 border-blue-200",
+        "greeting": "bg-blue-50 border-blue-200",
         "intro": "bg-blue-50 border-blue-200",
         "opening": "bg-blue-50 border-blue-200",
-        "context": "bg-teal-50 border-teal-200",
+        "emphasis": "bg-blue-50 border-blue-200",
+        "value": "bg-blue-50 border-blue-200",
+        "evidence": "bg-blue-50 border-blue-200",
+        # Problems use warning colors
         "pain-point": "bg-red-50 border-red-200",
         "problem": "bg-red-50 border-red-200",
+        "urgency": "bg-red-50 border-red-200",
+        # Solutions use success colors
         "solution": "bg-green-50 border-green-200",
         "company-intro": "bg-green-50 border-green-200",
-        "emphasis": "bg-indigo-50 border-indigo-200",
-        "value": "bg-indigo-50 border-indigo-200",
-        "evidence": "bg-indigo-50 border-indigo-200",
-        "social-proof": "bg-pink-50 border-pink-200",
-        "testimonial": "bg-pink-50 border-pink-200",
-        "urgency": "bg-orange-50 border-orange-200",
-        "cta": "bg-yellow-50 border-yellow-200",
-        "call-to-action": "bg-yellow-50 border-yellow-200",
-        "next-steps": "bg-yellow-50 border-yellow-200",
+        "social-proof": "bg-green-50 border-green-200",
+        "testimonial": "bg-green-50 border-green-200",
+        # Actions use user input color
+        "cta": "bg-cyan-50 border-cyan-200",
+        "call-to-action": "bg-cyan-50 border-cyan-200",
+        "next-steps": "bg-cyan-50 border-cyan-200",
+        # Neutral elements
+        "context": "bg-gray-50 border-gray-200",
         "signature": "bg-gray-50 border-gray-200",
         "closing": "bg-gray-50 border-gray-200",
         "ps": "bg-gray-50 border-gray-200",
     }
 
-    # Default color for unknown segment types
+    # Default color for unknown segment types - use brand blue
     DEFAULT_COLOR = "bg-blue-50 border-blue-200"
 
     # Assign colors to each breakdown entry

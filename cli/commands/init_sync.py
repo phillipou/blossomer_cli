@@ -31,13 +31,20 @@ from rich.markdown import Markdown
 
 console = Console()
 
-# Questionary styling for better UX - using the same color as step headers
+# Questionary styling for better UX - using brand blue theme
 MENU_STYLE = questionary.Style([
-    ('question', 'bold #9370DB'),           # Question text - blue violet color
-    ('pointer', 'bold #9370DB'),            # Arrow pointer - blue violet color
-    ('highlighted', 'bold #9370DB'),        # Currently selected item - blue violet color
-    ('selected', 'bold #9370DB'),           # After selection - blue violet color
-    ('answer', 'bold #9370DB')              # Final answer display - blue violet color
+    ('question', 'bold #01A0E4'),           # Question text - brand blue
+    ('pointer', 'bold #01A0E4'),            # Arrow pointer - brand blue
+    ('highlighted', 'bold #01A0E4'),        # Currently selected item - brand blue
+    ('selected', 'bold #01A0E4'),           # After selection - brand blue
+    ('answer', 'bold #01A0E4')              # Final answer display - brand blue
+])
+
+# Text input styling for cyan user inputs
+TEXT_INPUT_STYLE = questionary.Style([
+    ('question', 'bold #01A0E4'),           # Question text - brand blue
+    ('text', '#00BFFF'),                    # Text input - cyan
+    ('answer', '#00BFFF')                   # Answer display - cyan
 ])
 
 def show_menu_with_separator(question: str, choices: list, add_separator: bool = True):
@@ -56,13 +63,13 @@ def show_menu_with_separator(question: str, choices: list, add_separator: bool =
 def capture_hypotheses() -> dict:
     """Capture optional user hypotheses for target account and persona"""
     console.print()
-    console.print("🎯 [bold blue_violet]Optional Context (press Enter to skip)[/bold blue_violet]")
+    console.print("🎯 [bold #01A0E4]Optional Context (press Enter to skip)[/bold #01A0E4]")
     console.print()
     
     account_hypothesis = questionary.text(
         "💡 Target Account Hypothesis (optional - helps focus our analysis):",
         placeholder="e.g., Mid-market SaaS companies with 50-500 employees experiencing rapid growth",
-        style=MENU_STYLE
+        style=TEXT_INPUT_STYLE
     ).ask()
     
     # Handle CTRL+C (questionary returns None when interrupted)
@@ -72,7 +79,7 @@ def capture_hypotheses() -> dict:
     persona_hypothesis = questionary.text(
         "👤 Target Persona Hypothesis (optional - helps focus our analysis):",
         placeholder="e.g., CTOs and VP Engineering at fast-growing tech companies",
-        style=MENU_STYLE
+        style=TEXT_INPUT_STYLE
     ).ask()
     
     # Handle CTRL+C (questionary returns None when interrupted)
@@ -100,7 +107,8 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
     if domain is None:
         domain = questionary.text(
             "🔍 Enter the company domain you'd like to analyze for GTM intelligence:",
-            placeholder="e.g., acme.com, https://company.com, or www.startup.io"
+            placeholder="e.g., acme.com, https://company.com, or www.startup.io",
+            style=TEXT_INPUT_STYLE
         ).ask()
         
         ensure_breathing_room(console)
@@ -244,14 +252,14 @@ def init_sync_flow(domain: Optional[str], context: Optional[str] = None, yolo: b
         console.print(create_completion_panel())
         
     except KeyboardInterrupt:
-        console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
-        console.print(f"→ Resume with: [bold blue_violet]blossomer init {normalized_domain}[/bold blue_violet]")
-        console.print(f"→ Or view progress: [bold blue_violet]blossomer show all[/bold blue_violet]")
+        console.print(f"\n{Colors.format_warning('🛑 Stopped. Progress saved 💾')}")
+        console.print(f"→ Resume with: [bold #01A0E4]blossomer init {normalized_domain}[/bold #01A0E4]")
+        console.print(f"→ Or view progress: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
         console.print("💡 Common issues: network connectivity, invalid domain, or API limits")
-        console.print(f"→ Try again: [bold blue_violet]blossomer init {normalized_domain}[/bold blue_violet]")
-        console.print(f"→ Check status: [bold blue_violet]blossomer show all[/bold blue_violet]")
+        console.print(f"→ Try again: [bold #01A0E4]blossomer init {normalized_domain}[/bold #01A0E4]")
+        console.print(f"→ Check status: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
         raise typer.Exit(1)
 
 
@@ -379,14 +387,14 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         console.print(create_completion_panel())
         
     except KeyboardInterrupt:
-        console.print(f"\n{Colors.format_warning('Generation interrupted. Progress has been saved.')}")
-        console.print(f"→ Resume with: [bold blue_violet]blossomer init {domain}[/bold blue_violet]")
-        console.print(f"→ Or view progress: [bold blue_violet]blossomer show all[/bold blue_violet]")
+        console.print(f"\n{Colors.format_warning('🛑 Stopped. Progress saved 💾')}")
+        console.print(f"→ Resume with: [bold #01A0E4]blossomer init {domain}[/bold #01A0E4]")
+        console.print(f"→ Or view progress: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
         console.print("💡 Common issues: network connectivity, invalid domain, or API limits")
-        console.print(f"→ Try again: [bold blue_violet]blossomer init {domain}[/bold blue_violet]")
-        console.print(f"→ Check status: [bold blue_violet]blossomer show all[/bold blue_violet]")
+        console.print(f"→ Try again: [bold #01A0E4]blossomer init {domain}[/bold #01A0E4]")
+        console.print(f"→ Check status: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
 
 
 def run_generation_step(
@@ -417,10 +425,10 @@ def run_generation_step(
     else:
         # Fallback for unknown steps
         console.print(Panel(
-            f"[bold blue_violet][{step_number}/{step_manager.get_total_steps()}] {step_name}[/bold blue_violet]\n"
+            f"[bold #01A0E4][{step_number}/{step_manager.get_total_steps()}] {step_name}[/bold #01A0E4]\n"
             f"\n"
             f"{explanation}",
-            border_style="blue_violet",
+            border_style="#01A0E4",
             expand=False,
             padding=(1, 2)
         ))
@@ -501,6 +509,10 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
         # Run the guided email builder
         builder = GuidedEmailBuilder(persona_data, account_data)
         guided_preferences = builder.run_guided_flow()
+        
+        # Clear screen and show all completed steps before generation
+        clear_console()
+        builder._show_previous_steps()
         
         console.print()
         console.print("Generating your personalized email campaign... ", end="")
@@ -586,7 +598,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
         if generate_plan == "Skip for now":
             console.print()
             console.print("[yellow]Skipping strategic plan generation.[/yellow]")
-            console.print("→ You can generate it later with: [bold blue_violet]blossomer advisor {domain}[/bold blue_violet]")
+            console.print("→ You can generate it later with: [bold #01A0E4]blossomer advisor {domain}[/bold #01A0E4]")
             return
     
     console.print()
@@ -599,7 +611,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
         # Create step panel
         step_name = "GTM Strategic Plan"
         console.print()
-        console.print(f"[bold blue_violet][{step_counter}/5] {step_name}[/bold blue_violet]")
+        console.print(f"[bold #01A0E4][{step_counter}/5] {step_name}[/bold #01A0E4]")
         console.print("Creating comprehensive go-to-market execution plan with scoring frameworks and tool recommendations")
         console.print()
         
@@ -634,7 +646,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
             console.print()
             console.print("─" * 60)
             console.print()
-            console.print("[bold blue_violet]Strategic Plan Generated![/bold blue_violet]")
+            console.print("[bold #01A0E4]Strategic Plan Generated![/bold #01A0E4]")
             console.print()
             console.print("Your comprehensive GTM execution plan includes:")
             console.print("  • Lead scoring frameworks (account + contact)")
@@ -663,7 +675,7 @@ def run_advisor_generation_step(domain: str, yolo: bool = False, step_counter: i
         
     except Exception as e:
         console.print(f"[red]Failed to generate strategic plan:[/red] {e}")
-        console.print("→ You can try again later with: [bold blue_violet]blossomer advisor {domain}[/bold blue_violet]")
+        console.print("→ You can try again later with: [bold #01A0E4]blossomer advisor {domain}[/bold #01A0E4]")
 
 
 async def run_async_advisor_generation(domain: str):
