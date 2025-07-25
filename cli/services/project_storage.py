@@ -277,6 +277,24 @@ class ProjectStorage:
         
         self.save_metadata(domain, metadata)
     
+    def get_file_path(self, domain: str, step: str) -> Path:
+        """Get the file path for a specific step's markdown file"""
+        project_dir = self.get_project_dir(domain)
+        plans_dir = project_dir / "plans"
+        
+        # Map step keys to actual filenames
+        step_to_filename = {
+            "overview": "overview.md",
+            "account": "account.md", 
+            "persona": "persona.md",
+            "email": "email.md",
+            "plan": "strategy.md",  # plan step maps to strategy.md
+            "advisor": "strategy.md"  # advisor step also maps to strategy.md
+        }
+        
+        filename = step_to_filename.get(step, f"{step}.md")
+        return plans_dir / filename
+    
     def _auto_generate_plans_file(self, domain: str, step: str, data_dict: Dict[str, Any]) -> None:
         """Auto-generate markdown file in plans/ directory when JSON is saved"""
         try:
@@ -292,8 +310,17 @@ class ProjectStorage:
             formatter = get_formatter(step)
             markdown_content = formatter.format_with_markers(data_dict, step)
             
-            # Save markdown file
-            plans_file = plans_dir / f"{step}.md"
+            # Save markdown file using the same filename mapping as get_file_path
+            step_to_filename = {
+                "overview": "overview.md",
+                "account": "account.md", 
+                "persona": "persona.md",
+                "email": "email.md",
+                "plan": "strategy.md",  # plan step maps to strategy.md
+                "advisor": "strategy.md"  # advisor step also maps to strategy.md
+            }
+            filename = step_to_filename.get(step, f"{step}.md")
+            plans_file = plans_dir / filename
             with open(plans_file, 'w', encoding='utf-8') as f:
                 f.write(markdown_content)
             
