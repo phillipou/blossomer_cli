@@ -17,19 +17,19 @@ class Colors:
     SUCCESS = "green"           # ✓ Completed tasks, positive outcomes
     ERROR = "#DB2D20"           # ✗ Failures, missing data, critical issues  
     WARNING = "#FDED02"         # ⚠ Stale data, non-critical issues
-    PRIMARY = "bold #01A0E4"    # Section headers, current process - brand blue
-    ACTION = "bold #01A0E4"     # Commands, actionable items - brand blue
+    PRIMARY = "bold #0066CC"    # Section headers, current process - brand blue
+    ACTION = "bold #0066CC"     # Commands, actionable items - brand blue
     META = "#A5A2A2"            # Timestamps, file info, secondary details
     EMPHASIS = "bold"           # Important labels (use sparingly)
-    USER_INPUT = "#00BFFF"      # User input, interactive elements - cyan for contrast
+    USER_INPUT = "#0066CC"      # User input, interactive elements - brand blue
     
     # Compound styles for common patterns - all using brand blue
-    SECTION_HEADER = "bold #01A0E4"    # Main section titles 
+    SECTION_HEADER = "bold #0066CC"    # Main section titles 
     SUCCESS_MESSAGE = "green"          # ✓ Success indicators
     ERROR_MESSAGE = "#DB2D20"          # ✗ Error indicators  
     WARNING_MESSAGE = "#FDED02"        # ⚠ Warning indicators
-    COMMAND_SUGGESTION = "bold #01A0E4"  # → Try: command
-    PROCESS_INDICATOR = "bold #01A0E4"   # [1/4] Step name 
+    COMMAND_SUGGESTION = "bold #0066CC"  # → Try: command
+    PROCESS_INDICATOR = "bold #0066CC"   # [1/4] Step name 
     FILE_INFO = "#A5A2A2"             # Generated: timestamp
     
     @classmethod

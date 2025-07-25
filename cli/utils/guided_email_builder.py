@@ -10,11 +10,11 @@ from cli.utils.console import ensure_breathing_room, clear_console
 
 console = Console()
 
-# Custom style for text inputs to use cyan color
+# Custom style for text inputs to use brand blue color
 TEXT_INPUT_STYLE = questionary.Style([
-    ('question', 'bold #01A0E4'),           # Question text - brand blue
-    ('text', '#00BFFF'),                    # Text input - cyan
-    ('answer', '#00BFFF')                   # Answer display - cyan
+    ('question', 'bold #0066CC'),        # Question text - brand blue
+    ('text', 'bold black'),              # Text input - bold black
+    ('answer', 'bold black')             # Answer display - bold black
 ])
 
 
@@ -35,17 +35,19 @@ class GuidedEmailBuilder:
     def run_guided_flow(self) -> Dict[str, Any]:
         """Run the complete 5-step guided email building flow"""
         
-        console.print()
+        # Clear console to start fresh, like other steps
+        clear_console()
+        
         console.print(Panel.fit(
-            "[bold #01A0E4]📧 Email Campaign Builder - Guided Mode[/bold #01A0E4]\n\n"
+            "[bold #0066CC]📩 Email Campaign Builder - Guided Mode[/bold #0066CC]\n\n"
             "We'll walk you through 5 steps to create the perfect email:\n"
-            "• 1 What should your email emphasize?\n"
-            "• 2 Which specific content to focus on?\n" 
-            "• 3 Add social proof (optional)\n"
-            "• 4 How should we personalize this email?\n"
-            "• 5 What should the call-to-action be?",
-            title="[bold #01A0E4]Guided Email Builder[/bold #01A0E4]",
-            border_style="#01A0E4"
+            "  1. What should your email emphasize?\n"
+            "  2. Which specific content to focus on?\n" 
+            "  3. Add social proof (optional)\n"
+            "  4. How should we personalize this email?\n"
+            "  5. What should the call-to-action be?",
+            title="[bold #0066CC]Guided Email Builder[/bold #0066CC]",
+            border_style="#0066CC"
         ))
         
         # Step 1: Point of Emphasis
@@ -63,6 +65,20 @@ class GuidedEmailBuilder:
         # Step 5: Call-to-Action
         cta = self._step_5_call_to_action()
         
+        # Show completion message after all 5 steps
+        console.print()
+        console.print("[bold #0066CC]✅ Email Campaign Configuration Complete![/bold #0066CC]")
+        console.print()
+        console.print("[bold #0066CC]Next Steps[/bold #0066CC]")
+        console.print("This is of course just the tip of the iceberg! There's so much more to dive into including:")
+        console.print("• How to incorporate other channels (LinkedIn, inbound leads, paid advertising)?")
+        console.print("• How to analyze data and iterate on these campaigns?")
+        console.print("• How to integrate this into your CRM and workflows?")
+        console.print()
+        console.print("If you need any additional help or want us to work with you hands-on, reach out to us at")
+        console.print("[#0066CC]blossomer.io[/#0066CC] or contact our founder Phil ([#0066CC]phil@blossomer.io[/#0066CC]).")
+        console.print()
+        
         # Return configuration for email generation
         return {
             "guided_mode": True,
@@ -75,66 +91,58 @@ class GuidedEmailBuilder:
         }
     
     def _step_1_emphasis(self) -> Dict[str, Any]:
-        """Step 1: Select point of emphasis"""
+        """📩 Step 1: Select point of emphasis"""
         console.print()
-        console.print("[bold]Step 1: What should your email emphasize?[/bold]")
-        console.print()
-        
+        console.print("[bold]📩 Step[/bold] [bold #0066CC]1[/bold #0066CC] [bold]- What should your email emphasize?[/bold]")
+        console.print("This helps frame the value proposition of your product.")
+
         choices = [
-            "1. Use Case: Focus on specific workflows your solution impacts",
-            "2. Pain Point: Focus on challenges they're experiencing",
-            "3. Capability: Focus on what your solution can do", 
-            "4. Desired Outcome: Focus on the results they want"
+            "Use Case: Focus on specific workflows your solution impacts",
+            "Pain Point: Focus on challenges they're experiencing",
+            "Capability: Focus on what your solution can do", 
+            "Desired Outcome: Focus on the results they want"
         ]
         
         from cli.utils.menu_utils import show_menu_with_numbers
         choice = show_menu_with_numbers(
-            "💡 What should be the main focus of your email? (This shapes the entire message):",
-            choices=[
-                "General Introduction - Company/product overview",
-                "Value Proposition - Focus on specific benefits",
-                "Pain Point - Address specific challenges",
-                "Product Feature - Highlight specific capabilities",
-                "Customer Success - Share proof/testimonials",
-                "Educational Content - Share insights/resources",
-                "Request/Ask - Meeting, demo, or trial"
-            ],
+            "Select Emphasis:",
+            choices=choices,
             add_separator=False
         )
         
-        # Map choice to value
-        emphasis_type = choice.split(".")[0].strip()
-        if emphasis_type == "1":
+        # Map choice to value based on the actual choice text
+        if "Use Case:" in choice:
             emphasis_value = "use_case"
-        elif emphasis_type == "2":
+        elif "Pain Point:" in choice:
             emphasis_value = "pain_point"
-        elif emphasis_type == "3":
+        elif "Capability:" in choice:
             emphasis_value = "capability"
-        else:
+        elif "Desired Outcome:" in choice:
             emphasis_value = "desired_outcome"
+        else:
+            emphasis_value = "desired_outcome"  # fallback
         
         console.print(f"✓ Focusing on {emphasis_value.replace('_', ' ')}")
         console.print()
         
         # Track completed step with Q&A
-        self.completed_steps.append(f"Step 1: Focusing on {emphasis_value.replace('_', ' ')}")
+        self.completed_steps.append(f"Focusing on {emphasis_value.replace('_', ' ')}")
         self.qa_history.append({
-            "question": "Step 1: What should your email emphasize?",
+            "question": "What should your email emphasize?",
             "answer": choice
         })
         
         return {"type": emphasis_value}
     
     def _step_2_content_selection(self, emphasis: Dict[str, Any]) -> Dict[str, Any]:
-        """Step 2: Select specific content based on emphasis choice"""
+        """📩 Step 2: Select specific content based on emphasis choice"""
         emphasis_type = emphasis["type"]
         
         # Clear screen and show previous steps
         clear_console()
         self._show_previous_steps()
         
-        console.print(f"[bold]Step 2: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
-        console.print()
+        console.print(f"[bold]📩 Step[/bold] [bold #0066CC]2[/bold #0066CC][bold]: Which {emphasis_type.replace('_', ' ')} should we focus on?[/bold]")
         console.print(f"Based on your persona analysis, here are their key {emphasis_type.replace('_', ' ')}s:")
         
         # Extract content options based on emphasis type
@@ -149,7 +157,7 @@ class GuidedEmailBuilder:
             choices.append(display_text)
         
         # Add "Other" option
-        choices.append("Other (specify custom instructions to the LLM)")
+        choices.append("Other (specify your own)")
         
         from cli.utils.menu_utils import show_menu_with_numbers
         choice = show_menu_with_numbers(
@@ -183,29 +191,27 @@ class GuidedEmailBuilder:
         console.print()
         
         # Track completed step with Q&A
-        self.completed_steps.append(f"Step 2: Selected {selected_content['value']}")
+        self.completed_steps.append(f"Selected {selected_content['value']}")
         self.qa_history.append({
-            "question": f"Step 2: Which {emphasis_type.replace('_', ' ')} should we focus on?",
+            "question": f"Which {emphasis_type.replace('_', ' ')} should we focus on?",
             "answer": choice
         })
         
         return selected_content
     
     def _step_3_social_proof(self) -> Optional[str]:
-        """Step 3: Collect social proof (optional)"""
+        """📩 Step 3: Collect social proof (optional)"""
         # Clear screen and show previous steps
         clear_console()
         self._show_previous_steps()
         
-        console.print("[bold]Step 3: Add Social Proof (Optional)[/bold]")
-        console.print()
-        console.print("💪 Social proof adds credibility to your outreach")
-        console.print("Examples: client wins, case studies, impressive metrics, or notable partnerships")
+        console.print("[bold]📩 Step[/bold] [bold #0066CC]3[/bold #0066CC][bold]: Add Social Proof (Optional)[/bold]")
+        console.print("Social proof adds credibility to your outreach e.g. client wins, case studies, metrics, etc.")
         console.print()
         
         social_proof = questionary.text(
-            "Add social proof (optional):",
-            placeholder="e.g., We helped 50+ companies reduce churn by 25% | Recently worked with Stripe on scaling | Featured in TechCrunch",
+            "Social Proof (optional):",
+            placeholder="e.g., We helped Stripe reduce AWS cost 60%",
             style=TEXT_INPUT_STYLE
         ).ask()
         
@@ -216,9 +222,9 @@ class GuidedEmailBuilder:
             console.print()
             
             # Track completed step with Q&A
-            self.completed_steps.append("Step 3: Social proof added")
+            self.completed_steps.append("Social proof added")
             self.qa_history.append({
-                "question": "Step 3: Add Social Proof (Optional)",
+                "question": "Add Social Proof (Optional)",
                 "answer": f"Added: {social_proof.strip()}"
             })
             
@@ -230,29 +236,26 @@ class GuidedEmailBuilder:
             # Track completed step with Q&A
             self.completed_steps.append("Step 3: Skipping social proof")
             self.qa_history.append({
-                "question": "Step 3: Add Social Proof (Optional)",
+                "question": "Add Social Proof (Optional)",
                 "answer": "Skipped - no social proof added"
             })
             
             return None
     
     def _step_4_personalization(self) -> Dict[str, Any]:
-        """Step 4: Select personalization angle"""
+        """📩 Step 4: Select personalization angle"""
         # Clear screen and show previous steps
         clear_console()
         self._show_previous_steps()
         
-        console.print("[bold]Step 4: How should we personalize this email?[/bold]")
+        console.print("[bold]📩 Step[/bold] [bold #0066CC]4[/bold #0066CC][bold]: How should we personalize this email?[/bold]")
+        console.print("The best personalization answers: Why are you reaching out to me? Here are some angles based on our analysis")
         console.print()
-        console.print("Based on your target account analysis:")
-        console.print()
-        
         # Extract personalization options from buying signals
         personalization_options = self._extract_buying_signals_for_personalization()
         
         choices = []
-        # Add "No Personalization" first
-        choices.append("No Personalization (generic outreach)")
+        choices.append("How you found them")
         
         for option in personalization_options:
             # For step 3: show only the text before the colon (if there is one)
@@ -266,7 +269,7 @@ class GuidedEmailBuilder:
         
         from cli.utils.menu_utils import show_menu_with_numbers
         choice = show_menu_with_numbers(
-            f"Select personalization:",
+            f"Select angle:",
             choices=choices,
             add_separator=False
         )
@@ -304,54 +307,54 @@ class GuidedEmailBuilder:
         console.print()
         
         # Track completed step with Q&A
-        self.completed_steps.append(f"Step 4: Will reference {selected_personalization.get('title', 'custom approach')}")
+        self.completed_steps.append(f"Will reference {selected_personalization.get('title', 'custom approach')}")
         self.qa_history.append({
-            "question": "Step 4: How should we personalize this email?",
+            "question": "How should we personalize this email?",
             "answer": choice
         })
         
         return selected_personalization
     
     def _step_5_call_to_action(self) -> Dict[str, Any]:
-        """Step 5: Select call-to-action"""
+        """📩 Step 5: Select call-to-action"""
         # Clear screen and show previous steps
         clear_console()
         self._show_previous_steps()
         
-        console.print("[bold]Step 5: What should the call-to-action be?[/bold]")
+        console.print("[bold]📩 Step[/bold] [bold #0066CC]5[/bold #0066CC][bold]: What should the call-to-action be?[/bold]")
         console.print()
         
         cta_options = [
+            {
+                "type": "interest",
+                "text": "Is this interesting at all?",
+                "intent": "gauge_interest",
+                "label": "Gauge interest"
+            },
+            {
+                "type": "priority_check",
+                "text": "Is improving support efficiency a Q1 priority?",
+                "intent": "gauge_interest",
+                "label": "Gauge priority"
+            },
+            {
+                "type": "feedback",
+                "text": "We'd love to get your feedback on our product?",
+                "intent": "start_conversation",
+                "label": "Feedback on your offer"
+            },
+            {
+                "type": "free_help",
+                "text": "Happy to share our scaling playbook if it's helpful?",
+                "intent": "provide_value",
+                "label": "Offer free help or resources"
+            },
             {
                 "type": "meeting",
                 "text": "Worth a quick 15-min call next week?",
                 "intent": "schedule_meeting",
                 "label": "Ask for a meeting"
             },
-            {
-                "type": "priority_check",
-                "text": "Is improving support efficiency a Q1 priority?",
-                "intent": "gauge_interest",
-                "label": "Ask if it's a priority"
-            },
-            {
-                "type": "feedback",
-                "text": "Curious if this resonates with your experience?",
-                "intent": "start_conversation",
-                "label": "Ask for feedback"
-            },
-            {
-                "type": "free_help",
-                "text": "Happy to share our scaling playbook - interested?",
-                "intent": "provide_value",
-                "label": "Offer free help"
-            },
-            {
-                "type": "resource",
-                "text": "We have a guide on this - should I send it over?",
-                "intent": "share_content",
-                "label": "Invite to resource"
-            }
         ]
         
         choices = []
@@ -392,9 +395,9 @@ class GuidedEmailBuilder:
         console.print()
         
         # Track completed step with Q&A
-        self.completed_steps.append(f"Step 5: Will {selected_cta['intent'].replace('_', ' ')}")
+        self.completed_steps.append(f"Will {selected_cta['intent'].replace('_', ' ')}")
         self.qa_history.append({
-            "question": "Step 5: What should the call-to-action be?",
+            "question": "What should the call-to-action be?",
             "answer": choice
         })
         
@@ -403,9 +406,9 @@ class GuidedEmailBuilder:
     def _show_previous_steps(self) -> None:
         """Show all completed steps with full Q&A context at the top of the screen"""
         if self.qa_history:
-            console.print("✓ Previous steps:")
+            console.print("✓ Email preferences:")
             for qa in self.qa_history:
-                console.print(f"  [bold]{qa['question']}[/bold]")
+                console.print(f"  [bold]📩 {qa['question']}[/bold]")
                 console.print(f"  → {qa['answer']}")
                 console.print()
             console.print()

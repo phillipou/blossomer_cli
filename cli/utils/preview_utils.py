@@ -55,13 +55,13 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         total_chars = len(full_content)
         preview_chars = len(preview_markdown)
         console.print()
-        console.print(f"[dim][Previewing {preview_chars:,} of {total_chars:,} characters][/dim]")
+        console.print(f"[#0066CC][Previewing {preview_chars:,} of {total_chars:,} characters][/#0066CC]")
         
         # Show file save info
         project_dir = gtm_service.storage.get_project_dir(domain)
         markdown_file_path = project_dir / "plans" / f"{step_key}.md"
         if markdown_file_path.exists():
-            console.print(f"[green]✓ Full {step.name.lower()} saved to: plans/{step_key}.md[/green]")
+            console.print(f"✅ Full {step.name.lower()} saved to: plans/{step_key}.md")
         else:
             console.print(f"✓ {step.name.lower()} generated (file not yet saved)")
                 
@@ -69,7 +69,7 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         if choices is None:
             # Map step keys to actual filenames
             edit_filename_map = {
-                "advisor": "gtm_plan.md"
+                "advisor": "strategy.md"
             }
             edit_filename = edit_filename_map.get(step_key, f"{step_key}.md")
             
@@ -77,14 +77,14 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
                 choices = [
                     "Complete generation",
                     f"Edit {edit_filename}",
-                    "Abort"
+                    "Exit"
                 ]
             else:
                 next_step_name = step_manager.get_next_step_name(step_key)
                 choices = [
-                    f"Next: {next_step_name}",
+                    f"Next Step: {next_step_name}",
                     f"Edit {edit_filename}",
-                    "Abort"
+                    "Exit"
                 ]
         
         choice = show_menu_with_separator(
@@ -93,7 +93,7 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         )
         
         # Handle user choice
-        if choice == "Abort":
+        if choice == "Exit":
             raise KeyboardInterrupt()
         elif "Edit" in choice:
             edit_step_content(domain, step_key, step.name)
@@ -175,7 +175,7 @@ def show_guided_email_preview(domain: str) -> None:
         total_chars = len(primary_subject) + len(full_email_body) + 50  # Add some for template parts
         preview_chars = len(primary_subject) + len(preview_body) + 50
         console.print()
-        console.print(f"[dim][Previewing {preview_chars:,} of {total_chars:,} characters][/dim]")
+        console.print(f"[#0066CC][Previewing {preview_chars:,} of {total_chars:,} characters][/#0066CC]")
         
         console.print()
         
@@ -196,12 +196,12 @@ def show_guided_email_preview(domain: str) -> None:
             choices=[
                 "Next: Create GTM plan",
                 "Edit email.md",
-                "Abort"
+                "Exit"
             ],
             add_separator=False
         )
         
-        if choice == "Abort":
+        if choice == "Exit":
             raise KeyboardInterrupt()
         elif choice == "Edit email.md":
             edit_step_content(domain, "email", step.name)

@@ -37,7 +37,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
+        console.print("→ Create one with: [bold #0066CC]blossomer init[/bold #0066CC]")
         return
     
     if asset == "all":
@@ -46,7 +46,7 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
         show_single_asset(normalized_domain, asset, json_output)
     else:
         console.print(f"[red]Unknown asset: {asset}[/red]")
-        console.print("Available assets: [bold #01A0E4]all, overview, account, persona, email, plan[/bold #01A0E4]")
+        console.print("Available assets: [bold #0066CC]all, overview, account, persona, email, plan[/bold #0066CC]")
 
 
 def show_all_assets(domain: str, json_output: bool = False) -> None:
@@ -61,7 +61,7 @@ def show_all_assets(domain: str, json_output: bool = False) -> None:
     
     console.print()
     console.print(Panel.fit(
-        f"[bold blue]GTM Project: {domain}[/bold blue]\n\n"
+        f"[bold #0066CC]GTM Project: {domain}[/bold #0066CC]\n\n"
         f"Progress: {status['progress_percentage']:.0f}% complete\n"
         f"Available steps: {', '.join(status['available_steps'])}\n"
         f"Last updated: {status.get('updated_at', 'Unknown')}",
@@ -98,9 +98,9 @@ def show_all_assets(domain: str, json_output: bool = False) -> None:
     # Next steps
     console.print()
     console.print("[bold]Commands:[/bold]")
-    console.print(f"  • View details: [bold #01A0E4]blossomer show <asset>[/bold #01A0E4]")
-    console.print(f"  • Edit content: [bold #01A0E4]blossomer edit <asset>[/bold #01A0E4]")
-    console.print(f"  • Export report: [bold #01A0E4]blossomer export[/bold #01A0E4]")
+    console.print(f"  • View details: [bold #0066CC]blossomer show <asset>[/bold #0066CC]")
+    console.print(f"  • Edit content: [bold #0066CC]blossomer edit <asset>[/bold #0066CC]")
+    console.print(f"  • Export report: [bold #0066CC]blossomer export[/bold #0066CC]")
 
 
 def show_single_asset(domain: str, step: str, json_output: bool = False) -> None:
@@ -120,7 +120,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
     if json_output:
         if not step_data:
             console.print(f"[red]{step.title()} not found for {domain}[/red]")
-            console.print(f"→ Generate with: [bold #01A0E4]blossomer generate {step}[/bold #01A0E4]")
+            console.print(f"→ Generate with: [bold #0066CC]blossomer generate {step}[/bold #0066CC]")
             return
         # Output raw JSON
         syntax = Syntax(
@@ -143,7 +143,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
     
     title = step_titles.get(step, step.title())
     console.print()
-    console.print(f"[bold blue]{title}[/bold blue]")
+    console.print(f"[bold #0066CC]{title}[/bold #0066CC]")
     console.print()
     
     # Check if data is stale
@@ -337,11 +337,28 @@ def show_email_campaign(data: dict) -> None:
     """Format email campaign data using markdown formatter"""
     from cli.utils.markdown_formatter import get_formatter
     from rich.markdown import Markdown
+    from rich.style import Style
+    
+    # Create custom Markdown style using brand blue instead of cyan
+    custom_markdown_style = {
+        "markdown.code": Style(color="#0066CC"),
+        "markdown.code_block": Style(color="#0066CC"),
+        "markdown.link": Style(color="#0066CC"),
+        "markdown.link_url": Style(color="#0066CC"),
+        "markdown.strong": Style(color="#0066CC", bold=True),
+        "markdown.emphasis": Style(color="#0066CC", italic=True),
+        "markdown.text": Style(color="white"),
+        "markdown.paragraph": Style(color="white")
+    }
     
     # Use markdown formatter for consistent display
     formatter = get_formatter('email')
     preview_markdown = formatter.format(data, preview=True, max_chars=800)
+    
+    # Apply custom theme to override cyan colors
+    console.push_theme(custom_markdown_style)
     console.print(Markdown(preview_markdown))
+    console.pop_theme()
 
 
 def show_gtm_plan(data: dict) -> None:
@@ -368,7 +385,7 @@ def show_markdown_file(domain: str, actual_step: str, original_step: str) -> Non
         "account": "account.md", 
         "persona": "persona.md",
         "email": "email.md",
-        "advisor": "gtm_plan.md"  # advisor step maps to gtm_plan.md
+        "advisor": "strategy.md"  # advisor step maps to strategy.md
     }
     
     filename = step_to_filename.get(actual_step, f"{actual_step}.md")
@@ -376,7 +393,7 @@ def show_markdown_file(domain: str, actual_step: str, original_step: str) -> Non
     
     if not markdown_path.exists():
         console.print(f"[red]{original_step.title()} markdown file not found[/red]")
-        console.print(f"→ Generate with: [bold #01A0E4]blossomer generate {original_step} --domain {domain}[/bold #01A0E4]")
+        console.print(f"→ Generate with: [bold #0066CC]blossomer generate {original_step} --domain {domain}[/bold #0066CC]")
         return
     
     try:
@@ -443,14 +460,14 @@ def auto_detect_current_project() -> Optional[str]:
     # Method 2: Check if gtm_projects exists and has projects
     if not gtm_projects_path.exists():
         console.print("[red]No GTM projects found.[/red]")
-        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
+        console.print("→ Create one with: [bold #0066CC]blossomer init[/bold #0066CC]")
         return None
     
     # Method 3: Check for single project (auto-detect)
     projects = gtm_service.storage.list_projects()
     if not projects:
         console.print("[red]No GTM projects found.[/red]")
-        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
+        console.print("→ Create one with: [bold #0066CC]blossomer init[/bold #0066CC]")
         return None
     elif len(projects) == 1:
         domain = projects[0]["domain"]
@@ -483,5 +500,5 @@ def auto_detect_current_project() -> Optional[str]:
     for project in projects[:10]:  # Show up to 10 projects
         console.print(f"  • {project['domain']}")
     console.print()
-    console.print("→ Use: [bold #01A0E4]blossomer show plan --domain <domain>[/bold #01A0E4]")
+    console.print("→ Use: [bold #0066CC]blossomer show plan --domain <domain>[/bold #0066CC]")
     return None

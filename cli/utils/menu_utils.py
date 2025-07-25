@@ -7,13 +7,14 @@ import questionary
 from questionary import Style
 import sys
 
-# Import consistent styling - brand blue theme
+# Import consistent styling - brand blue theme with bold black selection
 MENU_STYLE = Style([
-    ('question', 'bold #01A0E4'),
-    ('pointer', 'bold #01A0E4'),
-    ('highlighted', 'bold #01A0E4'),
-    ('selected', 'bold #01A0E4'),
-    ('answer', 'bold #01A0E4')
+    ('question', 'bold #0066CC'),
+    ('pointer', 'bold #0066CC'),
+    ('highlighted', 'bold black'),     # Currently focused item - bold black
+    ('selected', 'bold black'),        # Selected item - bold black
+    ('answer', 'bold #0066CC'),
+    ('instruction', '#0066CC'),        # Instruction text
 ])
 
 def numbered_menu_with_keys(question: str, choices: List[str]) -> Optional[str]:
@@ -27,7 +28,7 @@ def numbered_menu_with_keys(question: str, choices: List[str]) -> Optional[str]:
     console = Console()
     
     # Display the question and choices
-    console.print(f"[bold #01A0E4]? {question}[/bold #01A0E4]")
+    console.print(f"[bold #0066CC]? {question}[/bold #0066CC]")
     for i, choice in enumerate(choices, 1):
         console.print(f"  [dim]{i}.[/dim] {choice}")
     console.print()
@@ -83,8 +84,7 @@ def numbered_menu(question: str, choices: List[str], style: Optional[Style] = No
         question,
         choices=choice_objects,
         style=style or MENU_STYLE,
-        use_shortcuts=True,
-        instruction="(Use arrow keys or shortcuts + Enter)"
+        use_shortcuts=True
     ).ask()
     
     return result
