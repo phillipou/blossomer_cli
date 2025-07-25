@@ -29,24 +29,24 @@ from cli.utils.step_config import step_manager
 from cli.utils.panel_utils import create_step_panel_by_key, create_welcome_panel, create_status_panel, create_completion_panel
 from cli.utils.preview_utils import show_step_preview, show_guided_email_preview
 from cli.utils.loading_animation import LoadingAnimator
-from rich.markdown import Markdown
 
 console = Console()
 
-# Questionary styling for better UX - using brand blue theme
+# Questionary styling for better UX - using brand blue theme with bold black selection
 MENU_STYLE = questionary.Style([
-    ('question', 'bold #01A0E4'),           # Question text - brand blue
-    ('pointer', 'bold #01A0E4'),            # Arrow pointer - brand blue
-    ('highlighted', 'bold #01A0E4'),        # Currently selected item - brand blue
-    ('selected', 'bold #01A0E4'),           # After selection - brand blue
-    ('answer', 'bold #01A0E4')              # Final answer display - brand blue
+    ('question', 'bold #0066CC'),           # Question text - brand blue
+    ('pointer', 'bold #0066CC'),            # Arrow pointer - brand blue
+    ('highlighted', 'bold black'),          # Currently focused item - bold black
+    ('selected', 'bold black'),             # Selected item - bold black
+    ('answer', 'bold #0066CC'),             # Final answer display - brand blue
+    ('instruction', '#0066CC'),             # Instruction text
 ])
 
-# Text input styling for cyan user inputs
+# Text input styling for brand blue user inputs
 TEXT_INPUT_STYLE = questionary.Style([
-    ('question', 'bold #01A0E4'),           # Question text - brand blue
-    ('text', '#00BFFF'),                    # Text input - cyan
-    ('answer', '#00BFFF')                   # Answer display - cyan
+    ('question', 'bold #0066CC'),        # Question text - brand blue
+    ('text', 'bold black'),              # Text input - bold black for visibility
+    ('answer', 'bold black')             # Answer display - bold black
 ])
 
 def show_menu_with_separator(question: str, choices: list, add_separator: bool = True):
@@ -65,24 +65,34 @@ def show_menu_with_separator(question: str, choices: list, add_separator: bool =
 def capture_hypotheses() -> dict:
     """Capture optional user hypotheses for target account and persona"""
     console.print()
-    console.print("🎯 [bold #01A0E4]Optional Context (press Enter to skip)[/bold #01A0E4]")
+    console.print("🧠 [bold #0066CC]Gathering Context (press Enter to skip)[/bold #0066CC]")
+    console.print("Let's learn more about your business and your users. Provide anything you think will be relevant developing your go-to-market strategy.")
+    console.print()
     
     account_hypothesis = questionary.text(
-        "💡 Target Account Hypothesis (optional - helps focus our analysis):",
-        placeholder="e.g., Mid-market SaaS companies with 50-500 employees experiencing rapid growth",
+        "💼 What types of businesses buy your product/service? (press Enter to skip):",
+        placeholder="e.g., Mid-market enterprises with complex procurement processes",
         style=TEXT_INPUT_STYLE
     ).ask()
+    console.print()
     
     # Handle CTRL+C (questionary returns None when interrupted)
     if account_hypothesis is None:
         raise KeyboardInterrupt()
     
     persona_hypothesis = questionary.text(
-        "👤 Target Persona Hypothesis (optional - helps focus our analysis):",
-        placeholder="e.g., CTOs and VP Engineering at fast-growing tech companies",
+        "👤 Who would most likely champion your product? (press Enter to skip):",
+        placeholder="e.g., CTOs and VP Engineering with large teams",
         style=TEXT_INPUT_STYLE
     ).ask()
-    
+    console.print()
+
+    extra_context = questionary.text(
+        "💡 Is there anything else you'd like to add? (press Enter to skip):",
+        placeholder="e.g. current plans, product roadmap, previous challenges, etc.",
+        style=TEXT_INPUT_STYLE
+    ).ask()
+    console.print() 
     # Handle CTRL+C (questionary returns None when interrupted)
     if persona_hypothesis is None:
         raise KeyboardInterrupt()
@@ -93,7 +103,9 @@ def capture_hypotheses() -> dict:
         context["account_hypothesis"] = account_hypothesis.strip()
     if persona_hypothesis and persona_hypothesis.strip():
         context["persona_hypothesis"] = persona_hypothesis.strip()
-    
+    if extra_context and extra_context.strip():
+        context["extra_context"] = extra_context.strip()
+
     if context:
         console.print()
         console.print("✓ Context captured.")
@@ -105,31 +117,31 @@ def create_init_welcome_panel() -> Panel:
     """Create a rich welcome panel for the init command"""
     welcome_text = Text()
     welcome_text.append("🚀 Welcome to ", style="bold")
-    welcome_text.append("Blossomer CLI", style="bold #01A0E4")
+    welcome_text.append("Blossomer CLI", style="bold #0066CC")
     welcome_text.append("!\n\n", style="bold")
     welcome_text.append("Generate a complete go-to-market plan using our internal AI workflow.\n\n", style="")
     welcome_text.append("What you'll get:\n", style="bold")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("Company Overview", style="bold #01A0E4")
-    welcome_text.append(" - Deep business analysis\n", style="")
+    welcome_text.append("Company Overview", style="bold #0066CC")
+    welcome_text.append(" - An overview of your business and product\n", style="")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("Target Account Profile", style="bold #01A0E4")
-    welcome_text.append(" - Ideal customer identification\n", style="")
+    welcome_text.append("Target Account Profile", style="bold #0066CC")
+    welcome_text.append(" - A detailed hypothesis of businesses you should sell to\n", style="") 
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("Buyer Persona", style="bold #01A0E4")
-    welcome_text.append(" - Decision-maker profiles\n", style="")
+    welcome_text.append("Buyer Persona", style="bold #0066CC")
+    welcome_text.append(" - A detaield hypothesis of persona profiles who would champion your product\n", style="")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("Email Campaign", style="bold #01A0E4")
-    welcome_text.append(" - Personalized outreach\n", style="")
+    welcome_text.append("Email Campaign", style="bold #0066CC")
+    welcome_text.append(" - A multi-step email campaign built using our best practices\n", style="")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("GTM Strategic Plan", style="bold #01A0E4")
-    welcome_text.append(" - Execution framework\n\n", style="")
-    welcome_text.append("Takes ~60 seconds. Let's get started!", style="dim italic")
+    welcome_text.append("GTM Strategic Plan", style="bold #0066CC")
+    welcome_text.append(" - A complete plan to execute your go-to-market strategy\n\n", style="")
+    welcome_text.append("Let's get started!", style="dim italic")
     
     return Panel(
         welcome_text,
-        title="[bold #01A0E4]Blossomer Command Line Tool[/bold #01A0E4]",
-        border_style="#01A0E4",
+        title="[bold #0066CC]Blossomer Command Line Tool[/bold #0066CC]",
+        border_style="#0066CC",
         padding=(1, 2),
         expand=False
     )
@@ -166,23 +178,23 @@ def create_api_key_setup_panel(missing_keys: list[str]) -> Panel:
             setup_text.append("FIRECRAWL_API_KEY", style="bold yellow")
             setup_text.append(" - For website analysis\n", style="")
             setup_text.append("  Get it from: ", style="dim")
-            setup_text.append("https://firecrawl.dev\n\n", style="cyan underline")
+            setup_text.append("https://firecrawl.dev\n\n", style="#0066CC underline")
         elif key == "FORGE_API_KEY":
             setup_text.append("• ", style="dim")
             setup_text.append("FORGE_API_KEY", style="bold yellow")
             setup_text.append(" - For AI processing\n", style="")
             setup_text.append("  Get it from: ", style="dim")
-            setup_text.append("https://tensorblock.co\n\n", style="cyan underline")
+            setup_text.append("https://tensorblock.co\n\n", style="#0066CC underline")
     
     setup_text.append("Set them up:\n", style="bold")
     setup_text.append("1. Add to your shell profile (~/.bashrc or ~/.zshrc):\n", style="")
     for key in missing_keys:
-        setup_text.append(f"   export {key}=your_key_here\n", style="cyan")
+        setup_text.append(f"   export {key}=your_key_here\n", style="#0066CC")
     setup_text.append("\n2. Then reload your shell:\n", style="")
-    setup_text.append("   source ~/.bashrc  # or ~/.zshrc\n", style="cyan")
+    setup_text.append("   source ~/.bashrc  # or ~/.zshrc\n", style="#0066CC")
     setup_text.append("\n3. Or set temporarily for this session:\n", style="")
     for key in missing_keys:
-        setup_text.append(f"   export {key}=your_key_here\n", style="cyan")
+        setup_text.append(f"   export {key}=your_key_here\n", style="#0066CC")
     
     return Panel(
         setup_text,
@@ -252,7 +264,7 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
     
     # Welcome message for new project
     console.print()
-    console.print(create_welcome_panel(normalized_domain))
+    console.print(create_welcome_panel(domain))
     
     # Capture hypotheses (if not in YOLO mode and context not provided)
     hypothesis_context = None
@@ -262,7 +274,7 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
         hypothesis_context = {"general_context": context}
     
     if not yolo:
-        ready = typer.confirm("🚀 Ready to start? (This will analyze your website and generate 4 GTM assets in ~60 seconds)", default=True)
+        ready = typer.confirm("🚀 Ready to start? We're going to analyze your website to learn more about you", default=True)
         ensure_breathing_room(console)
         # Handle CTRL+C (typer.confirm returns None when interrupted)
         if ready is None:
@@ -364,22 +376,45 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
         console.print()
         console.print(create_completion_panel())
         
-        # Next steps message - only show if plan step succeeded
-        if plan_success:
-            console.print()
-            console.print("[bold #01A0E4]Next Steps[/bold #01A0E4]")
-            console.print("This is of course just the tip of the iceberg! There's so much more to dive into including:")
-            console.print("• How to incorporate other channels (LinkedIn, inbound leads, paid advertising)?")
-            console.print("• How to analyze data and iterate on these campaigns?")
-            console.print("• How to integrate this into your CRM and workflows?")
-            console.print()
-            console.print("If you need any additional help or want us to work with you hands-on, reach out to us at")
-            console.print("[cyan]blossomer.io[/cyan] or contact our founder Phil ([cyan]phil@blossomer.io[/cyan]).")
+        # Next steps message removed - now shown after guided email builder completion
         
-        # Interactive completion - wait for user to press Enter
+        # Interactive completion menu
         console.print()
         try:
-            input("Press Enter to finish and return to your terminal...")
+            final_choice = show_menu_with_separator(
+                "What would you like to do?",
+                choices=[
+                    "View plan",
+                    "Edit plan", 
+                    "Finish"
+                ],
+                add_separator=False
+            )
+            
+            if final_choice == "View plan":
+                # Open the plan file in the editor
+                plan_path = gtm_service.storage.get_file_path(normalized_domain, "plan")
+                if plan_path.exists():
+                    open_file_in_editor(str(plan_path))
+                    console.print()
+                    console.print("[green]✓[/green] Opened plan in your editor")
+                    console.print()
+                    # Show menu again
+                    input("Press Enter to finish and return to your terminal...")
+                else:
+                    console.print("[yellow]Plan file not found[/yellow]")
+                    input("Press Enter to finish and return to your terminal...")
+                    
+            elif final_choice == "Edit plan":
+                # Edit the plan content
+                from cli.utils.preview_utils import edit_step_content
+                edit_step_content(normalized_domain, "plan", "GTM Strategic Plan")
+                console.print()
+                # Show menu again
+                input("Press Enter to finish and return to your terminal...")
+                
+            # If "Finish" is selected, just continue to exit
+            
         except KeyboardInterrupt:
             # Handle Ctrl+C gracefully
             console.print(f"\n{Colors.format_meta('Goodbye! 👋')}")
@@ -389,13 +424,13 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_warning('Operation Stopped. Progress saved 💾')}")
-        console.print(f"→ Resume with: [bold #01A0E4]blossomer init {normalized_domain}[/bold #01A0E4]")
-        console.print(f"→ Or view progress: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
+        console.print(f"→ Resume with: [bold #0066CC]blossomer init {domain}[/bold #0066CC]")
+        console.print(f"→ Or view progress: [bold #0066CC]blossomer show all[/bold #0066CC]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
         console.print("💡 Common issues: network connectivity, invalid domain, or API limits")
-        console.print(f"→ Try again: [bold #01A0E4]blossomer init {normalized_domain}[/bold #01A0E4]")
-        console.print(f"→ Check status: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
+        console.print(f"→ Try again: [bold #0066CC]blossomer init {domain}[/bold #0066CC]")
+        console.print(f"→ Check status: [bold #0066CC]blossomer show all[/bold #0066CC]")
         raise typer.Exit(1)
 
 
@@ -418,7 +453,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         console.print(Colors.format_section("YOLO mode: Updating all steps with fresh data", "⚡"))
         start_from_step = "overview"
     else:
-        console.print(f"Project '{domain}' already exists.")
+        console.print(f"Project already exists.")
         
         # Offer step selection menu
         choices = [
@@ -432,7 +467,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         ]
         
         choice = show_menu_with_separator(
-            "🚀 Choose your starting point (we'll run all subsequent steps automatically):",
+            "🚀 Choose your starting point:",
             choices=choices
         )
         
@@ -512,10 +547,14 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         # Step 5: GTM Strategic Plan
         plan_success = True
         if "plan" in steps_to_run:
+            # Skip the prompt if we're only running the plan step (user selected "Jump to Step 5")
+            # or if email step was just completed
+            coming_from_email = "email" in steps_to_run or steps_to_run == ["plan"]
             plan_success = run_plan_generation_step(
                 domain=domain,
                 yolo=yolo,
-                step_counter=5  # Always show as step 5/5
+                step_counter=5,  # Always show as step 5/5
+                coming_from_email=coming_from_email
             )
             step_counter += 1
         
@@ -523,22 +562,45 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         console.print()
         console.print(create_completion_panel())
         
-        # Next steps message - only show if plan step succeeded
-        if plan_success:
-            console.print()
-            console.print("[bold #01A0E4]Next Steps[/bold #01A0E4]")
-            console.print("This is of course just the tip of the iceberg! There's so much more to dive into including:")
-            console.print("• How to incorporate other channels (LinkedIn, inbound leads, paid advertising)?")
-            console.print("• How to analyze data and iterate on these campaigns?")
-            console.print("• How to integrate this into your CRM and workflows?")
-            console.print()
-            console.print("If you need any additional help or want us to work with you hands-on, reach out to us at")
-            console.print("[cyan]blossomer.io[/cyan] or contact our founder Phil ([cyan]phil@blossomer.io[/cyan]).")
+        # Next steps message removed - now shown after guided email builder completion
         
-        # Interactive completion - wait for user to press Enter
+        # Interactive completion menu
         console.print()
         try:
-            input("Press Enter to finish and return to your terminal...")
+            final_choice = show_menu_with_separator(
+                "What would you like to do?",
+                choices=[
+                    "View plan",
+                    "Edit plan", 
+                    "Finish"
+                ],
+                add_separator=False
+            )
+            
+            if final_choice == "View plan":
+                # Open the plan file in the editor
+                plan_path = gtm_service.storage.get_file_path(domain, "plan")
+                if plan_path.exists():
+                    open_file_in_editor(str(plan_path))
+                    console.print()
+                    console.print("[green]✓[/green] Opened plan in your editor")
+                    console.print()
+                    # Show menu again
+                    input("Press Enter to finish and return to your terminal...")
+                else:
+                    console.print("[yellow]Plan file not found[/yellow]")
+                    input("Press Enter to finish and return to your terminal...")
+                    
+            elif final_choice == "Edit plan":
+                # Edit the plan content
+                from cli.utils.preview_utils import edit_step_content
+                edit_step_content(domain, "plan", "GTM Strategic Plan")
+                console.print()
+                # Show menu again
+                input("Press Enter to finish and return to your terminal...")
+                
+            # If "Finish" is selected, just continue to exit
+            
         except KeyboardInterrupt:
             # Handle Ctrl+C gracefully
             console.print(f"\n{Colors.format_meta('Goodbye! 👋')}")
@@ -548,13 +610,13 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         
     except KeyboardInterrupt:
         console.print(f"\n{Colors.format_meta('Operation Stopped. Progress saved 💾')}")
-        console.print(f"→ Resume with: [bold #01A0E4]blossomer init {domain}[/bold #01A0E4]")
-        console.print(f"→ Or view progress: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
+        console.print(f"→ Resume with: [bold #0066CC]blossomer init {domain}[/bold #0066CC]")
+        console.print(f"→ Or view progress: [bold #0066CC]blossomer show all[/bold #0066CC]")
     except Exception as e:
         console.print(f"\n[red]Error during generation:[/red] {e}")
         console.print("💡 Common issues: network connectivity, invalid domain, or API limits")
-        console.print(f"→ Try again: [bold #01A0E4]blossomer init {domain}[/bold #01A0E4]")
-        console.print(f"→ Check status: [bold #01A0E4]blossomer show all[/bold #01A0E4]")
+        console.print(f"→ Try again: [bold #0066CC]blossomer init {domain}[/bold #0066CC]")
+        console.print(f"→ Check status: [bold #0066CC]blossomer show all[/bold #0066CC]")
 
 
 def run_generation_step(
@@ -585,10 +647,10 @@ def run_generation_step(
     else:
         # Fallback for unknown steps
         console.print(Panel(
-            f"[bold #01A0E4][{step_number}/{step_manager.get_total_steps()}] {step_name}[/bold #01A0E4]\n"
+            f"[bold #0066CC][{step_number}/{step_manager.get_total_steps()}] {step_name}[/bold #0066CC]\n"
             f"\n"
             f"{explanation}",
-            border_style="#01A0E4",
+            border_style="#0066CC",
             expand=False,
             padding=(1, 2)
         ))
@@ -650,18 +712,62 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
     
     console.print()
     
+    # Initialize guided preferences (will be set if guided mode is used)
+    guided_preferences = None
+    
     if is_guided:
         # Load persona and account data for guided builder
         persona_data = gtm_service.storage.load_step_data(domain, "persona")
         account_data = gtm_service.storage.load_step_data(domain, "account")
         
-        # Run the guided email builder
-        builder = GuidedEmailBuilder(persona_data, account_data)
-        guided_preferences = builder.run_guided_flow()
+        # Check for missing dependencies and offer to generate them
+        missing_steps = []
+        if not account_data:
+            missing_steps.append(("account", "Target Account Profile", 2))
+        if not persona_data:
+            missing_steps.append(("persona", "Buyer Persona", 3))
+            
+        if missing_steps:
+            console.print()
+            console.print(f"[yellow]⚠️  Guided email builder requires some previous steps to be completed first:[/yellow]")
+            for step_key, step_name, step_num in missing_steps:
+                console.print(f"   • Step {step_num}: {step_name}")
+            console.print()
+            
+            import questionary
+            choice = questionary.select(
+                "What would you like to do?",
+                choices=[
+                    f"Generate missing steps first (recommended)",
+                    f"Continue with automatic mode instead", 
+                    f"Cancel and choose different starting point"
+                ]
+            ).ask()
+            
+            if choice == f"Generate missing steps first (recommended)":
+                # Start from the earliest missing step
+                earliest_step = missing_steps[0][0]  # Get step key
+                console.print(f"→ Starting from {earliest_step} step to generate missing dependencies...")
+                console.print()
+                start_from_step = earliest_step
+                is_guided = False  # We'll come back to guided mode after dependencies are generated
+            elif choice == f"Continue with automatic mode instead":
+                console.print("→ Switching to automatic email generation...")
+                console.print()
+                is_guided = False
+            else:  # Cancel
+                console.print("Operation cancelled.")
+                console.print(f"→ Try: {Colors.format_command('blossomer init ' + domain)}")
+                return
         
-        # Clear screen and show all completed steps before generation
-        clear_console()
-        builder._show_previous_steps()
+        # If we have all dependencies, run the guided email builder
+        if is_guided:
+            builder = GuidedEmailBuilder(persona_data, account_data)
+            guided_preferences = builder.run_guided_flow()
+            
+            # Clear screen and show all completed steps before generation
+            clear_console()
+            builder._show_previous_steps()
         
         console.print()
         console.print("Generating your personalized email campaign... ", end="")
@@ -718,22 +824,27 @@ def run_email_generation_step(domain: str, yolo: bool = False) -> None:
 # edit_step_content moved to preview_utils.py
 
 
-def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int = 5) -> bool:
+def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int = 5, coming_from_email: bool = False) -> bool:
     """Run the GTM Strategic Plan generation step
+    
+    Args:
+        domain: The domain being analyzed
+        yolo: Whether in YOLO mode (auto-generate)
+        step_counter: The step number for display
+        coming_from_email: If True, skip the prompt and generate directly
     
     Returns:
         bool: True if generation succeeded, False if it failed
     """
     
-    # Clear screen before showing step panel for clean UX (unless in YOLO mode)
-    if not yolo:
-        clear_console()
+    # Clear screen before showing step panel for clean UX
+    clear_console()
     
     console.print()
     console.print(create_step_panel_by_key("plan"))
     
-    # In YOLO mode, skip the prompt and generate automatically
-    if not yolo:
+    # In YOLO mode or when coming from email step, skip the prompt and generate automatically
+    if not yolo and not coming_from_email:
         generate_plan = show_menu_with_separator(
             "🎯 Would you like to generate a comprehensive GTM strategic plan?",
             choices=[
@@ -745,7 +856,7 @@ def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int 
         if generate_plan == "Skip for now":
             console.print()
             console.print("[yellow]Skipping strategic plan generation.[/yellow]")
-            console.print("→ You can generate it later with: [bold #01A0E4]blossomer advisor {domain}[/bold #01A0E4]")
+            console.print("→ You can generate it later with: [bold #0066CC]blossomer advisor {domain}[/bold #0066CC]")
             return False  # Return False when skipped
     
     console.print()
@@ -755,14 +866,7 @@ def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int 
         from cli.services.llm_service import LLMClient
         from app.services.gtm_advisor_service import GTMAdvisorService
         
-        # Create step panel
-        step_name = "GTM Strategic Plan"
-        console.print()
-        console.print(f"[bold #01A0E4][{step_counter}/5] {step_name}[/bold #01A0E4]")
-        console.print("Creating comprehensive go-to-market execution plan with scoring frameworks and tool recommendations")
-        console.print()
-        
-        # Show animated loading for strategic plan generation
+        # Show animated loading for strategic plan generation (panel already shown above)
         animator = LoadingAnimator(console)
         animator.start_animation("plan")
         
@@ -786,7 +890,7 @@ def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int 
             console.print()
             console.print("─" * 60)
             console.print()
-            console.print("[bold #01A0E4]Strategic Plan Generated![/bold #01A0E4]")
+            console.print("[bold #0066CC]Strategic Plan Generated![/bold #0066CC]")
             console.print()
             console.print("Your comprehensive GTM execution plan includes:")
             console.print("  • Lead scoring frameworks (account + contact)")
@@ -807,15 +911,14 @@ def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int 
                 console.print("─" * 40)
                 console.print()
             
-            console.print("→ View your full plan in plans/gtm_plan.md")
+            console.print("→ View your full plan in plans/strategy.md")
         
         console.print()
-        console.print(f"[green]✓[/green] {step_name} completed!")
         return True  # Return True on success
         
     except Exception as e:
         console.print(f"[red]Failed to generate strategic plan:[/red] {e}")
-        console.print("→ You can try again later with: [bold #01A0E4]blossomer advisor {domain}[/bold #01A0E4]")
+        console.print("→ You can try again later with: [bold #0066CC]blossomer advisor {domain}[/bold #0066CC]")
         return False  # Return False on failure
 
 

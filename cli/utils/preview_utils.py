@@ -5,6 +5,8 @@ Generic preview functions to eliminate repetitive code
 
 from typing import Optional, List
 from rich.console import Console
+from rich.markdown import Markdown
+from rich.style import Style
 import typer
 import questionary
 
@@ -15,6 +17,24 @@ from cli.utils.markdown_formatter import get_formatter
 from cli.services.gtm_generation_service import gtm_service
 
 console = Console()
+
+# Custom Markdown style to prevent cyan numbers/URLs - use black text for all markdown elements
+CUSTOM_MARKDOWN_STYLE = {
+    "markdown.code": Style(color="white"),
+    "markdown.code_block": Style(color="white"),
+    "markdown.link": Style(color="white"),
+    "markdown.link_url": Style(color="white"),
+    "markdown.strong": Style(color="white", bold=True),
+    "markdown.emphasis": Style(color="white", italic=True),
+    "markdown.text": Style(color="white"),
+    "markdown.paragraph": Style(color="white"),
+    "markdown.h1": Style(color="white", bold=True),
+    "markdown.h2": Style(color="white", bold=True),
+    "markdown.h3": Style(color="white", bold=True),
+    "markdown.h4": Style(color="white", bold=True),
+    "markdown.h5": Style(color="white", bold=True),
+    "markdown.h6": Style(color="white", bold=True),
+}
 
 def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] = None) -> None:
     """
@@ -48,7 +68,7 @@ def show_step_preview(domain: str, step_key: str, choices: Optional[List[str]] =
         console.print(create_preview_header(step_key))
         
         # Display preview content
-        console.print(preview_markdown)
+        console.print(Markdown(preview_markdown))
         
         # Add character count indicator
         full_content = formatter.format(step_data, preview=False)
