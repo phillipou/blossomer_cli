@@ -14,7 +14,7 @@ def create_step_panel(step: StepConfig, step_number: int, total_steps: int) -> P
         f"{step.get_step_panel_title(step_number, total_steps)}\n"
         f"\n"
         f"{step.explanation}",
-        border_style="#01A0E4",
+        border_style="#0066CC",
         expand=False,
         padding=(1, 2)
     )
@@ -33,17 +33,17 @@ def create_step_panel_by_key(step_key: str) -> Panel:
 def create_welcome_panel(domain: str) -> Panel:
     """Create the welcome panel for new projects"""
     step_names = [step.name for step in step_manager.steps]
-    steps_text = " → ".join([f"[green]{name}[/green]" for name in step_names])
+    steps_text = " → ".join([f"{name}" for name in step_names])
     
     content = (
-        f"🚀 [bold #01A0E4]Starting GTM Generation for {domain}[/bold #01A0E4]\n"
+        f"🚀 [bold #0066CC]Starting GTM Plan for {domain}[/bold #0066CC]\n"
         f"\n"
-        f"[bold]Creating:[/bold] {steps_text}"
+        f"[bold]Steps:[/bold] {steps_text}"
     )
     
     return Panel(
         content,
-        border_style="#01A0E4",
+        border_style="#0066CC",
         expand=False,
         padding=(1, 2)
     )
@@ -53,10 +53,10 @@ def create_status_panel(domain: str, status: dict) -> Panel:
     from cli.utils.colors import Colors
     
     content = (
-        f"[bold #01A0E4]Project: {domain}[/bold #01A0E4]\n"
+        f"[bold #0066CC]Project: {domain}[/bold #0066CC]\n"
         f"\n"
         f"[bold]Status:[/bold] {Colors.format_success(', '.join(status['available_steps']))} | "
-        f"[bold #01A0E4]{status['progress_percentage']:.0f}%[/bold #01A0E4] complete\n"
+        f"[bold #0066CC]{status['progress_percentage']:.0f}%[/bold #0066CC] complete\n"
         f"[#A5A2A2]Last updated: {status.get('last_updated', 'Unknown')}[/#A5A2A2]"
     )
     
@@ -65,7 +65,7 @@ def create_status_panel(domain: str, status: dict) -> Panel:
     
     return Panel(
         content,
-        border_style="#01A0E4",
+        border_style="#0066CC",
         expand=False,
         padding=(1, 2)
     )
@@ -75,12 +75,7 @@ def create_completion_panel() -> Panel:
     from cli.utils.colors import Colors
     
     content = (
-        "[bold green]✅ GTM Generation Complete![/bold green]\n"
-        "\n"
-        "[bold]Your go-to-market package is ready:[/bold]\n"
-        f"• View results: {Colors.format_command('blossomer show plan')}\n"
-        f"• Edit content: {Colors.format_command('blossomer edit [overview|account|persona|email|plan]')}\n"
-        f"• Press Enter to finish and exit"
+        "✅ GTM Plan Completed!"
     )
     
     return Panel(

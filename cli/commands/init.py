@@ -17,7 +17,8 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.text import Text
 
-from cli.services.gtm_generation_service import gtm_service
+# Delay imports that might trigger client initialization
+# from cli.services.gtm_generation_service import gtm_service
 from cli.utils.domain import normalize_domain
 from cli.utils.editor import detect_editor, open_file_in_editor
 from cli.utils.console import enter_immersive_mode, exit_immersive_mode, ensure_breathing_room, clear_console
@@ -169,40 +170,130 @@ def check_api_keys() -> tuple[bool, list[str]]:
 def create_api_key_setup_panel(missing_keys: list[str]) -> Panel:
     """Create a panel showing how to set up missing API keys"""
     setup_text = Text()
-    setup_text.append("🔑 API Keys Required\n\n", style="bold red")
-    setup_text.append("To use Blossomer CLI, you'll need the following API keys:\n\n", style="")
+    setup_text.append("👋 Welcome to Blossomer GTM CLI!\n\n", style="bold cyan")
+    setup_text.append("It looks like you're missing some API keys. Let's get you set up!\n\n", style="")
+    setup_text.append("Required API Keys:\n\n", style="bold")
     
     for key in missing_keys:
         if key == "FIRECRAWL_API_KEY":
-            setup_text.append("• ", style="dim")
-            setup_text.append("FIRECRAWL_API_KEY", style="bold yellow")
-            setup_text.append(" - For website analysis\n", style="")
-            setup_text.append("  Get it from: ", style="dim")
-            setup_text.append("https://firecrawl.dev\n\n", style="#0066CC underline")
+            setup_text.append("🔥 ", style="")
+            setup_text.append("Firecrawl API Key", style="bold #0066CC")
+            setup_text.append(" - For website scraping\n", style="")
+            setup_text.append("   Get yours at: ", style="dim")
+            setup_text.append("https://firecrawl.dev", style="#0066CC underline")
+            setup_text.append("\n\n")
         elif key == "FORGE_API_KEY":
-            setup_text.append("• ", style="dim")
-            setup_text.append("FORGE_API_KEY", style="bold yellow")
-            setup_text.append(" - For AI processing\n", style="")
-            setup_text.append("  Get it from: ", style="dim")
-            setup_text.append("https://tensorblock.co\n\n", style="#0066CC underline")
-    
-    setup_text.append("Set them up:\n", style="bold")
-    setup_text.append("1. Add to your shell profile (~/.bashrc or ~/.zshrc):\n", style="")
-    for key in missing_keys:
-        setup_text.append(f"   export {key}=your_key_here\n", style="#0066CC")
-    setup_text.append("\n2. Then reload your shell:\n", style="")
-    setup_text.append("   source ~/.bashrc  # or ~/.zshrc\n", style="#0066CC")
-    setup_text.append("\n3. Or set temporarily for this session:\n", style="")
-    for key in missing_keys:
-        setup_text.append(f"   export {key}=your_key_here\n", style="#0066CC")
+            setup_text.append("📦 ", style="")
+            setup_text.append("TensorBlock Forge API Key", style="bold #0066CC")
+            setup_text.append(" - For AI model access (GPT-4, Claude, etc.)\n", style="")
+            setup_text.append("   Get yours at: ", style="dim")
+            setup_text.append("https://tensorblock.co", style="#0066CC underline")
+            setup_text.append("\n\n")
     
     return Panel(
         setup_text,
-        title="[bold red]⚠️  Setup Required[/bold red]",
-        border_style="red",
+        title="[bold #0066CC]First Time Setup[/bold #0066CC]",
+        border_style="#0066CC",
         padding=(1, 2),
         expand=False
     )
+
+
+def setup_api_keys_interactively(missing_keys: list[str]) -> bool:
+    """Interactive API key setup. Returns True if setup completed."""
+    console.print()
+    console.print(create_api_key_setup_panel(missing_keys))
+    
+    # Ask if they want to set up now
+    if not questionary.confirm(
+        "Would you like to set up your API keys now?",
+        default=True,
+        style=questionary.Style([('question', 'bold #0066CC')])
+    ).ask():
+        console.print("\n[yellow]No problem! When you're ready:[/yellow]")
+        console.print("\n  1. Get your API keys from the links above")
+        console.print("  2. Set them as environment variables:")
+        for key in missing_keys:
+            console.print(f"     export {key}='your-key-here'")
+        console.print("\n  3. Run [bold cyan]blossomer init[/bold cyan] again\n")
+        return False
+    
+    # Collect missing keys
+    console.print("\n[bold]Let's set up your keys:[/bold]\n")
+    
+    env_vars = []
+    
+    for key in missing_keys:
+        if key == "FIRECRAWL_API_KEY":
+            api_key = questionary.password(
+                "🔥 Enter your Firecrawl API key:",
+                validate=lambda x: len(x) > 0 or "API key cannot be empty"
+            ).ask()
+        elif key == "FORGE_API_KEY":
+            api_key = questionary.password(
+                "📦 Enter your TensorBlock API key:",
+                validate=lambda x: len(x) > 0 or "API key cannot be empty"
+            ).ask()
+        
+        if not api_key:
+            console.print("[red]Setup cancelled.[/red]")
+            return False
+        
+        # Set for current session
+        os.environ[key] = api_key
+        env_vars.append(f"export {key}='{api_key}'")
+    
+    # Success message
+    console.print("\n[green]✅ API keys configured for this session![/green]\n")
+    
+    # Ask about .env file
+    if questionary.confirm(
+        "Would you like me to create a .env file to save these keys?",
+        default=True,
+        style=questionary.Style([('question', 'bold #0066CC')])
+    ).ask():
+        create_env_file(env_vars)
+        console.print("[green]✅ Created .env file![/green]\n")
+    else:
+        console.print("[bold]To save permanently, add these to your shell config:[/bold]\n")
+        for var in env_vars:
+            console.print(f"  {var}")
+        console.print()
+    
+    console.print("[bold #0066CC]🚀 You're all set! Let's continue...[/bold #0066CC]\n")
+    return True
+
+
+def create_env_file(env_vars: list) -> None:
+    """Create or update .env file with API keys."""
+    env_path = ".env"
+    
+    # Read existing content if file exists
+    existing_content = []
+    if os.path.exists(env_path):
+        with open(env_path, 'r') as f:
+            existing_content = f.readlines()
+    
+    # Update or add new vars
+    updated_content = []
+    keys_to_add = {var.split('=')[0].replace('export ', ''): var for var in env_vars}
+    
+    for line in existing_content:
+        key = line.split('=')[0].strip()
+        if key in keys_to_add:
+            # Update existing key
+            updated_content.append(keys_to_add[key].replace('export ', '') + '\n')
+            del keys_to_add[key]
+        else:
+            updated_content.append(line)
+    
+    # Add remaining new keys
+    for var in keys_to_add.values():
+        updated_content.append(var.replace('export ', '') + '\n')
+    
+    # Write back
+    with open(env_path, 'w') as f:
+        f.writelines(updated_content)
 
 
 def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool = False) -> None:
@@ -212,11 +303,12 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
     keys_present, missing_keys = check_api_keys()
     
     if not keys_present:
-        # Show API key setup instructions
-        console.print()
-        console.print(create_api_key_setup_panel(missing_keys))
-        console.print("[yellow]Please set up the required API keys and try again.[/yellow]")
-        raise typer.Exit(1)
+        # Try interactive setup
+        if not setup_api_keys_interactively(missing_keys):
+            raise typer.Exit(0)
+    
+    # Import gtm_service after API keys are confirmed
+    from cli.services.gtm_generation_service import gtm_service
     
     # Show welcome panel first (unless domain is provided and we're going straight to generation)
     if domain is None and not yolo:
@@ -365,7 +457,7 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
                 explanation="Synthesizing comprehensive go-to-market strategy from your analysis",
                 generate_func=lambda: run_async_generation(run_async_advisor_generation(normalized_domain)),
                 domain=normalized_domain,
-                step_key="plan",
+                step_key="strategy",
                 yolo=yolo
             )
         except Exception:
@@ -393,7 +485,7 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
             
             if final_choice == "View plan":
                 # Open the plan file in the editor
-                plan_path = gtm_service.storage.get_file_path(normalized_domain, "plan")
+                plan_path = gtm_service.storage.get_file_path(normalized_domain, "strategy")
                 if plan_path.exists():
                     open_file_in_editor(str(plan_path))
                     console.print()
@@ -408,7 +500,7 @@ def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool =
             elif final_choice == "Edit plan":
                 # Edit the plan content
                 from cli.utils.preview_utils import edit_step_content
-                edit_step_content(normalized_domain, "plan", "GTM Strategic Plan")
+                edit_step_content(normalized_domain, "strategy", "GTM Strategic Plan")
                 console.print()
                 # Show menu again
                 input("Press Enter to finish and return to your terminal...")
@@ -546,10 +638,10 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
         
         # Step 5: GTM Strategic Plan
         plan_success = True
-        if "plan" in steps_to_run:
+        if "strategy" in steps_to_run:
             # Skip the prompt if we're only running the plan step (user selected "Jump to Step 5")
             # or if email step was just completed
-            coming_from_email = "email" in steps_to_run or steps_to_run == ["plan"]
+            coming_from_email = "email" in steps_to_run or steps_to_run == ["strategy"]
             plan_success = run_plan_generation_step(
                 domain=domain,
                 yolo=yolo,
@@ -579,7 +671,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             
             if final_choice == "View plan":
                 # Open the plan file in the editor
-                plan_path = gtm_service.storage.get_file_path(domain, "plan")
+                plan_path = gtm_service.storage.get_file_path(domain, "strategy")
                 if plan_path.exists():
                     open_file_in_editor(str(plan_path))
                     console.print()
@@ -594,7 +686,7 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
             elif final_choice == "Edit plan":
                 # Edit the plan content
                 from cli.utils.preview_utils import edit_step_content
-                edit_step_content(domain, "plan", "GTM Strategic Plan")
+                edit_step_content(domain, "strategy", "GTM Strategic Plan")
                 console.print()
                 # Show menu again
                 input("Press Enter to finish and return to your terminal...")
@@ -841,7 +933,7 @@ def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int 
     clear_console()
     
     console.print()
-    console.print(create_step_panel_by_key("plan"))
+    console.print(create_step_panel_by_key("strategy"))
     
     # In YOLO mode or when coming from email step, skip the prompt and generate automatically
     if not yolo and not coming_from_email:

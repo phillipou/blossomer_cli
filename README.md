@@ -75,7 +75,7 @@ gtm_projects/
 │   │   ├── account.md        # Target account profile
 │   │   ├── persona.md        # Buyer persona
 │   │   ├── email.md          # Email campaigns
-│   │   └── gtm_plan.md       # Strategic execution plan
+│   │   └── strategy.md       # Strategic execution plan
 │   └── json_output/          # Raw data (for integrations)
 └── acme.com/
     └── ...

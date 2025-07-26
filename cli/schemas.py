@@ -121,7 +121,7 @@ class ProjectState(BaseModel):
     @property
     def missing_steps(self) -> List[str]:
         """Get list of missing steps."""
-        all_steps = ["overview", "account", "persona", "email", "plan"]
+        all_steps = ["overview", "account", "persona", "email", "strategy"]
         return [step for step in all_steps if step not in self.steps_completed]
 
 
@@ -173,7 +173,7 @@ STEP_NAMES = {
     "account": "Target Account",
     "persona": "Buyer Persona", 
     "email": "Email Campaign",
-    "plan": "GTM Plan"
+    "strategy": "GTM Plan"
 }
 
 STEP_ICONS = {
@@ -181,7 +181,7 @@ STEP_ICONS = {
     "account": "🎯", 
     "persona": "👤",
     "email": "✉️",
-    "plan": "📋"
+    "strategy": "📋"
 }
 
 STEP_DEPENDENCIES = {
@@ -189,7 +189,7 @@ STEP_DEPENDENCIES = {
     "account": ["overview"],
     "persona": ["overview", "account"],
     "email": ["overview", "account", "persona"],
-    "plan": ["overview", "account", "persona", "email"]
+    "strategy": ["overview", "account", "persona", "email"]
 }
 
 

@@ -42,11 +42,11 @@ def show_assets(asset: str = "all", json_output: bool = False, domain: Optional[
     
     if asset == "all":
         show_all_assets(normalized_domain, json_output)
-    elif asset in ["overview", "account", "persona", "email", "plan"]:
+    elif asset in ["overview", "account", "persona", "email", "strategy"]:
         show_single_asset(normalized_domain, asset, json_output)
     else:
         console.print(f"[red]Unknown asset: {asset}[/red]")
-        console.print("Available assets: [bold #0066CC]all, overview, account, persona, email, plan[/bold #0066CC]")
+        console.print("Available assets: [bold #0066CC]all, overview, account, persona, email, strategy[/bold #0066CC]")
 
 
 def show_all_assets(domain: str, json_output: bool = False) -> None:
@@ -76,7 +76,7 @@ def show_all_assets(domain: str, json_output: bool = False) -> None:
         "account": "🎯 Target Account Profile", 
         "persona": "👤 Buyer Persona",
         "email": "📧 Email Campaign",
-        "plan": "📋 GTM Plan",
+        "strategy": "📋 GTM Plan",
         "strategic_plan": "🎯 Strategic Plan"
     }
     
@@ -108,7 +108,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
     
     # Map user-friendly step names to internal step keys
     step_mapping = {
-        "plan": "advisor"  # 'plan' maps to 'advisor' step
+        "strategy": "strategy"  # No mapping needed anymore
     }
     
     # Use mapped step name if available
@@ -138,7 +138,7 @@ def show_single_asset(domain: str, step: str, json_output: bool = False) -> None
         "account": "🎯 Target Account Profile",
         "persona": "👤 Buyer Persona", 
         "email": "📧 Email Campaign",
-        "plan": "📋 GTM Strategic Plan"
+        "strategy": "📋 GTM Strategic Plan"
     }
     
     title = step_titles.get(step, step.title())
@@ -209,7 +209,7 @@ def show_asset_summary(domain: str, step: str, title: str) -> None:
             summary = f"Subject: {primary_subject} | {' | '.join(extras)}"
         else:
             summary = f"Subject: {primary_subject}"
-    elif step == "plan":
+    elif step == "strategy":
         summary = "30-day GTM execution plan"
     else:
         summary = "Generated content available"
@@ -339,16 +339,22 @@ def show_email_campaign(data: dict) -> None:
     from rich.markdown import Markdown
     from rich.style import Style
     
-    # Create custom Markdown style using brand blue instead of cyan
+    # Create custom Markdown style to prevent cyan numbers/URLs - use black text
     custom_markdown_style = {
-        "markdown.code": Style(color="#0066CC"),
-        "markdown.code_block": Style(color="#0066CC"),
-        "markdown.link": Style(color="#0066CC"),
-        "markdown.link_url": Style(color="#0066CC"),
-        "markdown.strong": Style(color="#0066CC", bold=True),
-        "markdown.emphasis": Style(color="#0066CC", italic=True),
+        "markdown.code": Style(color="white"),
+        "markdown.code_block": Style(color="white"),
+        "markdown.link": Style(color="white"),
+        "markdown.link_url": Style(color="white"),
+        "markdown.strong": Style(color="white", bold=True),
+        "markdown.emphasis": Style(color="white", italic=True),
         "markdown.text": Style(color="white"),
-        "markdown.paragraph": Style(color="white")
+        "markdown.paragraph": Style(color="white"),
+        "markdown.h1": Style(color="white", bold=True),
+        "markdown.h2": Style(color="white", bold=True),
+        "markdown.h3": Style(color="white", bold=True),
+        "markdown.h4": Style(color="white", bold=True),
+        "markdown.h5": Style(color="white", bold=True),
+        "markdown.h6": Style(color="white", bold=True),
     }
     
     # Use markdown formatter for consistent display

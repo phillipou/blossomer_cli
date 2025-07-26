@@ -1,0 +1,285 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-18T13:20:06.137320",
+  "evaluation_time": 26.719587087631226,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://mandrel.tech",
+        "context_type": "valid",
+        "expected_company_name": "Mandrel",
+        "company_context": "{\"company_name\": \"Mandrel\", \"description\": \"Mandrel is a supply chain optimization platform that helps consumer goods companies manage procurement, inventory, and vendor relationships more efficiently. It provides real-time visibility into supply chain operations and automated workflows for sourcing decisions.\", \"capabilities\": [\"Procurement Automation: Streamlines vendor selection and purchase order management\", \"Inventory Optimization: Provides real-time visibility into stock levels and demand forecasting\", \"Vendor Management: Centralizes supplier relationships and performance tracking\"]}",
+        "target_account_context": "{\"account_profile_name\": \"Consumer goods companies\", \"firmographics\": {\"industry\": [\"Consumer Goods\", \"Retail\"], \"employees\": \"100-1000\", \"revenue\": \"$10M-$100M\"}, \"use_cases\": [\"Optimize procurement costs and supplier relationships\", \"Reduce inventory carrying costs while avoiding stockouts\"]}",
+        "target_persona_context": "{\"target_persona_name\": \"Supply Chain Leads\", \"responsibilities\": [\"Manage vendor relationships and procurement processes\", \"Optimize inventory levels and supply chain costs\", \"Ensure supply chain resilience and risk mitigation\"], \"pain_points\": [\"Manual procurement processes slow down operations\", \"Poor visibility into supplier performance and inventory levels\", \"Difficulty balancing inventory costs with stockout risks\"], \"goals\": [\"Reduce procurement costs by 10-15%\", \"Improve supply chain visibility and automation\"]}",
+        "preferences": "{\"use_case\": \"reduce_costs\", \"emphasis\": \"desired-outcome\", \"opening_line\": \"buying-signal\", \"cta_setting\": \"demo\", \"template\": \"blossomer\"}",
+        "account_profile_name": "Consumer goods companies",
+        "persona_profile_name": "Supply Chain Leads"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"subjects\":{\"primary\":\"Reduce supply costs\",\"alternatives\":[\"Cut procurement expenses\",\"Optimize inventory spend\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed your recent push to streamline supply chain..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "subjects": {
+                "primary": "Reduce supply costs",
+                "alternatives": [
+                  "Cut procurement expenses",
+                  "Optimize inventory spend"
+                ]
+              },
+              "full_email_body": "Hi there,\n\nNoticed your recent push to streamline supply chain costs at [Company Name], which is a smart move given current market pressures. Many supply chain leads are finding it tough to cut costs without sacrificing service levels.\n\nAt Mandrel, we've helped companies like yours automate procurement workflows and gain real-time visibility into inventory, which often leads to significant savings. Our platform simplifies vendor management and helps identify cost-saving opportunities quickly.\n\nIf reducing costs is a priority right now, I’d love to show you how it works—are you open to a quick demo?\n\nBest,\n[Your Name]",
+              "email_body_breakdown": [
+                {
+                  "text": "Hi there,",
+                  "type": "greeting"
+                },
+                {
+                  "text": "Noticed your recent push to streamline supply chain costs at [Company Name], which is a smart move given current market pressures. Many supply chain leads are finding it tough to cut costs without sacrificing service levels.",
+                  "type": "opening"
+                },
+                {
+                  "text": "At Mandrel, we've helped companies like yours automate procurement workflows and gain real-time visibility into inventory, which often leads to significant savings. Our platform simplifies vendor management and helps identify cost-saving opportunities quickly.",
+                  "type": "pain-point"
+                },
+                {
+                  "text": "If reducing costs is a priority right now, I’d love to show you how it works—are you open to a quick demo?",
+                  "type": "cta"
+                }
+              ],
+              "writing_process": {
+                "trigger": "Noticed their push to reduce costs",
+                "problem": "Supply chain costs are hard to cut without impacting service",
+                "help": "Helped similar companies automate procurement and improve visibility",
+                "cta": "Offer a quick demo"
+              },
+              "metadata": {
+                "generation_id": "539de6c2-484d-4af4-9e54-3a5a3ff63f33",
+                "confidence": "high",
+                "personalization_level": "medium",
+                "processing_time_ms": 9381
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 5/5 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "subject_format",
+            "description": "Validates subject line has 3-4 words with proper capitalization",
+            "inputs_evaluated": [
+              {
+                "field": "primary_subject",
+                "value": "Reduce supply costs"
+              }
+            ],
+            "pass": true,
+            "rationale": "Subject line has correct format: 3-4 words with proper capitalization"
+          },
+          "D-4_field_cardinality": {
+            "check_name": "word_count",
+            "description": "Validates email body is between 50-100 words",
+            "inputs_evaluated": [
+              {
+                "field": "full_email_body",
+                "value": "96 words"
+              }
+            ],
+            "pass": true,
+            "rationale": "Email body has 96 words, within the 50-100 word range"
+          },
+          "D-5_url_preservation": {
+            "check_name": "identity_check",
+            "description": "Validates proper sender/recipient identity handling",
+            "inputs_evaluated": [
+              {
+                "field": "placeholder_present",
+                "value": "Yes"
+              },
+              {
+                "field": "sender_as_recipient",
+                "value": "No"
+              },
+              {
+                "field": "email_excerpt",
+                "value": "Hi there,\n\nNoticed your recent push to streamline supply chain costs at [Company Name], which is a smart move given current market pressures. Many supply chain leads are finding it tough to cut costs ..."
+              }
+            ],
+            "pass": true,
+            "rationale": "Email correctly handles company identity without confusing sender/recipient or hallucinating company names"
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": false,
+        "judges": {
+          "email_quality": {
+            "email_naturalness": {
+              "check_name": "email_naturalness",
+              "description": "Email sounds like a real founder wrote it",
+              "inputs_evaluated": [
+                {
+                  "field": "most_natural_phrase",
+                  "value": "Noticed your recent push to streamline supply chain costs at [Company Name], which is a smart move given current market pressures."
+                },
+                {
+                  "field": "least_natural_phrase",
+                  "value": "None found"
+                },
+                {
+                  "field": "subject_assessment",
+                  "value": "Reduce supply costs - The subject line is straightforward and relevant, but lacks a conversational tone."
+                }
+              ],
+              "pass": true,
+              "rating": "sufficient",
+              "rationale": "The email contains natural language, particularly in the opening line that acknowledges the recipient's efforts. However, the subject line could be more engaging and conversational."
+            },
+            "genuine_helpfulness": {
+              "check_name": "genuine_helpfulness",
+              "description": "Email feels genuinely helpful rather than sales-focused",
+              "inputs_evaluated": [
+                {
+                  "field": "rhetorical_questions",
+                  "value": "None found"
+                },
+                {
+                  "field": "sales_manipulation",
+                  "value": "None found"
+                },
+                {
+                  "field": "helpful_tone_evidence",
+                  "value": "Many supply chain leads are finding it tough to cut costs without sacrificing service levels."
+                }
+              ],
+              "pass": true,
+              "rating": "impressive",
+              "rationale": "The email avoids rhetorical questions and sales manipulation, instead focusing on a common challenge faced by supply chain leads, which demonstrates a genuine desire to help."
+            },
+            "personalization_appropriateness": {
+              "check_name": "personalization_appropriateness",
+              "description": "Personalization is relevant without being creepy OR email is hyper-relevant to recipient",
+              "inputs_evaluated": [
+                {
+                  "field": "personalization_evidence",
+                  "value": "Noticed your recent push to streamline supply chain costs at [Company Name]"
+                },
+                {
+                  "field": "hyper_relevance_evidence",
+                  "value": "Many supply chain leads are finding it tough to cut costs without sacrificing service levels."
+                },
+                {
+                  "field": "overall_relevance_level",
+                  "value": "The content feels targeted to supply chain leads, addressing their specific challenges."
+                }
+              ],
+              "pass": true,
+              "rating": "impressive",
+              "rationale": "The email effectively personalizes the outreach by referencing the recipient's specific initiative while also addressing a common pain point in the industry, making it highly relevant."
+            },
+            "uncertainty_handling": {
+              "check_name": "uncertainty_handling",
+              "description": "Uncertain inputs handled properly with graceful fallbacks",
+              "inputs_evaluated": [
+                {
+                  "field": "uncertainty_indicators_present",
+                  "value": "No uncertainty detected"
+                },
+                {
+                  "field": "content_coherence",
+                  "value": "None found"
+                },
+                {
+                  "field": "natural_fallback_evidence",
+                  "value": "If reducing costs is a priority right now, I’d love to show you how it works."
+                }
+              ],
+              "pass": true,
+              "rating": "impressive",
+              "rationale": "The email does not contain any uncertain inputs and maintains coherence throughout, with a natural fallback that invites further discussion."
+            },
+            "structure_compliance": {
+              "check_name": "structure_compliance",
+              "description": "Email follows founder outreach best practices",
+              "inputs_evaluated": [
+                {
+                  "field": "opening_hook",
+                  "value": "Noticed your recent push to streamline supply chain costs at [Company Name], which is a smart move given current market pressures."
+                },
+                {
+                  "field": "value_proposition",
+                  "value": "At Mandrel, we've helped companies like yours automate procurement workflows and gain real-time visibility into inventory."
+                },
+                {
+                  "field": "call_to_action",
+                  "value": "If reducing costs is a priority right now, I’d love to show you how it works—are you open to a quick demo?"
+                }
+              ],
+              "pass": true,
+              "rating": "sufficient",
+              "rationale": "The email has a clear opening hook and value proposition, but the call-to-action could be more assertive. Overall, it adheres to best practices for structure."
+            }
+          }
+        },
+        "total_calls": 1
+      },
+      "overall_pass": false,
+      "errors": [],
+      "generated_output": "{\"subjects\":{\"primary\":\"Reduce supply costs\",\"alternatives\":[\"Cut procurement expenses\",\"Optimize inventory spend\"]},\"full_email_body\":\"Hi there,\\n\\nNoticed your recent push to streamline supply chain costs at [Company Name], which is a smart move given current market pressures. Many supply chain leads are finding it tough to cut costs without sacrificing service levels.\\n\\nAt Mandrel, we've helped companies like yours automate procurement workflows and gain real-time visibility into inventory, which often leads to significant savings. Our platform simplifies vendor management and helps identify cost-saving opportunities quickly.\\n\\nIf reducing costs is a priority right now, I’d love to show you how it works—are you open to a quick demo?\\n\\nBest,\\n[Your Name]\",\"email_body_breakdown\":[{\"text\":\"Hi there,\",\"type\":\"greeting\"},{\"text\":\"Noticed your recent push to streamline supply chain costs at [Company Name], which is a smart move given current market pressures. Many supply chain leads are finding it tough to cut costs without sacrificing service levels.\",\"type\":\"opening\"},{\"text\":\"At Mandrel, we've helped companies like yours automate procurement workflows and gain real-time visibility into inventory, which often leads to significant savings. Our platform simplifies vendor management and helps identify cost-saving opportunities quickly.\",\"type\":\"pain-point\"},{\"text\":\"If reducing costs is a priority right now, I’d love to show you how it works—are you open to a quick demo?\",\"type\":\"cta\"}],\"writing_process\":{\"trigger\":\"Noticed their push to reduce costs\",\"problem\":\"Supply chain costs are hard to cut without impacting service\",\"help\":\"Helped similar companies automate procurement and improve visibility\",\"cta\":\"Offer a quick demo\"},\"metadata\":{\"generation_id\":\"539de6c2-484d-4af4-9e54-3a5a3ff63f33\",\"confidence\":\"high\",\"personalization_level\":\"medium\",\"processing_time_ms\":9381}}",
+      "test_case_id": 1
+    }
+  ]
+}

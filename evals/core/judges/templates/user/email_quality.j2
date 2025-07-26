@@ -1,0 +1,125 @@
+**Email to Evaluate:**
+
+**Initial Email:**
+Subject: {{ email.subjects.primary }}
+
+{{ email.full_email_body }}
+
+{% if email.follow_up_email %}
+**Follow-up Email ({{ email.follow_up_email.wait_days }} days later):**
+Subject: {{ email.follow_up_email.subject }}
+
+{{ email.follow_up_email.body }}
+{% else %}
+**Follow-up Email:** Not generated
+{% endif %}
+
+**Generation Context:**
+- User Preferences: {{ preferences|default("No specific preferences") }}
+- Personalization Request: {{ personalization|default("No personalization specified") }}
+- Uncertainty Indicators: {% if has_uncertainty %}Present in user inputs{% else %}None detected{% endif %}
+
+**Email Metadata:**
+- Word Count: {{ email.metadata.word_count|default("Not specified") }}
+- Confidence: {{ email.metadata.confidence|default("Not specified") }}
+- Personalization Level: {{ email.metadata.personalization_level|default("Not specified") }}
+
+---
+
+## Instructions
+Evaluate this email for:
+1. **Email Naturalness**: Does it sound like a real founder wrote it?
+2. **Genuine Helpfulness**: Does this feel like the sender actually wants to help vs just sell?
+3. **Personalization Appropriateness**: Is the personalization level appropriate OR is the email hyper-relevant?
+4. **Uncertainty Handling**: Are uncertain/gibberish inputs handled properly?
+5. **Structure Compliance**: Does it follow founder outreach best practices?
+6. **Follow-Up Variety**: Does the follow-up email offer a different angle than the initial email?
+
+**IMPORTANT**: For each check, identify and quote the specific lines/sentences from the email that most influenced your rating. When quoting text, ensure you properly escape any quotes or special characters for valid JSON format (replace " with \" and handle line breaks).
+
+## Output Requirements
+
+Return exactly 6 checks in this format. **CRITICAL**: Ensure all quoted text is properly escaped for JSON:
+- Replace all " with \"  
+- Replace line breaks with \\n
+- Keep quoted text under 80 characters when possible
+- If text contains quotes, use single quotes around it or summarize instead
+
+Example of proper escaping: "We're excited to \"help\" your team" becomes "We're excited to \\\"help\\\" your team"
+
+```json
+{
+  "email_naturalness": {
+    "check_name": "email_naturalness",
+    "description": "Email sounds like a real founder wrote it",
+    "inputs_evaluated": [
+      {"field": "most_natural_phrase", "value": "Quote the specific phrase (max 80 chars, escape quotes)"},
+      {"field": "least_natural_phrase", "value": "Quote corporate phrase or 'None found'"},
+      {"field": "subject_assessment", "value": "Quote subject line and brief assessment"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of naturalness assessment, referencing the specific quotes above"
+  },
+  "genuine_helpfulness": {
+    "check_name": "genuine_helpfulness",
+    "description": "Email feels genuinely helpful rather than sales-focused",
+    "inputs_evaluated": [
+      {"field": "rhetorical_questions", "value": "Quote rhetorical questions or 'None found'"},
+      {"field": "sales_manipulation", "value": "Quote sales tactics or 'None found'"},
+      {"field": "helpful_tone_evidence", "value": "Quote most helpful phrase (max 80 chars)"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of how genuine and helpful the email feels, avoiding sales manipulation"
+  },
+  "personalization_appropriateness": {
+    "check_name": "personalization_appropriateness", 
+    "description": "Personalization is relevant without being creepy OR email is hyper-relevant to recipient",
+    "inputs_evaluated": [
+      {"field": "personalization_evidence", "value": "Quote personalized refs or 'None found'"},
+      {"field": "hyper_relevance_evidence", "value": "Quote most relevant content (max 80 chars)"},
+      {"field": "overall_relevance_level", "value": "Assess targeting level"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation. Focus on whether hyper-relevant content compensates for lack of traditional personalization."
+  },
+  "uncertainty_handling": {
+    "check_name": "uncertainty_handling",
+    "description": "Uncertain inputs handled properly with graceful fallbacks",
+    "inputs_evaluated": [
+      {"field": "uncertainty_indicators_present", "value": "{% if has_uncertainty %}Yes - brief description{% else %}No uncertainty detected{% endif %}"},
+      {"field": "content_coherence", "value": "Quote forced content or 'None found'"},
+      {"field": "natural_fallback_evidence", "value": "Quote natural content (max 80 chars)"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of how well uncertainty was handled"
+  },
+  "structure_compliance": {
+    "check_name": "structure_compliance",
+    "description": "Email follows founder outreach best practices",
+    "inputs_evaluated": [
+      {"field": "opening_hook", "value": "Quote opening line (max 80 chars)"},
+      {"field": "value_proposition", "value": "Quote value prop (max 80 chars)"},
+      {"field": "call_to_action", "value": "Quote CTA and brief assessment"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive", 
+    "rationale": "2-3 sentence explanation of structure quality, referencing the specific elements quoted above"
+  },
+  "follow_up_variety": {
+    "check_name": "follow_up_variety",
+    "description": "Follow-up email offers different angle than initial email",
+    "inputs_evaluated": [
+      {"field": "initial_email_focus", "value": "Brief theme description (max 60 chars)"},
+      {"field": "follow_up_email_focus", "value": "Brief theme description (max 60 chars)"},
+      {"field": "repetition_assessment", "value": "Assess variety and complementarity"}
+    ],
+    "pass": true/false,
+    "rating": "poor|sufficient|impressive",
+    "rationale": "2-3 sentence explanation of whether the follow-up provides sufficient variety and new value compared to the initial email"
+  }
+}
+```

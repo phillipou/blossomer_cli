@@ -1,0 +1,167 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-18T12:31:29.150394",
+  "evaluation_time": 13.038838624954224,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0,
+    "passed": 0,
+    "eligible": 0
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://intryc.com",
+        "context_type": "noise",
+        "account_profile_name": "Quantum Application Realms",
+        "persona_profile_name": "Mystical Integration Wizard",
+        "persona_hypothesis": "Interdimensional beings who weave integration spells through cosmic API portals using telekinetic data transformation abilities",
+        "account_hypothesis": "Organizations existing in parallel digital universes where applications communicate through telepathic data streams and holographic interface protocols",
+        "expected_company_name": "Intryc"
+      },
+      "deterministic_results": {
+        "overall_pass": false,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"subjects\":{\"primary\":\"Outbound pipeline help\",\"alternatives\":[\"Sales process boost\",\"Growth bottleneck fix\"]},\"full_email_body\":\"Hi Mystical Integration Wizard,\\n\\nNoticed your team is expanding rap..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "subjects": {
+                "primary": "Outbound pipeline help",
+                "alternatives": [
+                  "Sales process boost",
+                  "Growth bottleneck fix"
+                ]
+              },
+              "full_email_body": "Hi Mystical Integration Wizard,\n\nNoticed your team is expanding rapidly, which often means the sales pipeline gets swamped with new leads and chaos. Founders like you often struggle to keep up with outbound outreach without losing focus on core growth. At Intryc, we've helped companies streamline their outreach and reduce the headache of managing high-volume lead follow-up. If you're open, I’d love to hop on a quick call to see how we might help clear some of that chaos. Let me know when works for you.\n\nBest,\n[Your Name]",
+              "email_body_breakdown": [
+                {
+                  "text": "Hi Mystical Integration Wizard,",
+                  "type": "greeting"
+                },
+                {
+                  "text": "Noticed your team is expanding rapidly, which often means the sales pipeline gets swamped with new leads and chaos. Founders like you often struggle to keep up with outbound outreach without losing focus on core growth.",
+                  "type": "intro"
+                },
+                {
+                  "text": "At Intryc, we've helped companies streamline their outreach and reduce the headache of managing high-volume lead follow-up.",
+                  "type": "pain-point"
+                },
+                {
+                  "text": "If you're open, I’d love to hop on a quick call to see how we might help clear some of that chaos. Let me know when works for you.",
+                  "type": "cta"
+                },
+                {
+                  "text": "Best,\n[Your Name]",
+                  "type": "signature"
+                }
+              ],
+              "writing_process": {
+                "trigger": "Noticed your team is expanding rapidly",
+                "problem": "The sales pipeline gets swamped with new leads and chaos",
+                "help": "Helped companies streamline outreach and reduce follow-up headaches",
+                "cta": "Hop on a quick call to explore solutions"
+              },
+              "metadata": {
+                "generation_id": "02cf8d9f-1971-47e8-aeca-61b4de4ef3dc",
+                "confidence": "high",
+                "personalization_level": "low",
+                "processing_time_ms": 12862
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 5/5 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "subject_format",
+            "description": "Validates subject line has 3-4 words with proper capitalization",
+            "inputs_evaluated": [
+              {
+                "field": "primary_subject",
+                "value": "Outbound pipeline help"
+              }
+            ],
+            "pass": true,
+            "rationale": "Subject line has correct format: 3-4 words with proper capitalization"
+          },
+          "D-4_field_cardinality": {
+            "check_name": "word_count",
+            "description": "Validates email body is between 50-100 words",
+            "inputs_evaluated": [
+              {
+                "field": "full_email_body",
+                "value": "89 words"
+              }
+            ],
+            "pass": true,
+            "rationale": "Email body has 89 words, within the 50-100 word range"
+          },
+          "D-5_url_preservation": {
+            "check_name": "identity_check",
+            "description": "Validates proper sender/recipient identity handling",
+            "inputs_evaluated": [
+              {
+                "field": "email_body_contains",
+                "value": "[Company Name] missing"
+              }
+            ],
+            "pass": false,
+            "rationale": "Email must use [Company Name] placeholder for recipient"
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 4,
+        "total_checks": 5
+      },
+      "llm_results": {},
+      "overall_pass": false,
+      "errors": [],
+      "generated_output": "{\"subjects\":{\"primary\":\"Outbound pipeline help\",\"alternatives\":[\"Sales process boost\",\"Growth bottleneck fix\"]},\"full_email_body\":\"Hi Mystical Integration Wizard,\\n\\nNoticed your team is expanding rapidly, which often means the sales pipeline gets swamped with new leads and chaos. Founders like you often struggle to keep up with outbound outreach without losing focus on core growth. At Intryc, we've helped companies streamline their outreach and reduce the headache of managing high-volume lead follow-up. If you're open, I’d love to hop on a quick call to see how we might help clear some of that chaos. Let me know when works for you.\\n\\nBest,\\n[Your Name]\",\"email_body_breakdown\":[{\"text\":\"Hi Mystical Integration Wizard,\",\"type\":\"greeting\"},{\"text\":\"Noticed your team is expanding rapidly, which often means the sales pipeline gets swamped with new leads and chaos. Founders like you often struggle to keep up with outbound outreach without losing focus on core growth.\",\"type\":\"intro\"},{\"text\":\"At Intryc, we've helped companies streamline their outreach and reduce the headache of managing high-volume lead follow-up.\",\"type\":\"pain-point\"},{\"text\":\"If you're open, I’d love to hop on a quick call to see how we might help clear some of that chaos. Let me know when works for you.\",\"type\":\"cta\"},{\"text\":\"Best,\\n[Your Name]\",\"type\":\"signature\"}],\"writing_process\":{\"trigger\":\"Noticed your team is expanding rapidly\",\"problem\":\"The sales pipeline gets swamped with new leads and chaos\",\"help\":\"Helped companies streamline outreach and reduce follow-up headaches\",\"cta\":\"Hop on a quick call to explore solutions\"},\"metadata\":{\"generation_id\":\"02cf8d9f-1971-47e8-aeca-61b4de4ef3dc\",\"confidence\":\"high\",\"personalization_level\":\"low\",\"processing_time_ms\":12862}}",
+      "test_case_id": 1
+    }
+  ]
+}

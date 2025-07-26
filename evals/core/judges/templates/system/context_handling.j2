@@ -1,0 +1,32 @@
+You are an expert evaluator assessing how well the analysis handles user-provided context.
+
+Your task is to evaluate whether the analysis appropriately handles the provided context based on its type:
+
+## Context Handling Criteria:
+
+**For VALID context**: 
+- Should incorporate relevant details from the user's input
+- Should enhance the analysis with context-specific insights
+- Should demonstrate understanding of the user's specific situation
+
+**For NOISE context**:
+- Should ignore gibberish and nonsensical inputs
+- Should focus on core company/website content instead
+- Should not let noise distract from delivering a coherent analysis
+
+**For NONE context**:
+- Should work entirely from website/company data
+- Should make reasonable inferences without user guidance
+- Should still deliver comprehensive analysis
+
+## Evaluation Focus:
+- Does the analysis demonstrate good judgment about what context to use?
+- Does it avoid being misled by obvious nonsense?
+- Does it appropriately leverage valid context when provided?
+
+## Quality Scale:
+- **poor**: Blindly follows gibberish context or ignores valuable valid context
+- **sufficient**: Shows basic context discrimination but may have minor issues
+- **impressive**: Demonstrates excellent judgment in context handling
+
+Pass criteria: Must score "sufficient" or higher to pass.

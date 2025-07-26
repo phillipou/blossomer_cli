@@ -1,0 +1,41 @@
+# Testing dependencies for Blossomer GTM CLI
+# Install with: pip install -r requirements-test.txt
+
+# Core testing framework
+pytest>=6.0.0
+pytest-asyncio>=0.21.0
+
+# Test utilities
+pytest-mock>=3.10.0
+pytest-timeout>=2.1.0
+
+# Coverage reporting
+pytest-cov>=4.0.0
+coverage>=7.0.0
+
+# HTML test reports
+pytest-html>=3.1.0
+
+# Code quality
+flake8>=6.0.0
+black>=23.0.0
+mypy>=1.0.0
+
+# Performance testing
+pytest-benchmark>=4.0.0
+
+# Test data factories
+factory-boy>=3.2.0
+
+# HTTP mocking (if needed for external API tests)
+responses>=0.23.0
+httpx>=0.24.0
+
+# CLI testing utilities (already included in typer)
+# typer[test] should provide CliRunner
+
+# Rich testing utilities (for terminal output)
+# rich provides testing utilities
+
+# Development utilities
+pre-commit>=3.0.0

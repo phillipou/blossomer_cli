@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "subjects": {
+      "type": "object",
+      "properties": {
+        "primary": {
+          "type": "string",
+          "description": "Most effective subject line"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "2 alternative subject lines"
+        }
+      },
+      "required": ["primary", "alternatives"],
+      "description": "Generated subject lines"
+    },
+    "full_email_body": {
+      "type": "string",
+      "description": "Complete natural email from greeting to sign-off"
+    },
+    "email_body_breakdown": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text content of this email segment"
+          },
+          "type": {
+            "type": "string",
+            "description": "Segment type: greeting|opening|pain-point|solution|evidence|cta|signature"
+          }
+        },
+        "required": ["text", "type"]
+      },
+      "description": "Email content broken into structured segments"
+    },
+    "writing_process": {
+      "type": "object",
+      "properties": {
+        "trigger": {
+          "type": "string"
+        },
+        "problem": {
+          "type": "string"
+        },
+        "help": {
+          "type": "string"
+        },
+        "cta": {
+          "type": "string"
+        }
+      },
+      "description": "Writing process breakdown with trigger, problem, help, and cta"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string",
+          "description": "Unique identifier for this generation"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Confidence level for email quality"
+        },
+        "personalization_level": {
+          "type": "string", 
+          "enum": ["high", "medium", "low", "not-personalized"],
+          "description": "Level of personalization achieved"
+        },
+        "processing_time_ms": {
+          "type": "integer",
+          "description": "Processing time in milliseconds"
+        },
+        "word_count": {
+          "type": "integer",
+          "description": "Word count of email body"
+        },
+        "follow_up_word_count": {
+          "type": "integer",
+          "description": "Word count of follow-up email body"
+        }
+      },
+      "required": ["generation_id", "confidence", "personalization_level"],
+      "description": "Generation metadata and quality metrics"
+    },
+    "follow_up_email": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "description": "Follow-up email subject line (3-4 words)"
+        },
+        "body": {
+          "type": "string",
+          "description": "Complete follow-up email body (60 words max)"
+        },
+        "wait_days": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 7,
+          "description": "Days to wait before sending follow-up"
+        }
+      },
+      "required": ["subject", "body", "wait_days"],
+      "description": "Follow-up email to be sent 3-5 days after initial email"
+    }
+  },
+  "required": [
+    "subjects",
+    "full_email_body", 
+    "email_body_breakdown",
+    "writing_process",
+    "metadata"
+  ]
+}

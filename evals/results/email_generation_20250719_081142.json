@@ -1,0 +1,207 @@
+{
+  "prompt_name": "Email Generation Evaluation",
+  "timestamp": "2025-07-19T08:11:42.079929",
+  "evaluation_time": 23.242197275161743,
+  "test_cases": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "pass_rate": 0.0
+  },
+  "deterministic_checks": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "total": 1
+  },
+  "llm_judges": {
+    "pass_rate": 0.0,
+    "passed": 0,
+    "eligible": 1
+  },
+  "detailed_results": [
+    {
+      "test_case": {
+        "input_website_url": "https://flextract.com",
+        "context_type": "valid",
+        "expected_company_name": "Flextract",
+        "company_context": "{\"company_name\": \"Flextract\", \"description\": \"Flextract is a document processing automation platform that helps financial services firms extract and process data from unstructured documents. It uses AI-powered OCR and data extraction to streamline document-heavy workflows in financial advisory, lending, and compliance.\", \"capabilities\": [\"AI-Powered Document Processing: Automatically extracts structured data from PDFs, scanned documents, and forms\", \"Financial Document Templates: Pre-built extractors for common financial documents like tax returns, bank statements, and investment reports\", \"Compliance Automation: Ensures accurate data extraction for regulatory reporting and audit requirements\"]}",
+        "target_account_context": "{\"account_profile_name\": \"Financial advisory firms\", \"firmographics\": {\"industry\": [\"Financial Services\", \"Investment Management\"], \"employees\": \"20-500\", \"revenue\": \"$5M-$50M\"}, \"use_cases\": [\"Automate client onboarding document processing\", \"Reduce manual data entry errors in financial analysis\"]}",
+        "target_persona_context": "{\"target_persona_name\": \"Financial advisors\", \"responsibilities\": [\"Manage client relationships and investment portfolios\", \"Process client documentation for onboarding and compliance\", \"Analyze financial documents for investment decision-making\"], \"pain_points\": [\"Manual document processing takes hours away from client-facing work\", \"High error rates in manual data entry affect analysis accuracy\", \"Compliance documentation creates administrative burden\"], \"goals\": [\"Spend more time on high-value client advisory work\", \"Reduce errors in financial data processing\"]}",
+        "preferences": "{\"use_case\": \"reduce_manual_work\", \"emphasis\": \"desired-outcome\", \"opening_line\": \"not-personalized\", \"cta_setting\": \"resource\", \"template\": \"blossomer\"}",
+        "account_profile_name": "Financial advisory firms",
+        "persona_profile_name": "Financial advisors"
+      },
+      "deterministic_results": {
+        "overall_pass": true,
+        "checks": {
+          "D-1_valid_json": {
+            "check_name": "json_validation",
+            "description": "Validates that the output is properly formatted JSON",
+            "inputs_evaluated": [
+              {
+                "field": "raw_output",
+                "value": "{\"subjects\":{\"primary\":\"Streamline Data Work\",\"alternatives\":[\"Automate Document Processing\",\"Reduce Manual Tasks\"]},\"full_email_body\":\"Hi,\\n\\nNoticed many financial advisors like [Company Name] are a..."
+              }
+            ],
+            "pass": true,
+            "rationale": "The output is valid JSON with proper syntax and can be parsed successfully.",
+            "data": {
+              "subjects": {
+                "primary": "Streamline Data Work",
+                "alternatives": [
+                  "Automate Document Processing",
+                  "Reduce Manual Tasks"
+                ]
+              },
+              "full_email_body": "Hi,\n\nNoticed many financial advisors like [Company Name] are aiming to cut down manual data entry from unstructured documents. This often slows workflows and increases errors.\n\nAt Flextract, we’ve helped firms automate extraction from PDFs and forms, saving hours and boosting accuracy. Our AI-powered tools are tailored for financial reports, tax returns, and compliance.\n\nIf you’re interested, I can share a resource on how automation can transform your document workflows.\n\nBest,\n[Your Name]",
+              "email_body_breakdown": [
+                {
+                  "text": "Hi,",
+                  "type": "greeting"
+                },
+                {
+                  "text": "Noticed many financial advisors like [Company Name] are aiming to cut down manual data entry from unstructured documents. This often slows workflows and increases errors.",
+                  "type": "intro"
+                },
+                {
+                  "text": "At Flextract, we’ve helped firms automate extraction from PDFs and forms, saving hours and boosting accuracy. Our AI-powered tools are tailored for financial reports, tax returns, and compliance.",
+                  "type": "pain-point"
+                },
+                {
+                  "text": "If you’re interested, I can share a resource on how automation can transform your document workflows.",
+                  "type": "solution"
+                },
+                {
+                  "text": "Best,\n[Your Name]",
+                  "type": "signature"
+                }
+              ],
+              "writing_process": {
+                "trigger": "Noticed many financial advisors like [Company Name] are aiming to cut down manual data entry from unstructured documents.",
+                "problem": "This often slows workflows and increases errors.",
+                "help": "At Flextract, we’ve helped firms automate extraction from PDFs and forms, saving hours and boosting accuracy.",
+                "cta": "If you’re interested, I can share a resource on how automation can transform your document workflows."
+              },
+              "follow_up_email": {
+                "subject": "Data automation resource",
+                "body": "Hi, I wanted to share a resource on how automation can help [Company Name] reduce manual work. It covers practical steps and case studies. Check it out: [website]. Let me know if you'd like to discuss further.",
+                "wait_days": 4
+              },
+              "metadata": {
+                "generation_id": "95409902-774a-4b7e-bd7a-fa3775226d9b",
+                "confidence": "high",
+                "personalization_level": "low",
+                "processing_time_ms": 5824,
+                "word_count": 85,
+                "follow_up_word_count": 45
+              }
+            }
+          },
+          "D-2_schema_compliance": {
+            "check_name": "schema_compliance",
+            "description": "Validates that the output matches the expected JSON schema",
+            "inputs_evaluated": [
+              {
+                "field": "parsed_output",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "follow_up_email",
+                  "metadata"
+                ]
+              },
+              {
+                "field": "schema_fields",
+                "value": [
+                  "subjects",
+                  "full_email_body",
+                  "email_body_breakdown",
+                  "writing_process",
+                  "metadata",
+                  "follow_up_email"
+                ]
+              }
+            ],
+            "pass": true,
+            "rationale": "Output matches expected schema and has 6/6 fields populated (≥90% required)."
+          },
+          "D-3_format_compliance": {
+            "check_name": "subject_format",
+            "description": "Validates subject line has 3-4 words with proper capitalization",
+            "inputs_evaluated": [
+              {
+                "field": "primary_subject",
+                "value": "Streamline Data Work"
+              }
+            ],
+            "pass": true,
+            "rationale": "Subject line has correct format: 3-4 words with proper capitalization"
+          },
+          "D-4_field_cardinality": {
+            "check_name": "word_count",
+            "description": "Validates email body is between 50-100 words and follow-up is max 60 words",
+            "inputs_evaluated": [
+              {
+                "field": "full_email_body",
+                "value": "73 words"
+              },
+              {
+                "field": "follow_up_email.body",
+                "value": "37 words"
+              }
+            ],
+            "pass": true,
+            "rationale": "Email body has 73 words (50-100 range), follow-up within limits"
+          },
+          "D-5_url_preservation": {
+            "check_name": "identity_check",
+            "description": "Validates proper sender/recipient identity handling",
+            "inputs_evaluated": [
+              {
+                "field": "placeholder_present",
+                "value": "Yes"
+              },
+              {
+                "field": "sender_as_recipient",
+                "value": "No"
+              },
+              {
+                "field": "email_excerpt",
+                "value": "Hi,\n\nNoticed many financial advisors like [Company Name] are aiming to cut down manual data entry from unstructured documents. This often slows workflows and increases errors.\n\nAt Flextract, we’ve hel..."
+              }
+            ],
+            "pass": true,
+            "rationale": "Email correctly handles company identity without confusing sender/recipient or hallucinating company names"
+          }
+        },
+        "summary": "Deterministic validation results",
+        "passed_checks": 5,
+        "total_checks": 5
+      },
+      "llm_results": {
+        "overall_pass": false,
+        "judges": {
+          "email_quality": {
+            "check_name": "email_quality",
+            "description": "LLM evaluation using email_quality template",
+            "inputs_evaluated": [
+              {
+                "field": "error",
+                "value": "Unterminated string starting at: line 67 column 51 (char 4382)"
+              }
+            ],
+            "pass": false,
+            "rationale": "This check failed due to an error: Unterminated string starting at: line 67 column 51 (char 4382)"
+          }
+        },
+        "total_calls": 1
+      },
+      "overall_pass": false,
+      "errors": [],
+      "generated_output": "{\"subjects\":{\"primary\":\"Streamline Data Work\",\"alternatives\":[\"Automate Document Processing\",\"Reduce Manual Tasks\"]},\"full_email_body\":\"Hi,\\n\\nNoticed many financial advisors like [Company Name] are aiming to cut down manual data entry from unstructured documents. This often slows workflows and increases errors.\\n\\nAt Flextract, we’ve helped firms automate extraction from PDFs and forms, saving hours and boosting accuracy. Our AI-powered tools are tailored for financial reports, tax returns, and compliance.\\n\\nIf you’re interested, I can share a resource on how automation can transform your document workflows.\\n\\nBest,\\n[Your Name]\",\"email_body_breakdown\":[{\"text\":\"Hi,\",\"type\":\"greeting\"},{\"text\":\"Noticed many financial advisors like [Company Name] are aiming to cut down manual data entry from unstructured documents. This often slows workflows and increases errors.\",\"type\":\"intro\"},{\"text\":\"At Flextract, we’ve helped firms automate extraction from PDFs and forms, saving hours and boosting accuracy. Our AI-powered tools are tailored for financial reports, tax returns, and compliance.\",\"type\":\"pain-point\"},{\"text\":\"If you’re interested, I can share a resource on how automation can transform your document workflows.\",\"type\":\"solution\"},{\"text\":\"Best,\\n[Your Name]\",\"type\":\"signature\"}],\"writing_process\":{\"trigger\":\"Noticed many financial advisors like [Company Name] are aiming to cut down manual data entry from unstructured documents.\",\"problem\":\"This often slows workflows and increases errors.\",\"help\":\"At Flextract, we’ve helped firms automate extraction from PDFs and forms, saving hours and boosting accuracy.\",\"cta\":\"If you’re interested, I can share a resource on how automation can transform your document workflows.\"},\"follow_up_email\":{\"subject\":\"Data automation resource\",\"body\":\"Hi, I wanted to share a resource on how automation can help [Company Name] reduce manual work. It covers practical steps and case studies. Check it out: [website]. Let me know if you'd like to discuss further.\",\"wait_days\":4},\"metadata\":{\"generation_id\":\"95409902-774a-4b7e-bd7a-fa3775226d9b\",\"confidence\":\"high\",\"personalization_level\":\"low\",\"processing_time_ms\":5824,\"word_count\":85,\"follow_up_word_count\":45}}",
+      "test_case_id": 1
+    }
+  ]
+}

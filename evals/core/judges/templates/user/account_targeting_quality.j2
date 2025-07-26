@@ -1,0 +1,97 @@
+Please evaluate this target account profile for quality across proxy strength, detection feasibility, and profile crispness.
+
+## Target Account Profile Data
+
+**Target Account Name:** {{ analysis.target_account_name }}
+
+**Target Account Description:** {{ analysis.target_account_description }}
+
+**Target Account Rationale:**
+{% for rationale in analysis.target_account_rationale %}
+- {{ rationale }}
+{% endfor %}
+
+## Firmographics
+**Industry:** {{ analysis.firmographics.industry | join(", ") }}
+**Employees:** {{ analysis.firmographics.employees or "Not specified" }}
+**Department Size:** {{ analysis.firmographics.department_size or "Not specified" }}
+**Revenue:** {{ analysis.firmographics.revenue or "Not specified" }}
+**Geography:** {{ analysis.firmographics.geography | join(", ") if analysis.firmographics.geography else "Not specified" }}
+**Business Model:** {{ analysis.firmographics.business_model | join(", ") if analysis.firmographics.business_model else "Not specified" }}
+**Funding Stage:** {{ analysis.firmographics.funding_stage | join(", ") if analysis.firmographics.funding_stage else "Not specified" }}
+**Company Type:** {{ analysis.firmographics.company_type | join(", ") if analysis.firmographics.company_type else "Not specified" }}
+**Keywords:** {{ analysis.firmographics.keywords | join(", ") }}
+
+## Buying Signals
+{% for signal in analysis.buying_signals %}
+**{{ signal.title }}** ({{ signal.priority }} Priority, {{ signal.type }})
+- Description: {{ signal.description }}
+- Detection Method: {{ signal.detection_method }}
+
+{% endfor %}
+
+**Buying Signals Rationale:**
+{% for rationale in analysis.buying_signals_rationale %}
+- {{ rationale }}
+{% endfor %}
+
+## Metadata
+**Primary Context Source:** {{ analysis.metadata.primary_context_source }}
+**Sources Used:** {{ analysis.metadata.sources_used | join(", ") }}
+**Overall Confidence:** {{ analysis.metadata.confidence_assessment.overall_confidence }}
+**Data Quality:** {{ analysis.metadata.confidence_assessment.data_quality }}
+**Inference Level:** {{ analysis.metadata.confidence_assessment.inference_level }}
+
+## Company Context
+{% if company_context %}
+**Company Being Analyzed:** {{ company_context.get('company_name', 'Unknown') }}
+**Company URL:** {{ company_context.get('company_url', 'Not provided') }}
+**Problem/Solution:** {{ company_context.get('description', 'Not provided') }}
+{% else %}
+**Company Context:** Not provided in evaluation data
+{% endif %}
+
+## Instructions
+Evaluate this target account profile as an expert GTM engineer. Focus on whether this targeting strategy would actually work in practice for finding companies that need this product right now.
+
+## Output Requirements
+
+Evaluate the target account profile and return exactly 3 checks in this format:
+
+```json
+{
+  "proxy_strength": {
+    "check_name": "proxy_strength",
+    "description": "Evaluates whether firmographics and buying signals are strong predictors of actual need",
+    "inputs_evaluated": [
+      {"field": "firmographics", "value": "Industry: {{ analysis.firmographics.industry | join(', ') }}, Employees: {{ analysis.firmographics.employees }}, Revenue: {{ analysis.firmographics.revenue }}"},
+      {"field": "buying_signals", "value": "{{ analysis.buying_signals | length }} signals: {% for signal in analysis.buying_signals[:3] %}{{ signal.title }} ({{ signal.priority }}){% if not loop.last %}, {% endif %}{% endfor %}"}
+    ],
+    "pass": true/false,
+    "rating": "impressive|sufficient|poor",
+    "rationale": "2-3 sentences explaining why these attributes and signals do/don't predict real customer need"
+  },
+  "detection_feasibility": {
+    "check_name": "detection_feasibility", 
+    "description": "Assesses whether the specified detection methods can realistically identify the described signals",
+    "inputs_evaluated": [
+      {"field": "detection_methods", "value": "{% for signal in analysis.buying_signals[:3] %}{{ signal.detection_method }}{% if not loop.last %}; {% endif %}{% endfor %}"},
+      {"field": "buying_signals", "value": "{{ analysis.buying_signals | length }} signals: {% for signal in analysis.buying_signals[:3] %}{{ signal.title }} ({{ signal.priority }}){% if not loop.last %}, {% endif %}{% endfor %}"}
+    ],
+    "pass": true/false,
+    "rating": "impressive|sufficient|poor", 
+    "rationale": "2-3 sentences explaining the technical feasibility of the detection strategy"
+  },
+  "profile_crispness": {
+    "check_name": "profile_crispness",
+    "description": "Evaluates how precisely defined and actionable the target customer profile is",
+    "inputs_evaluated": [
+      {"field": "target_account_name", "value": "{{ analysis.target_account_name }}"},
+      {"field": "firmographics", "value": "Industry: {{ analysis.firmographics.industry | join(', ') }}, Employees: {{ analysis.firmographics.employees }}, Keywords: {{ analysis.firmographics.keywords | join(', ') }}"}
+    ],
+    "pass": true/false,
+    "rating": "impressive|sufficient|poor",
+    "rationale": "2-3 sentences explaining the specificity and actionability of the profile definition"
+  }
+}
+```

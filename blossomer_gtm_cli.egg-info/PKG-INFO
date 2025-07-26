@@ -13,6 +13,7 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Requires-Dist: typer>=0.16.0
 Requires-Dist: rich>=13.9.0
 Requires-Dist: questionary>=2.1.0
@@ -28,6 +29,7 @@ Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
 Requires-Dist: black>=23.0.0; extra == "dev"
 Requires-Dist: flake8>=6.0.0; extra == "dev"
 Requires-Dist: mypy>=1.0.0; extra == "dev"
+Dynamic: license-file
 
 # Blossomer GTM CLI
 
@@ -35,11 +37,11 @@ This CLI tool is a **prototype of the internal AI workflows used at Blossomer**.
 
 **With Blossomer's CLI, you can generate:**
 
-• **Company Overview**: Automatically analyze any website to extract business model, value propositions, and competitive positioning
-• **Target Account Profile**: Generate detailed ICP definitions with firmographic criteria and buying signals  
-• **Buyer Persona**: Create comprehensive personas with pain points, goals, and purchase journey mapping
-• **Email Campaigns**: Build personalized outreach sequences using our proven "Lego Block" methodology
-• **Strategic Plan**: Generate complete execution roadmaps with tool recommendations and success metrics
+- **Company Overview**: Automatically analyze any website to extract business model, value propositions, and competitive positioning
+- **Target Account Profile**: Generate detailed ICP definitions with firmographic criteria and buying signals  
+- **Buyer Persona**: Create comprehensive personas with pain points, goals, and purchase journey mapping
+- **Email Campaigns**: Build personalized outreach sequences using our proven "Lego Block" methodology
+- **Strategic Plan**: Generate complete execution roadmaps with tool recommendations and success metrics
 
 ## Quick Start
 
@@ -53,8 +55,8 @@ This CLI tool is a **prototype of the internal AI workflows used at Blossomer**.
 
 ```bash
 # Clone and install
-git clone https://github.com/your-org/blossomer-cli.git
-cd blossomer-cli
+git clone https://github.com/phillipou/blossomer_cli.git
+cd blossomer_cli
 make install
 
 # Set up your API keys
@@ -106,7 +108,7 @@ gtm_projects/
 │   │   ├── account.md        # Target account profile
 │   │   ├── persona.md        # Buyer persona
 │   │   ├── email.md          # Email campaigns
-│   │   └── gtm_plan.md       # Strategic execution plan
+│   │   └── strategy.md       # Strategic execution plan
 │   └── json_output/          # Raw data (for integrations)
 └── acme.com/
     └── ...

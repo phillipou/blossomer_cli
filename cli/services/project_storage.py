@@ -129,7 +129,7 @@ class ProjectStorage:
             return []
         
         steps = []
-        step_files = ["overview.json", "account.json", "persona.json", "email.json", "plan.json"]
+        step_files = ["overview.json", "account.json", "persona.json", "email.json", "strategy.json"]
         json_output_dir = project_dir / "json_output"
         
         for step_file in step_files:
@@ -216,7 +216,7 @@ class ProjectStorage:
             "account": ["overview"],
             "persona": ["overview", "account"],
             "email": ["overview", "account", "persona"],
-            "plan": ["overview", "account", "persona", "email"]
+            "strategy": ["overview", "account", "persona", "email"]
         }
     
     def get_dependent_steps(self, step: str) -> List[str]:

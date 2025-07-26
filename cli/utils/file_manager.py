@@ -51,7 +51,7 @@ class ProjectManager:
         'account': 'account.json', 
         'persona': 'persona.json',
         'email': 'email.json',
-        'plan': 'plan.json'
+        'strategy': 'strategy.json'
     }
     
     def __init__(self, base_path: Optional[Path] = None):

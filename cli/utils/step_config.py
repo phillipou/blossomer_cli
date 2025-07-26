@@ -18,7 +18,7 @@ class StepConfig:
     
     def get_step_panel_title(self, step_number: int, total_steps: int) -> str:
         """Get the panel title for this step"""
-        return f"[bold #01A0E4][{step_number}/{total_steps}] {self.name}[/bold #01A0E4]"
+        return f"[bold #0066CC][{step_number}/{total_steps}] {self.name}[/bold #0066CC]"
 
 # GTM Pipeline Configuration
 GTM_STEPS = [
@@ -55,12 +55,12 @@ GTM_STEPS = [
         file_name="email.json"
     ),
     StepConfig(
-        key="plan",
+        key="strategy",
         name="GTM Strategic Plan",
         explanation="Creating comprehensive go-to-market execution plan with scoring frameworks and tool recommendations",
         icon="🎯",
         preview_title="STRATEGIC PLAN - Preview",
-        file_name="strategic_plan.json"
+        file_name="strategy.json"
     )
 ]
 

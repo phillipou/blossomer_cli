@@ -171,7 +171,7 @@ class GuidedEmailBuilder:
         
         if choice_idx == len(content_options):  # "Other" option selected
             custom_instructions = questionary.text(
-                "🎯 Describe what you want the AI to focus on:",
+                "✍️ Describe what you want to focus on:",
                 placeholder="e.g., Emphasize cost savings, mention recent industry trends, focus on security benefits",
                 style=TEXT_INPUT_STYLE
             ).ask()

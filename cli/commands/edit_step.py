@@ -19,7 +19,7 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
     
     # Map user-friendly step names to internal step keys
     step_mapping = {
-        "plan": "advisor"  # 'plan' maps to 'advisor' step
+        # No mapping needed anymore
     }
     
     # Use mapped step name if available
@@ -53,7 +53,7 @@ def edit_step_command(step: str, domain: Optional[str] = None) -> None:
         "account": "account.md", 
         "persona": "persona.md",
         "email": "email.md",
-        "advisor": "gtm_plan.md"  # advisor step maps to gtm_plan.md
+        "advisor": "strategy.md"  # advisor step maps to strategy.md
     }
     
     filename = step_to_filename.get(actual_step, f"{actual_step}.md")

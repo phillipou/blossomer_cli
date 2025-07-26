@@ -223,5 +223,5 @@ def get_forge_client(force_new: bool = False) -> ForgeClient:
     return _forge_client
 
 
-# Initialize default instance for backward compatibility
-forge_client = get_forge_client()
+# Initialize default instance for backward compatibility (lazy loading)
+forge_client = None

@@ -1,0 +1,12 @@
+name: "Target Account Profile Evaluation"
+service:
+  module: "app.services.target_account_service"
+  function: "generate_target_account_profile"
+schema: "schema.json"
+dataset: "../../datasets/eval_test_inputs.csv"
+judges:
+  deterministic: ["D-1", "D-2", "D-3", "D-4", "D-5"]
+  llm: ["context_handling", "account_targeting_quality"]
+models:
+  default: "OpenAI/gpt-4.1-nano"
+  fallback: "Gemini/models/gemini-1.5-flash"

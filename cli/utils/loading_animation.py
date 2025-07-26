@@ -7,7 +7,7 @@ import time
 import threading
 from typing import Dict, List
 from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 class LoadingAnimator:
     """
@@ -40,18 +40,18 @@ class LoadingAnimator:
             "→ Finalizing buyer persona"
         ],
         "email": [
-            "→ Crafting personalized messaging",
-            "→ Optimizing email structure",
+            "→ Gathering context",
             "→ Incorporating talking poitns",
-            "→ Refining call-to-action",
-            "→ Finalizing email campaign"
+            "→ Optimizing structure",
+            "→ Modularizing for experimentation",
+            "→ Finalizing email copy"
         ],
-        "plan": [
-            "→ Synthesizing GTM strategy",
-            "→ Building scoring frameworks",
-            "→ Recommending tool stack",
-            "→ Creating implementation plan",
-            "→ Finalizing strategic plan"
+        "strategy": [
+            "→ Gathering context",
+            "→ Building qualification criteria",
+            "→ Building lead scoring criteria",
+            "→ Recommending best tools and data sources",
+            "→ Finalizing plan"
         ]
     }
     
@@ -67,11 +67,10 @@ class LoadingAnimator:
         if step_key not in self.STEP_MESSAGES:
             step_key = "overview"  # Fallback
             
-        # Create Rich Progress with spinner and timer
+        # Create Rich Progress with spinner
         self.progress = Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            TimeElapsedColumn(),
             console=self.console,
             transient=False
         )

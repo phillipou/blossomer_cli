@@ -26,7 +26,7 @@ async def generate_step(
     """Generate or regenerate a specific GTM step"""
     
     # Validate step
-    valid_steps = ["overview", "account", "persona", "email", "plan"]
+    valid_steps = ["overview", "account", "persona", "email", "strategy"]
     if step not in valid_steps:
         console.print(f"[red]Invalid step: {step}[/red]")
         console.print(f"Valid steps: {', '.join(valid_steps)}")
@@ -38,8 +38,8 @@ async def generate_step(
         if not projects:
             console.print("[red]No GTM projects found.[/red]")
             console.print("📝 Projects store your company analysis and GTM assets")
-            console.print("→ Create your first project: [bold #01A0E4]blossomer init company.com[/bold #01A0E4]")
-            console.print("→ Or get help: [bold #01A0E4]blossomer --help[/bold #01A0E4]")
+            console.print("→ Create your first project: [bold #0066CC]blossomer init company.com[/bold #0066CC]")
+            console.print("→ Or get help: [bold #0066CC]blossomer --help[/bold #0066CC]")
             raise typer.Exit(1)
         elif len(projects) == 1:
             domain = projects[0]["domain"]
@@ -47,7 +47,7 @@ async def generate_step(
             console.print("[red]Multiple projects found. Please specify domain:[/red]")
             for project in projects[:5]:
                 console.print(f"  • {project['domain']}")
-            console.print("→ Use: [bold #01A0E4]blossomer generate {step} --domain <domain>[/bold #01A0E4]")
+            console.print("→ Use: [bold #0066CC]blossomer generate {step} --domain <domain>[/bold #0066CC]")
             raise typer.Exit(1)
     
     # Normalize domain
@@ -62,7 +62,7 @@ async def generate_step(
     status = gtm_service.get_project_status(normalized_domain)
     if not status["exists"]:
         console.print(f"[red]No GTM project found for {normalized_domain}[/red]")
-        console.print("→ Create one with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
+        console.print("→ Create one with: [bold #0066CC]blossomer init[/bold #0066CC]")
         raise typer.Exit(1)
     
     # Check dependencies
@@ -73,7 +73,7 @@ async def generate_step(
     missing_deps = [dep for dep in required_deps if dep not in available_steps]
     if missing_deps:
         console.print(f"[red]Missing dependencies for {step}:[/red] {', '.join(missing_deps)}")
-        console.print("→ Generate dependencies first or run full flow with: [bold #01A0E4]blossomer init[/bold #01A0E4]")
+        console.print("→ Generate dependencies first or run full flow with: [bold #0066CC]blossomer init[/bold #0066CC]")
         raise typer.Exit(1)
     
     # Check if step already exists
@@ -99,15 +99,15 @@ async def generate_step(
             choices=[
                 "Regenerate anyway",
                 "View current content",
-                "Abort"
+                "Exit"
             ],
             add_separator=False
         )
         
-        if action == "Abort":
+        if action == "Exit":
             return
         elif action == "View current content":
-            console.print(f"→ Use: [bold #01A0E4]blossomer show {step}[/bold #01A0E4]")
+            console.print(f"→ Use: [bold #0066CC]blossomer show {step}[/bold #0066CC]")
             return
         # If "Regenerate anyway", continue
     
@@ -149,7 +149,7 @@ async def generate_step(
                         gtm_service.generate_email_campaign(normalized_domain, force_regenerate=True),
                         timeout=40.0
                     )
-                elif step == "plan":
+                elif step == "strategy":
                     from cli.services.llm_service import LLMClient
                     from app.services.gtm_advisor_service import GTMAdvisorService
                     
@@ -163,7 +163,7 @@ async def generate_step(
                     
             except asyncio.TimeoutError:
                 progress.stop()
-                console.print(f"   [red]✗[/red] {step.title()} generation timed out after 40 seconds")
+                console.print(f"   [red]✗[/red] {step.title()} generation timed out after 60 seconds")
                 console.print("💡 This may be due to high API load or network issues.")
                 console.print(f"→ Try again later or check your network connection")
                 return
@@ -199,16 +199,16 @@ async def generate_step(
         console.print(Panel.fit(
             f"[bold green]✓ {step.title()} Generation Complete![/bold green]\n\n"
             "[bold]Next steps:[/bold]\n"
-            f"• View result: [bold #01A0E4]blossomer show {step}[/bold #01A0E4]\n"
-            f"• Edit content: [bold #01A0E4]blossomer edit {step}[/bold #01A0E4]\n"
-            f"• View all: [bold #01A0E4]blossomer show all[/bold #01A0E4]",
+            f"• View result: [bold #0066CC]blossomer show {step}[/bold #0066CC]\n"
+            f"• Edit content: [bold #0066CC]blossomer edit {step}[/bold #0066CC]\n"
+            f"• View all: [bold #0066CC]blossomer show all[/bold #0066CC]",
             title="[bold]Success[/bold]",
             border_style="green"
         ))
         
     except Exception as e:
         console.print(f"\n[red]Generation failed:[/red] {e}")
-        console.print(f"→ Try again: [bold #01A0E4]blossomer generate {step}[/bold #01A0E4]")
+        console.print(f"→ Try again: [bold #0066CC]blossomer generate {step}[/bold #0066CC]")
         raise typer.Exit(1)
 
 
@@ -254,7 +254,7 @@ async def generate_step_internal(domain: str, step: str) -> None:
             
         except asyncio.TimeoutError:
             progress.stop()
-            console.print(f"   [red]✗[/red] {step.title()} regeneration timed out after 40 seconds")
+            console.print(f"   [red]✗[/red] {step.title()} regeneration timed out after 60 seconds")
             console.print("💡 This may be due to high API load or network issues.")
             raise
         except Exception as e:

@@ -37,34 +37,34 @@ def create_main_welcome_panel() -> Panel:
     """Create a rich welcome panel for the main blossomer command"""
     welcome_text = Text()
     welcome_text.append("🚀 Welcome to ", style="bold")
-    welcome_text.append("Blossomer CLI", style="bold #01A0E4")
+    welcome_text.append("Blossomer CLI", style="bold #0066CC")
     welcome_text.append("!\n\n", style="bold")
     welcome_text.append("Generate complete go-to-market packages from domain analysis.\n\n", style="")
     welcome_text.append("Available Commands:\n", style="bold")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("init [domain]", style="bold #01A0E4")
+    welcome_text.append("init [domain]", style="bold #0066CC")
     welcome_text.append(" - Start new GTM project\n", style="")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("show [step]", style="bold #01A0E4")
+    welcome_text.append("show [step]", style="bold #0066CC")
     welcome_text.append(" - Display generated content\n", style="")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("edit [step]", style="bold #01A0E4")
+    welcome_text.append("edit [step]", style="bold #0066CC")
     welcome_text.append(" - Open content in editor\n", style="")
     welcome_text.append("  • ", style="dim")
-    welcome_text.append("list", style="bold #01A0E4")
+    welcome_text.append("list", style="bold #0066CC")
     welcome_text.append(" - Show all GTM projects\n\n", style="")
     welcome_text.append("Quick Start:\n", style="bold")
     welcome_text.append("  ", style="dim")
-    welcome_text.append("blossomer init acme.com", style="cyan")
+    welcome_text.append("blossomer init acme.com", style="#0066CC")
     welcome_text.append("\n\n", style="")
     welcome_text.append("Use ", style="dim italic")
-    welcome_text.append("--help", style="cyan")
+    welcome_text.append("--help", style="#0066CC")
     welcome_text.append(" with any command for more details.", style="dim italic")
     
     return Panel(
         welcome_text,
-        title="[bold #01A0E4]Blossomer Command Line Tool[/bold #01A0E4]",
-        border_style="#01A0E4",
+        title="[bold #0066CC]Blossomer Command Line Tool[/bold #0066CC]",
+        border_style="#0066CC",
         padding=(1, 2),
         expand=False
     )
@@ -163,10 +163,10 @@ def init(
 
 @app.command()
 def show(
-    step: Optional[str] = typer.Argument("plan", help="Step to display: overview, account, persona, email, plan"),
+    step: Optional[str] = typer.Argument("strategy", help="Step to display: overview, account, persona, email, strategy"),
     json_output: bool = typer.Option(False, "--json", help="Output raw JSON"),
     domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
-    step_option: Optional[str] = typer.Option(None, "--step", help="Step to display: overview, account, persona, email, plan"),
+    step_option: Optional[str] = typer.Option(None, "--step", help="Step to display: overview, account, persona, email, strategy"),
 ) -> None:
     """📊 Display generated step with formatting."""
     from cli.commands.show import show_assets
@@ -180,7 +180,7 @@ def show(
 
 @app.command()
 def edit(
-    step: str = typer.Argument("plan", help="Step to edit: overview, account, persona, email, plan (default: plan)"),
+    step: str = typer.Argument("strategy", help="Step to edit: overview, account, persona, email, strategy (default: strategy)"),
     domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
 ) -> None:
     """✏️ Open generated markdown file in system editor."""

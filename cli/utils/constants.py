@@ -46,6 +46,6 @@ class MenuChoices:
             cls.START_FROM_ACCOUNT: "account",
             cls.START_FROM_PERSONA: "persona",
             cls.START_FROM_EMAIL: "email",
-            cls.START_FROM_PLAN: "plan",
+            cls.START_FROM_PLAN: "strategy",
         }
         return mapping.get(choice, "")
