@@ -34,7 +34,8 @@ class GTMGenerationService:
         self, 
         domain: str, 
         user_context: Optional[str] = None,
-        force_regenerate: bool = False
+        force_regenerate: bool = False,
+        client_id: Optional[str] = None
     ) -> ProductOverviewResponse:
         """Generate or load company overview (Step 1)"""
         normalized = normalize_domain(domain)
@@ -54,7 +55,10 @@ class GTMGenerationService:
             user_inputted_context=user_context
         )
         
-        result = await generate_product_overview_service(request)
+        result = await generate_product_overview_service(
+            request, 
+            client_id=client_id or normalized_domain
+        )
         
         # Save to storage
         self.storage.save_step_data(normalized_domain, "overview", result)

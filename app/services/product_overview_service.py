@@ -1,6 +1,8 @@
 import logging
+from typing import Optional
 from app.services.context_orchestrator_agent import ContextOrchestrator
 from app.services.context_orchestrator_service import ContextOrchestratorService
+from app.services.dynamic_context_orchestrator import DynamicContextOrchestrator
 from app.prompts.models import ProductOverviewPromptVars
 from app.schemas import ProductOverviewRequest, ProductOverviewResponse
 
@@ -22,19 +24,35 @@ logger = logging.getLogger(__name__)
 
 async def generate_product_overview_service(
     data: ProductOverviewRequest,
-    orchestrator: ContextOrchestrator,
+    orchestrator: Optional[ContextOrchestrator] = None,
+    client_id: str = "default",
+    use_dynamic_context: bool = True,
 ) -> ProductOverviewResponse:
     """
     Orchestrates the generation of a comprehensive product overview.
+    Now supports dynamic context with cross-client patterns and performance insights.
     """
-    service = ContextOrchestratorService(orchestrator=orchestrator)
-    result = await service.analyze(
-        request_data=data,
-        analysis_type="product_overview",
-        prompt_template="product_overview",
-        prompt_vars_class=ProductOverviewPromptVars,
-        response_model=ProductOverviewResponse,
-    )
+    if use_dynamic_context:
+        # Use new dynamic context orchestrator
+        service = DynamicContextOrchestrator(orchestrator=orchestrator)
+        result = await service.analyze(
+            request_data=data,
+            analysis_type="product_overview",
+            prompt_template="product_overview",
+            prompt_vars_class=ProductOverviewPromptVars,
+            response_model=ProductOverviewResponse,
+            client_id=client_id,
+        )
+    else:
+        # Fall back to original static context approach
+        service = ContextOrchestratorService(orchestrator=orchestrator)
+        result = await service.analyze(
+            request_data=data,
+            analysis_type="product_overview",
+            prompt_template="product_overview",
+            prompt_vars_class=ProductOverviewPromptVars,
+            response_model=ProductOverviewResponse,
+        )
     # Check for insufficient content
     if (
         hasattr(result, "metadata")

@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch, call
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from cli.utils.domain import normalize_domain, DomainInfo
+from cli.utils.domain import normalize_domain, NormalizedDomain
 from cli.utils.colors import Colors
 from cli.utils.guided_email_builder import GuidedEmailBuilder
 from cli.utils.markdown_formatter import get_formatter
@@ -33,7 +33,7 @@ class TestDomainUtils:
         
         for input_domain, expected_domain, expected_url in test_cases:
             result = normalize_domain(input_domain)
-            assert isinstance(result, DomainInfo)
+            assert isinstance(result, NormalizedDomain)
             assert result.domain == expected_domain
             assert result.url == expected_url
     
@@ -78,14 +78,14 @@ class TestDomainUtils:
             with pytest.raises(Exception):
                 normalize_domain(invalid_domain)
     
-    def test_domain_info_object(self):
-        """Test DomainInfo object properties"""
-        domain_info = DomainInfo(domain="test.com", url="https://test.com")
+    def test_normalized_domain_object(self):
+        """Test NormalizedDomain object properties"""
+        domain_info = NormalizedDomain(domain="test.com", url="https://test.com")
         
         assert domain_info.domain == "test.com"
         assert domain_info.url == "https://test.com"
-        assert str(domain_info) == "test.com"
-        assert repr(domain_info) == "DomainInfo(domain='test.com', url='https://test.com')"
+        assert str(domain_info) == "https://test.com"  # NormalizedDomain returns URL in __str__
+        assert repr(domain_info) == "NormalizedDomain(domain='test.com', url='https://test.com')"
 
 
 class TestColorsUtils:

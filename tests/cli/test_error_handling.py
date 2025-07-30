@@ -7,7 +7,7 @@ import pytest
 import json
 import os
 from pathlib import Path
-from unittest.mock import patch, Mock, side_effect
+from unittest.mock import patch, Mock
 from typer.testing import CliRunner
 
 from cli.main import app

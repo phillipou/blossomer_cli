@@ -30,11 +30,18 @@ def temp_project_dir(tmp_path, monkeypatch):
     project_dir = tmp_path / "gtm_projects"
     project_dir.mkdir()
     
-    # Mock the project storage to use temp directory
-    monkeypatch.setattr(
-        "cli.services.project_storage.PROJECT_ROOT",
-        project_dir
-    )
+    # Mock the ProjectStorage class to use temp directory
+    original_init = None
+    try:
+        from cli.services.project_storage import ProjectStorage
+        original_init = ProjectStorage.__init__
+        
+        def mock_init(self, base_dir="gtm_projects"):
+            original_init(self, str(project_dir))
+        
+        monkeypatch.setattr(ProjectStorage, "__init__", mock_init)
+    except ImportError:
+        pass  # Service might not exist
     
     return project_dir
 
@@ -51,6 +58,7 @@ def mock_llm_responses():
             "target_market": "Enterprise companies with 500+ employees",
             "business_model": "SaaS subscription with professional services",
             "key_differentiators": ["AI-powered automation", "Enterprise security", "Custom integrations"],
+            "capabilities": ["Workflow automation", "Process optimization", "System integration", "Analytics reporting"],
             "_generated_at": "2024-01-01T00:00:00Z"
         },
         "account": {
@@ -110,14 +118,29 @@ def mock_llm_responses():
                     "VP Operations: Your Automation Solution is Here"
                 ]
             },
-            "primary_email": {
-                "subject": "Transform Your Operations with Intelligent Automation",
-                "body": "Hi {{first_name}},\n\nI notice {{company}} is scaling rapidly in the tech space. Many VPs of Operations at similar companies are struggling with manual processes that slow down growth.\n\nAcmeFlow has helped companies like yours reduce manual work by 80% while improving visibility across operations.\n\nWould you be interested in a 15-minute conversation about how we could help {{company}} scale more efficiently?\n\nBest regards,\n[Your Name]",
-                "call_to_action": "Schedule a 15-minute call"
+            "full_email_body": "Hi {{first_name}},\n\nI notice {{company}} is scaling rapidly in the tech space. Many VPs of Operations at similar companies are struggling with manual processes that slow down growth.\n\nAcmeFlow has helped companies like yours reduce manual work by 80% while improving visibility across operations.\n\nWould you be interested in a 15-minute conversation about how we could help {{company}} scale more efficiently?\n\nBest regards,\n[Your Name]",
+            "email_body_breakdown": [
+                {"text": "Hi {{first_name}},", "type": "greeting"},
+                {"text": "I notice {{company}} is scaling rapidly in the tech space. Many VPs of Operations at similar companies are struggling with manual processes that slow down growth.", "type": "pain-point"},
+                {"text": "AcmeFlow has helped companies like yours reduce manual work by 80% while improving visibility across operations.", "type": "solution"},
+                {"text": "Would you be interested in a 15-minute conversation about how we could help {{company}} scale more efficiently?", "type": "cta"},
+                {"text": "Best regards,\n[Your Name]", "type": "signature"}
+            ],
+            "writing_process": {
+                "target_persona": "VP of Operations",
+                "key_pain_points": "Manual processes and scaling challenges",
+                "value_props_used": "80% reduction in manual work and improved operational visibility",
+                "call_to_action_type": "Soft meeting request"
             },
-            "follow_up_email": {
-                "subject": "Quick follow-up: Automation for {{company}}",
-                "body": "Hi {{first_name}},\n\nI wanted to follow up on my previous email about operational automation for {{company}}.\n\nI've attached a case study showing how a similar tech company reduced their manual processes by 75% in just 3 months.\n\nWould love to explore if this could work for your team as well.\n\nBest,\n[Your Name]"
+            "metadata": {
+                "word_count": 65,
+                "reading_time_seconds": 15,
+                "personalization_fields": ["first_name", "company"],
+                "tone": "Professional, consultative",
+                "generated_at": "2024-01-01T00:00:00Z",
+                "generation_id": "test-email-gen-123",
+                "confidence": "high",
+                "personalization_level": "medium"
             },
             "_generated_at": "2024-01-01T00:00:00Z"
         },
@@ -358,36 +381,83 @@ def mock_all_external_calls(monkeypatch, mock_llm_responses, mock_firecrawl_resp
     """Automatically mock all external API calls to prevent costs"""
     
     # Mock LLM service calls
-    async def mock_llm_generate(prompt: str, model: str = None, **kwargs):
+    async def mock_llm_generate(prompt=None, system_prompt: str = None, response_model=None, **kwargs):
         """Smart mock that returns appropriate response based on prompt content"""
-        prompt_lower = prompt.lower()
+        # Handle both generate and generate_structured_output calls
+        if prompt is None:
+            prompt = system_prompt or ""
         
-        if any(word in prompt_lower for word in ["company", "overview", "business", "product"]):
-            return json.dumps(mock_llm_responses["overview"])
-        elif any(word in prompt_lower for word in ["account", "target", "firmographic"]):
-            return json.dumps(mock_llm_responses["account"])
-        elif any(word in prompt_lower for word in ["persona", "buyer", "demographic"]):
-            return json.dumps(mock_llm_responses["persona"])
-        elif any(word in prompt_lower for word in ["email", "campaign", "outreach"]):
-            return json.dumps(mock_llm_responses["email"])
-        elif any(word in prompt_lower for word in ["strategy", "plan", "gtm"]):
-            return mock_llm_responses["strategy"]["content"]
+        # Handle different types of prompt input (string, LLMRequest object, etc.)
+        if hasattr(prompt, 'lower'):
+            prompt_lower = prompt.lower()
+        elif hasattr(prompt, 'prompt'):
+            prompt_lower = prompt.prompt.lower()
+        elif hasattr(prompt, '__str__'):
+            prompt_lower = str(prompt).lower()
         else:
-            return json.dumps({"default": "mock response"})
+            prompt_lower = ""
+        
+        # Check for email-related keywords first (more specific)
+        if any(word in prompt_lower for word in ["email", "campaign", "outreach", "subject", "message", "writing"]):
+            response_data = mock_llm_responses["email"]
+        elif any(word in prompt_lower for word in ["company", "overview", "business", "product"]):
+            response_data = mock_llm_responses["overview"]
+        elif any(word in prompt_lower for word in ["account", "target", "firmographic"]):
+            response_data = mock_llm_responses["account"]
+        elif any(word in prompt_lower for word in ["persona", "buyer", "demographic"]):
+            response_data = mock_llm_responses["persona"]
+        elif any(word in prompt_lower for word in ["strategy", "plan", "gtm"]):
+            # Strategy returns a response object with text attribute
+            strategy_response = Mock()
+            strategy_response.text = mock_llm_responses["strategy"]["content"]
+            return strategy_response
+        else:
+            response_data = {"default": "mock response"}
+        
+        # If response_model is provided (structured output), return the data as-is
+        # Otherwise return JSON string for compatibility
+        if response_model:
+            return response_data
+        else:
+            return json.dumps(response_data)
     
     # Mock all LLM service paths
     mock_llm = AsyncMock(side_effect=mock_llm_generate)
-    monkeypatch.setattr("cli.services.llm_service.LLMClient.generate", mock_llm)
-    monkeypatch.setattr("app.services.llm_service.LLMClient.generate", mock_llm)
-    monkeypatch.setattr("cli.services.llm_singleton.get_llm_client", lambda: Mock(generate=mock_llm))
+    
+    # Mock LLM client methods that are actually used
+    mock_client = Mock()
+    mock_client.generate = mock_llm
+    mock_client.generate_structured_output = mock_llm
+    
+    # Mock the singleton function to return our mock client
+    try:
+        monkeypatch.setattr("cli.services.llm_singleton.get_llm_client", lambda **kwargs: mock_client)
+    except (ImportError, AttributeError):
+        pass  # Service might not exist
+    
+    # Mock app services without importing them directly
+    try:
+        import app.services.llm_service
+        monkeypatch.setattr("app.services.llm_service.LLMClient.generate", mock_llm)
+    except ImportError:
+        # App service isn't available in CLI test environment - that's OK
+        pass
     
     # Mock Firecrawl website scraping
     def mock_firecrawl_scrape(*args, **kwargs):
         return mock_firecrawl_response
     
-    monkeypatch.setattr("app.services.website_scraper.scrape_website", mock_firecrawl_scrape)
-    monkeypatch.setattr("app.services.web_content_service.WebContentService.fetch_website_content", 
-                       lambda self, url: mock_firecrawl_response)
+    # Mock the actual functions that exist
+    monkeypatch.setattr("app.services.website_scraper.firecrawl_scrape_url", mock_firecrawl_scrape)
+    monkeypatch.setattr("app.services.website_scraper.get_processed_website_content", 
+                       lambda url: mock_firecrawl_response["content"])
+    
+    # Mock web content service if it exists
+    try:
+        monkeypatch.setattr("app.services.web_content_service.WebContentService.fetch_website_content", 
+                           lambda self, url: mock_firecrawl_response)
+    except AttributeError:
+        pass  # Service might not exist
     
     # Mock any other external API calls
     monkeypatch.setattr("requests.get", Mock(return_value=Mock(json=lambda: mock_firecrawl_response)))
@@ -544,8 +614,8 @@ def mock_error_scenarios(monkeypatch):
 def create_test_domain():
     """Factory for creating test domain objects"""
     def _create(domain_name="test.com"):
-        from cli.utils.domain import DomainInfo
-        return DomainInfo(domain=domain_name, url=f"https://{domain_name}")
+        from cli.utils.domain import NormalizedDomain
+        return NormalizedDomain(domain=domain_name, url=f"https://{domain_name}")
     return _create
 
 

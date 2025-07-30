@@ -199,6 +199,11 @@ def list(
     list_projects(domain)
 
 
+# Add context subcommand
+from cli.commands.context import app as context_app
+app.add_typer(context_app, name="context", help="🧠 Manage dynamic context store")
+
+
 
 
 

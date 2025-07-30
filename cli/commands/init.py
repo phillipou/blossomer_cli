@@ -532,6 +532,9 @@ def handle_existing_project(domain: str, status: dict, yolo: bool) -> None:
     # Enter immersive mode for existing projects too
     enter_immersive_mode()
     
+    # Import gtm_service when needed
+    from cli.services.gtm_generation_service import gtm_service
+    
     metadata = gtm_service.storage.load_metadata(domain)
     last_updated = metadata.updated_at if metadata else "Unknown"
     
@@ -780,6 +783,9 @@ def run_generation_step(
 
 def run_email_generation_step(domain: str, yolo: bool = False) -> None:
     """Run the email generation step with guided mode choice"""
+    
+    # Import gtm_service when needed
+    from cli.services.gtm_generation_service import gtm_service
     
     # Clear screen before showing step panel for clean UX
     clear_console()
