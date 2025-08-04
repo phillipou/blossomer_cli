@@ -16,12 +16,17 @@ app/schemas/gtm_advisor.py
 app/services/__init__.py
 app/services/circuit_breaker.py
 app/services/content_preprocessing.py
+app/services/context_event_bus.py
 app/services/context_orchestrator_agent.py
 app/services/context_orchestrator_service.py
+app/services/context_store.py
 app/services/dev_file_cache.py
+app/services/document_processor.py
+app/services/dynamic_context_orchestrator.py
 app/services/email_generation_service.py
 app/services/gtm_advisor_service.py
 app/services/llm_service.py
+app/services/performance_tracker.py
 app/services/product_overview_service.py
 app/services/target_account_service.py
 app/services/target_persona_service.py
@@ -39,6 +44,7 @@ cli/main.py
 cli/schemas.py
 cli/commands/__init__.py
 cli/commands/advisor.py
+cli/commands/context.py
 cli/commands/edit_step.py
 cli/commands/eval.py
 cli/commands/export.py
@@ -81,11 +87,9 @@ tests/test_correct_endpoint.py
 tests/test_dependencies.py
 tests/test_different_endpoints.py
 tests/test_domain_utils.py
-tests/test_error_handling.py
 tests/test_follow_up_email.py
 tests/test_gtm_flow_integration.py
 tests/test_guided_email_builder.py
 tests/test_project_storage.py
 tests/test_runner.py
-tests/test_services.py
 tests/test_structured_output.py

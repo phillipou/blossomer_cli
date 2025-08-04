@@ -966,7 +966,7 @@ def run_plan_generation_step(domain: str, yolo: bool = False, step_counter: int 
         
         # Show animated loading for strategic plan generation (panel already shown above)
         animator = LoadingAnimator(console)
-        animator.start_animation("plan")
+        animator.start_animation("strategy")
         
         start_time = time.time()
         

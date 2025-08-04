@@ -199,6 +199,52 @@ def list(
     list_projects(domain)
 
 
+@app.command()
+def status(
+    domain: Optional[str] = typer.Option(None, "--domain", help="Specify domain (auto-detected if only one project)"),
+) -> None:
+    """📊 Show project generation status."""
+    from cli.services.gtm_generation_service import gtm_service
+    from cli.utils.domain import normalize_domain
+    from cli.utils.panel_utils import create_status_panel
+    
+    # If no domain specified, show all projects
+    if not domain:
+        projects = gtm_service.storage.list_projects()
+        if not projects:
+            console.print("[yellow]No GTM projects found.[/yellow]")
+            console.print("→ Create one with: [bold #0066CC]blossomer init company.com[/bold #0066CC]")
+            return
+        elif len(projects) == 1:
+            domain = projects[0]["domain"]
+        else:
+            # Show status for all projects
+            console.print("\n[bold #0066CC]📊 GTM Projects Status[/bold #0066CC]\n")
+            for project in projects:
+                status = gtm_service.get_project_status(project["domain"])
+                console.print(create_status_panel(project["domain"], status))
+                console.print()
+            return
+    
+    # Show status for specific domain
+    try:
+        normalized = normalize_domain(domain)
+        normalized_domain = normalized.url
+    except Exception as e:
+        console.print(f"[red]Error:[/red] Invalid domain format: {e}")
+        return
+    
+    status = gtm_service.get_project_status(normalized_domain)
+    if not status["exists"]:
+        console.print(f"[yellow]No GTM project found for {normalized_domain}[/yellow]")
+        console.print("→ Create one with: [bold #0066CC]blossomer init {normalized_domain}[/bold #0066CC]")
+        return
+    
+    console.print()
+    console.print(create_status_panel(normalized_domain, status))
+    console.print()
+
+
 # Add context subcommand
 from cli.commands.context import app as context_app
 app.add_typer(context_app, name="context", help="🧠 Manage dynamic context store")
