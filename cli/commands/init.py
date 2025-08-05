@@ -30,6 +30,7 @@ from cli.utils.step_config import step_manager
 from cli.utils.panel_utils import create_step_panel_by_key, create_welcome_panel, create_status_panel, create_completion_panel
 from cli.utils.preview_utils import show_step_preview, show_guided_email_preview
 from cli.utils.loading_animation import LoadingAnimator
+from cli.utils.ascii_art import show_init_splash_screen
 
 console = Console()
 
@@ -298,6 +299,10 @@ def create_env_file(env_vars: list) -> None:
 
 def init_flow(domain: Optional[str], context: Optional[str] = None, yolo: bool = False) -> None:
     """Run the interactive GTM generation flow"""
+    
+    # Show ASCII art splash screen first (unless domain is provided)
+    if domain is None and not yolo:
+        show_init_splash_screen(console)
     
     # Check API keys first
     keys_present, missing_keys = check_api_keys()
