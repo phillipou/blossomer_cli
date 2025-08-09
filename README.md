@@ -1,5 +1,7 @@
 # Blossomer GTM CLI
 
+![Blossomer GTM CLI](assets/cover_photo.png)
+
 This CLI tool is a **prototype of the internal AI workflows used at Blossomer**. We've open-sourced it so you can tweak the prompts and systems to work perfectly for your specific needs. Think of it as a peek behind the curtain of how modern GTM intelligence actually works.
 
 **With Blossomer's CLI, you can generate:**

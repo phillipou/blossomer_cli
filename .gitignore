@@ -19,6 +19,7 @@ MANUAL_TESTING.md       # Internal testing notes
 bug_tracking.md         # Internal bug tracking
 scripts/                # Development scripts
 evals/                  # Evaluation framework (internal)
+assets/                 # Static assets like images
 .cursor/
 
 # User data directories (already listed but adding comment)
